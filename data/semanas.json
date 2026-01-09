@@ -1,0 +1,834 @@
+{
+  "bebe": {
+    "1": {
+      "titulo": "Semana 1 do bebê",
+      "descricao": "O bebê nasceu recentemente e está se adaptando ao mundo exterior.",
+      "dica": "Observe sinais de fome e sono. O contato pele a pele é muito importante.",
+      "acompanhe": "Primeira semana de adaptação. Peso pode diminuir levemente.",
+      "imagens": ["https://media.giphy.com/media/3o6ZtpxSZbQRRnwCKQ/giphy.gif"],
+      "bgColor": "#FFFDE7",
+      "textColor": "#F57F17"
+    },
+    "2": {
+      "titulo": "Semana 2 do bebê",
+      "descricao": "Ajustes iniciais de alimentação e sono começam a se estabelecer.",
+      "dica": "Mantenha rotina de amamentação a cada 2-3 horas.",
+      "acompanhe": "Pequenos ganhos de peso começam a aparecer.",
+      "imagens": ["https://via.placeholder.com/150"],
+      "bgColor": "#E8F5E9",
+      "textColor": "#1B5E20"
+    },
+    "3": {
+      "titulo": "Semana 3 do bebê",
+      "descricao": "O bebê começa a se adaptar melhor à rotina familiar.",
+      "dica": "Preste atenção nos sinais de sono para estabelecer bons hábitos.",
+      "acompanhe": "Ganhos de peso e altura mais consistentes.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#E65100"
+    },
+    "4": {
+      "titulo": "Semana 4 do bebê",
+      "descricao": "Com aproximadamente um mês de vida, o bebê começa a ficar mais atento aos sons e aos rostos.",
+      "dica": "Fale olhando nos olhos do bebê. Esse contato fortalece o vínculo.",
+      "acompanhe": "É comum o bebê ainda não dormir bem à noite.",
+      "imagens": ["https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"],
+      "bgColor": "#EDE7F6",
+      "textColor": "#5E35B1"
+    },
+    "5": {
+      "titulo": "Semana 5 do bebê",
+      "descricao": "O bebê começa a reconhecer vozes familiares e demonstra mais interesse pelo ambiente.",
+      "dica": "Cante canções suaves e leia para o bebê regularmente.",
+      "acompanhe": "Ganhos de peso e altura continuam de forma constante.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#006064"
+    },
+    "6": {
+      "titulo": "Semana 6 do bebê",
+      "descricao": "Sorrisos sociais começam a aparecer, encantando toda a família.",
+      "dica": "Responda aos sorrisos do bebê para estimular a comunicação.",
+      "acompanhe": "Maior controle da cabeça e pescoço.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#C2185B"
+    },
+    "7": {
+      "titulo": "Semana 7 do bebê",
+      "descricao": "O bebê começa a emitir sons guturais e demonstra mais expressões faciais.",
+      "dica": "Imitar os sons do bebê estimula o desenvolvimento da fala.",
+      "acompanhe": "Períodos de alerta mais longos durante o dia.",
+      "imagens": [],
+      "bgColor": "#E3F2FD",
+      "textColor": "#1565C0"
+    },
+    "8": {
+      "titulo": "Semana 8 do bebê",
+      "descricao": "Coordenação entre mãos e olhos começa a se desenvolver.",
+      "dica": "Ofereça brinquedos coloridos e de diferentes texturas.",
+      "acompanhe": "Movimentos mais intencionais com as mãos.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#2E7D32"
+    },
+    "9": {
+      "titulo": "Semana 9 do bebê",
+      "descricao": "O bebê começa a acompanhar objetos em movimento com os olhos.",
+      "dica": "Móveis objetos coloridos na frente do bebê para estimular a visão.",
+      "acompanhe": "Melhor foco visual em objetos próximos.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#EF6C00"
+    },
+    "10": {
+      "titulo": "Semana 10 do bebê",
+      "descricao": "O bebê demonstra mais força no tronco e começa a tentar rolar.",
+      "dica": "Deixe o bebê de bruços por curtos períodos sob supervisão.",
+      "acompanhe": "Preparação para os primeiros rolamentos.",
+      "imagens": [],
+      "bgColor": "#F3E5F5",
+      "textColor": "#7B1FA2"
+    },
+    "11": {
+      "titulo": "Semana 11 do bebê",
+      "descricao": "Risadas e gritinhos de alegria começam a aparecer com mais frequência.",
+      "dica": "Brincadeiras de cócegas e sons engraçados estimulam o riso.",
+      "acompanhe": "Maior interação social com a família.",
+      "imagens": [],
+      "bgColor": "#E0F2F1",
+      "textColor": "#00796B"
+    },
+    "12": {
+      "titulo": "Semana 12 do bebê",
+      "descricao": "Fim do primeiro trimestre! O bebê está mais ativo e curioso.",
+      "dica": "Crie um ambiente seguro para exploração.",
+      "acompanhe": "Ritmo de crescimento mais estabilizado.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#F9A825"
+    },
+    "13": {
+      "titulo": "Semana 13 do bebê",
+      "descricao": "O bebê começa a levar objetos à boca para explorar texturas.",
+      "dica": "Ofereça mordedores seguros para alívio do desconforto gengival.",
+      "acompanhe": "Aumento da salivação pode indicar dentição.",
+      "imagens": [],
+      "bgColor": "#E8EAF6",
+      "textColor": "#303F9F"
+    },
+    "14": {
+      "titulo": "Semana 14 do bebê",
+      "descricao": "Rolamentos podem começar a acontecer, surpreendendo o bebê e os pais.",
+      "dica": "Nunca deixe o bebê sozinho em superfícies elevadas.",
+      "acompanhe": "Grande desenvolvimento motor nesta fase.",
+      "imagens": [],
+      "bgColor": "#F1F8E9",
+      "textColor": "#689F38"
+    },
+    "15": {
+      "titulo": "Semana 15 do bebê",
+      "descricao": "O bebê começa a demonstrar preferências por brinquedos e pessoas.",
+      "dica": "Respeite as preferências do bebê enquanto apresenta novidades.",
+      "acompanhe": "Personalidade única começando a se mostrar.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#FB8C00"
+    },
+    "16": {
+      "titulo": "Semana 16 do bebê",
+      "descricao": "Maior coordenação para pegar e segurar objetos intencionalmente.",
+      "dica": "Ofereça objetos de diferentes tamanhos para desenvolver a preensão.",
+      "acompanhe": "Desenvolvimento da pinça digital começando.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#0097A7"
+    },
+    "17": {
+      "titulo": "Semana 17 do bebê",
+      "descricao": "O bebê começa a se sentar com apoio e tem melhor equilíbrio.",
+      "dica": "Use travesseiros ou almofadas para apoio durante a sessão.",
+      "acompanhe": "Fortalecimento dos músculos do core.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#C2185B"
+    },
+    "18": {
+      "titulo": "Semana 18 do bebê",
+      "descricao": "Balbucios mais complexos começam a surgir, incluindo consoantes.",
+      "dica": "Converse muito com o bebê, nomeando objetos e ações.",
+      "acompanhe": "Desenvolvimento linguístico acelerado.",
+      "imagens": [],
+      "bgColor": "#E3F2FD",
+      "textColor": "#1976D2"
+    },
+    "19": {
+      "titulo": "Semana 19 do bebê",
+      "descricao": "Reconhecimento do próprio nome e resposta quando chamado.",
+      "dica": "Use o nome do bebê frequentemente nas interações.",
+      "acompanhe": "Desenvolvimento da autoconsciência.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#388E3C"
+    },
+    "20": {
+      "titulo": "Semana 20 do bebê",
+      "descricao": "Metade do primeiro ano! O bebê está mais sociável e comunicativo.",
+      "dica": "Leve o bebê para socializar em ambientes seguros.",
+      "acompanhe": "Habilidades sociais em desenvolvimento.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#F57C00"
+    },
+    "21": {
+      "titulo": "Semana 21 do bebê",
+      "descricao": "Primeiros dentes podem começar a aparecer, causando desconforto.",
+      "dica": "Mordedores gelados podem aliviar o desconforto gengival.",
+      "acompanhe": "Sintomas de dentição como salivação excessiva.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#7E57C2"
+    },
+    "22": {
+      "titulo": "Semana 22 do bebê",
+      "descricao": "O bebê começa a se movimentar mais, engatinhando ou arrastando.",
+      "dica": "Crie um espaço seguro para exploração motora.",
+      "acompanhe": "Preparação para engatinhar propriamente.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#00ACC1"
+    },
+    "23": {
+      "titulo": "Semana 23 do bebê",
+      "descricao": "Maior interesse por alimentos sólidos e texturas diferentes.",
+      "dica": "Introduza novos alimentos um de cada vez.",
+      "acompanhe": "Transição para alimentação complementar.",
+      "imagens": [],
+      "bgColor": "#F3E5F5",
+      "textColor": "#8E24AA"
+    },
+    "24": {
+      "titulo": "Semana 24 do bebê",
+      "descricao": "Engatinhar pode estar mais coordenado e eficiente.",
+      "dica": "Proteja tomadas e quinas com protetores.",
+      "acompanhe": "Exploração ativa do ambiente.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#FBC02D"
+    },
+    "25": {
+      "titulo": "Semana 25 do bebê",
+      "descricao": "O bebê começa a puxar para ficar em pé com apoio.",
+      "dica": "Móveis estáveis podem servir de apoio seguro.",
+      "acompanhe": "Fortalecimento das pernas para futuros passos.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#43A047"
+    },
+    "26": {
+      "titulo": "Semana 26 do bebê",
+      "descricao": "Palavras simples como 'mama' ou 'papa' podem surgir.",
+      "dica": "Comemore e repita as primeiras palavras do bebê.",
+      "acompanhe": "Explosão linguística começando.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#FF9800"
+    },
+    "27": {
+      "titulo": "Semana 27 do bebê",
+      "descricao": "Compreensão de comandos simples como 'não' e 'vem'.",
+      "dica": "Use gestos junto com palavras para facilitar compreensão.",
+      "acompanhe": "Desenvolvimento da compreensão linguística.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#0097A7"
+    },
+    "28": {
+      "titulo": "Semana 28 do bebê",
+      "descricao": "Bebê mais independente nas brincadeiras e explorando sozinho.",
+      "dica": "Permita exploração independente sob supervisão.",
+      "acompanhe": "Desenvolvimento da autonomia.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#D81B60"
+    },
+    "29": {
+      "titulo": "Semana 29 do bebê",
+      "descricao": "Pegada em pinça mais refinada para pegar objetos pequenos.",
+      "dica": "Ofereça alimentos que estimulem a pinça, como pedaços de fruta.",
+      "acompanhe": "Refinamento das habilidades motoras finas.",
+      "imagens": [],
+      "bgColor": "#E3F2FD",
+      "textColor": "#1E88E5"
+    },
+    "30": {
+      "titulo": "Semana 30 do bebê",
+      "descricao": "Fim do sétimo mês! O bebê está mais comunicativo e ativo.",
+      "dica": "Estabeleça rotinas consistentes para segurança emocional.",
+      "acompanhe": "Crescimento constante e desenvolvimento acelerado.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#4CAF50"
+    },
+    "31": {
+      "titulo": "Semana 31 do bebê",
+      "descricao": "Permanência de objeto mais compreendida - busca objetos escondidos.",
+      "dica": "Brincadeiras de esconder objetos estimulam essa habilidade.",
+      "acompanhe": "Desenvolvimento cognitivo avançado.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#FFB300"
+    },
+    "32": {
+      "titulo": "Semana 32 do bebê",
+      "descricao": "Primeiros passos com apoio ou 'cruzinha' pelos móveis.",
+      "dica": "Calçados antiderrapantes ou pés no chão são ideais.",
+      "acompanhe": "Preparação para caminhar independentemente.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#7E57C2"
+    },
+    "33": {
+      "titulo": "Semana 33 do bebê",
+      "descricao": "Imitação de gestos e sons se torna mais frequente.",
+      "dica": "Faça gestos simples como 'tchau' e 'não' para imitação.",
+      "acompanhe": "Aprendizado por observação e imitação.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#00BCD4"
+    },
+    "34": {
+      "titulo": "Semana 34 do bebê",
+      "descricao": "Maior seletividade alimentar e preferências mais definidas.",
+      "dica": "Continue oferecendo variedade, mesmo que rejeitada inicialmente.",
+      "acompanhe": "Desenvolvimento do paladar e preferências.",
+      "imagens": [],
+      "bgColor": "#F3E5F5",
+      "textColor": "#9C27B0"
+    },
+    "35": {
+      "titulo": "Semana 35 do bebê",
+      "descricao": "Brincadeiras mais complexas e interativas com os pais.",
+      "dica": "Jogos simples como 'cadê-achou' são muito apreciados.",
+      "acompanhe": "Desenvolvimento do raciocínio lógico.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#FDD835"
+    },
+    "36": {
+      "titulo": "Semana 36 do bebê",
+      "descricao": "Primeiros passos independentes podem começar a aparecer.",
+      "dica": "Celebre cada tentativa, mesmo que termine em queda.",
+      "acompanhe": "Marco importante do desenvolvimento motor.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#66BB6A"
+    },
+    "37": {
+      "titulo": "Semana 37 do bebê",
+      "descricao": "Vocabulário expandindo com algumas palavras compreensíveis.",
+      "dica": "Nomeie tudo ao redor para expandir o vocabulário.",
+      "acompanhe": "Progresso linguístico acelerado.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#FFA000"
+    },
+    "38": {
+      "titulo": "Semana 38 do bebê",
+      "descricao": "Maior independência nas brincadeiras e explorações.",
+      "dica": "Ofereça brinquedos que desafiem habilidades em desenvolvimento.",
+      "acompanhe": "Crescimento da autonomia e confiança.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#0097A7"
+    },
+    "39": {
+      "titulo": "Semana 39 do bebê",
+      "descricao": "Compreensão de instruções mais complexas com dois passos.",
+      "dica": "Dê instruções simples como 'pegue a bola e traga para mim'.",
+      "acompanhe": "Desenvolvimento da memória e compreensão.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#EC407A"
+    },
+    "40": {
+      "titulo": "Semana 40 do bebê",
+      "descricao": "Fim do décimo mês! Caminhada mais confiante e estável.",
+      "dica": "Continue celebrando cada conquista do desenvolvimento.",
+      "acompanhe": "Consolidação das habilidades motoras grossas.",
+      "imagens": [],
+      "bgColor": "#E3F2FD",
+      "textColor": "#2196F3"
+    },
+    "41": {
+      "titulo": "Semana 41 do bebê",
+      "descricao": "Curiosidade aumentada e exploração ativa de todos os ambientes.",
+      "dica": "Mantenha a casa segura para exploração livre.",
+      "acompanhe": "Desenvolvimento da curiosidade e investigação.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#4CAF50"
+    },
+    "42": {
+      "titulo": "Semana 42 do bebê",
+      "descricao": "Imitação de atividades domésticas e rotinas familiares.",
+      "dica": "Ofereça brinquedos que imitem objetos domésticos seguros.",
+      "acompanhe": "Aprendizado por observação do mundo adulto.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#FF9800"
+    },
+    "43": {
+      "titulo": "Semana 43 do bebê",
+      "descricao": "Maior interesse por livros e histórias com figuras coloridas.",
+      "dica": "Estabeleça rotina de leitura diária.",
+      "acompanhe": "Desenvolvimento do interesse por leitura.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#7E57C2"
+    },
+    "44": {
+      "titulo": "Semana 44 do bebê",
+      "descricao": "Habilidades motoras finas mais refinadas para atividades precisas.",
+      "dica": "Ofereça brinquedos de encaixe e construção.",
+      "acompanhe": "Coordenação olho-mão aprimorada.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#00BCD4"
+    },
+    "45": {
+      "titulo": "Semana 45 do bebê",
+      "descricao": "Comunicação mais eficiente através de gestos e palavras simples.",
+      "dica": "Ensine linguagem de sinais infantil para comunicação.",
+      "acompanhe": "Expansão das formas de comunicação.",
+      "imagens": [],
+      "bgColor": "#F3E5F5",
+      "textColor": "#9C27B0"
+    },
+    "46": {
+      "titulo": "Semana 46 do bebê",
+      "descricao": "Brincadeiras simbólicas começam a aparecer.",
+      "dica": "Ofereça bonecos, carrinhos e brinquedos que estimulem imaginação.",
+      "acompanhe": "Desenvolvimento do pensamento simbólico.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#FBC02D"
+    },
+    "47": {
+      "titulo": "Semana 47 do bebê",
+      "descricao": "Primeiro aniversário se aproximando! Crescimento e desenvolvimento notáveis.",
+      "dica": "Documente as conquistas do primeiro ano.",
+      "acompanhe": "Reflexão sobre o crescimento do primeiro ano.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#388E3C"
+    },
+    "48": {
+      "titulo": "Semana 48 do bebê",
+      "descricao": "Personalidade única mais definida com gostos e aversões claros.",
+      "dica": "Respeite a individualidade enquanto estabelece limites.",
+      "acompanhe": "Formação da identidade pessoal.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#F57C00"
+    },
+    "49": {
+      "titulo": "Semana 49 do bebê",
+      "descricao": "Habilidades sociais em desenvolvimento com interações mais complexas.",
+      "dica": "Promova encontros com outras crianças para socialização.",
+      "acompanhe": "Aprendizado de compartilhamento e turnos.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#0097A7"
+    },
+    "50": {
+      "titulo": "Semana 50 do bebê",
+      "descricao": "Vocabulário em expansão com combinação de sons e tentativas de frases.",
+      "dica": "Converse em frases completas para modelar a linguagem.",
+      "acompanhe": "Transição de palavras soltas para frases.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#D81B60"
+    },
+    "51": {
+      "titulo": "Semana 51 do bebê",
+      "descricao": "Coordenação motora mais refinada para atividades complexas.",
+      "dica": "Atividades como rabiscar e empilhar blocos são benéficas.",
+      "acompanhe": "Aprimoramento das habilidades motoras finas.",
+      "imagens": [],
+      "bgColor": "#E3F2FD",
+      "textColor": "#1976D2"
+    },
+    "52": {
+      "titulo": "Semana 52 do bebê - Primeiro Aniversário!",
+      "descricao": "Celebração de um ano de vida! O bebê se transformou completamente.",
+      "dica": "Comemore cada conquista e planeje os próximos passos.",
+      "acompanhe": "Reflexão sobre o incrível desenvolvimento do primeiro ano.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#1B5E20"
+    }
+  },
+  "gestante": {
+    "1": {
+      "titulo": "Semana 1 da gestação",
+      "descricao": "A jornada começa! A fecundação ocorre e o zigoto se forma.",
+      "dica": "Comece a tomar ácido fólico se ainda não começou.",
+      "acompanhe": "Sintomas ainda não são perceptíveis.",
+      "imagens": ["https://via.placeholder.com/150"],
+      "bgColor": "#E0F7FA",
+      "textColor": "#006064"
+    },
+    "2": {
+      "titulo": "Semana 2 da gestação",
+      "descricao": "O embrião se implanta no útero e começa a se desenvolver.",
+      "dica": "Mantenha hábitos saudáveis e evite álcool e cigarro.",
+      "acompanhe": "Teste de gravidez pode detectar níveis de HCG.",
+      "imagens": ["https://via.placeholder.com/150"],
+      "bgColor": "#FFF3E0",
+      "textColor": "#E65100"
+    },
+    "3": {
+      "titulo": "Semana 3 da gestação",
+      "descricao": "O bebê é agora um embrião com desenvolvimento celular acelerado.",
+      "dica": "Agende sua primeira consulta pré-natal.",
+      "acompanhe": "Sintomas leves como cansaço podem surgir.",
+      "imagens": [],
+      "bgColor": "#F3E5F5",
+      "textColor": "#6A1B9A"
+    },
+    "4": {
+      "titulo": "Semana 4 da gestação",
+      "descricao": "O embrião está se fixando firmemente no útero.",
+      "dica": "Evite alimentos ultraprocessados e mantenha hidratação.",
+      "acompanhe": "Pequenas mudanças hormonais podem causar sensibilidade.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#F57F17"
+    },
+    "5": {
+      "titulo": "Semana 5 da gestação",
+      "descricao": "O coração do bebê começa a bater! Sistema nervoso em desenvolvimento.",
+      "dica": "Descanse sempre que possível - o cansaço é normal.",
+      "acompanhe": "Náuseas matinais podem começar a aparecer.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#1B5E20"
+    },
+    "6": {
+      "titulo": "Semana 6 da gestação",
+      "descricao": "O embrião mede cerca de 4-6mm. Braços e pernas começam a se formar.",
+      "dica": "Faça pequenas refeições frequentes para controlar náuseas.",
+      "acompanhe": "Sensibilidade a odores pode aumentar.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#EF6C00"
+    },
+    "7": {
+      "titulo": "Semana 7 da gestação",
+      "descricao": "O bebê dobra de tamanho! Características faciais começam a se definir.",
+      "dica": "Mantenha alimentação balanceada com proteínas e ferro.",
+      "acompanhe": "Alterações de humor são comuns devido aos hormônios.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#5E35B1"
+    },
+    "8": {
+      "titulo": "Semana 8 da gestação",
+      "descricao": "Todos os órgãos principais estão formados. O bebê mexe-se muito.",
+      "dica": "Use roupas confortáveis que não apertem a barriga.",
+      "acompanhe": "Primeiro ultrassom pode ser realizado.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#006064"
+    },
+    "9": {
+      "titulo": "Semana 9 da gestação",
+      "descricao": "O embrião agora é chamado de feto. Dedos das mãos e pés se formam.",
+      "dica": "Pratique exercícios leves como caminhada ou ioga pré-natal.",
+      "acompanhe": "Aumento do apetite pode começar.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#C2185B"
+    },
+    "10": {
+      "titulo": "Semana 10 da gestação",
+      "descricao": "Fim do período embrionário! O bebê tem todos os órgãos formados.",
+      "dica": "Converse com seu bebê - ele já pode ouvir sua voz.",
+      "acompanhe": "Risco de aborto espontâneo diminui significativamente.",
+      "imagens": [],
+      "bgColor": "#E3F2FD",
+      "textColor": "#1565C0"
+    },
+    "11": {
+      "titulo": "Semana 11 da gestação",
+      "descricao": "O bebê começa a engolir e chupar o dedo. Genitais externos se desenvolvem.",
+      "dica": "Mantenha hidratação adequada - beba bastante água.",
+      "acompanhe": "Enjoo pode começar a diminuir para algumas mulheres.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#2E7D32"
+    },
+    "12": {
+      "titulo": "Semana 12 da gestação",
+      "descricao": "Fim do primeiro trimestre! O bebê está completamente formado.",
+      "dica": "Compartilhe a notícia com familiares e amigos se desejar.",
+      "acompanhe": "Energia geralmente retorna nesta fase.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#F57C00"
+    },
+    "13": {
+      "titulo": "Semana 13 da gestação",
+      "descricao": "O bebê desenvolve reflexos e pode responder a estímulos externos.",
+      "dica": "Comece a pensar no enxoval do bebê.",
+      "acompanhe": "Barriguinha pode começar a aparecer.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#7B1FA2"
+    },
+    "14": {
+      "titulo": "Semana 14 da gestação",
+      "descricao": "O bebê pratica expressões faciais e movimentos respiratórios.",
+      "dica": "Use cremes hidratantes para prevenir estrias.",
+      "acompanhe": "Aumento da libido pode ocorrer.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#00838F"
+    },
+    "15": {
+      "titulo": "Semana 15 da gestação",
+      "descricao": "O bebê ouve sons externos e pode responder à luz.",
+      "dica": "Ouça músicas calmas - o bebê pode se acalmar com elas.",
+      "acompanhe": "Exames do segundo trimestre podem ser solicitados.",
+      "imagens": [],
+      "bgColor": "#F3E5F5",
+      "textColor": "#8E24AA"
+    },
+    "16": {
+      "titulo": "Semana 16 da gestação",
+      "descricao": "O bebê está mais ativo! Movimentos podem ser sentidos pela mãe.",
+      "dica": "Tente identificar os primeiros movimentos do bebê.",
+      "acompanhe": "Ultrassom morfológico pode ser realizado.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#F9A825"
+    },
+    "17": {
+      "titulo": "Semana 17 da gestação",
+      "descricao": "O bebê desenvolve gordura corporal para regulação térmica.",
+      "dica": "Durma do lado esquerdo para melhor circulação.",
+      "acompanhe": "Azia e indigestão podem começar.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#43A047"
+    },
+    "18": {
+      "titulo": "Semana 18 da gestação",
+      "descricao": "O bebê ouve sons cada vez melhor e reconhece vozes familiares.",
+      "dica": "Peça ao parceiro para conversar com a barriga.",
+      "acompanhe": "Sexo do bebê pode ser identificado no ultrassom.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#FF9800"
+    },
+    "19": {
+      "titulo": "Semana 19 da gestação",
+      "descricao": "Vernix caseosa protege a pele do bebê do líquido amniótico.",
+      "dica": "Faça exercícios de Kegel para fortalecer o assoalho pélvico.",
+      "acompanhe": "Aumento do apetite e possíveis desejos alimentares.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#0097A7"
+    },
+    "20": {
+      "titulo": "Semana 20 da gestação",
+      "descricao": "Metade da gestação! O bebê está mais ativo e responsivo.",
+      "dica": "Comece a planejar o chá de bebê.",
+      "acompanhe": "Movimentos fetais mais evidentes e frequentes.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#D81B60"
+    },
+    "21": {
+      "titulo": "Semana 21 da gestação",
+      "descricao": "O bebê desenvolve padrões de sono e vigília regulares.",
+      "dica": "Estabeleça rotina de sono consistente.",
+      "acompanhe": "Aumento da pressão sobre a bexiga.",
+      "imagens": [],
+      "bgColor": "#E3F2FD",
+      "textColor": "#1E88E5"
+    },
+    "22": {
+      "titulo": "Semana 22 da gestação",
+      "descricao": "Sentidos do bebê se desenvolvem - paladar, olfato e tato.",
+      "dica": "Alimente-se com variedade para expor o bebê a diferentes sabores.",
+      "acompanhe": "Inchaço leve nos pés e tornozelos pode ocorrer.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#4CAF50"
+    },
+    "23": {
+      "titulo": "Semana 23 da gestação",
+      "descricao": "O bebê pratica movimentos respiratórios e engole líquido amniótico.",
+      "dica": "Faça curso preparatório para o parto.",
+      "acompanhe": "Crescimento acelerado da barriga.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#FFB300"
+    },
+    "24": {
+      "titulo": "Semana 24 da gestação",
+      "descricao": "O bebê está praticamente viável! Pulmões se desenvolvem rapidamente.",
+      "dica": "Monitore movimentos fetais diariamente.",
+      "acompanhe": "Teste de tolerância à glicose pode ser realizado.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#7E57C2"
+    },
+    "25": {
+      "titulo": "Semana 25 da gestação",
+      "descricao": "O bebê responde a vozes familiares e sons externos.",
+      "dica": "Leia histórias em voz alta para o bebê.",
+      "acompanhe": "Dores nas costas podem se intensificar.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#00BCD4"
+    },
+    "26": {
+      "titulo": "Semana 26 da gestação",
+      "descricao": "Olhos do bebê começam a se abrir e piscar.",
+      "dica": "Use sutiãs de apoio confortáveis.",
+      "acompanhe": "Contrações de Braxton Hicks podem começar.",
+      "imagens": [],
+      "bgColor": "#F3E5F5",
+      "textColor": "#9C27B0"
+    },
+    "27": {
+      "titulo": "Semana 27 da gestação",
+      "descricao": "Fim do segundo trimestre! O bebê reconhece a voz da mãe.",
+      "dica": "Descanse sempre que possível - o terceiro trimestre exige mais energia.",
+      "acompanhe": "Aumento do desconforto para dormir.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#FDD835"
+    },
+    "28": {
+      "titulo": "Semana 28 da gestação",
+      "descricao": "Terceiro trimestre começa! O bebê está praticamente formado.",
+      "dica": "Comece a preparar a mala da maternidade.",
+      "acompanhe": "Consultas pré-natais tornam-se quinzenais.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#66BB6A"
+    },
+    "29": {
+      "titulo": "Semana 29 da gestação",
+      "descricao": "O bebê ganha peso rapidamente e ocupa mais espaço.",
+      "dica": "Alimente-se com pequenas porções frequentes.",
+      "acompanhe": "Falta de ar pode ocorrer devido à pressão no diafragma.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#FFA000"
+    },
+    "30": {
+      "titulo": "Semana 30 da gestação",
+      "descricao": "O bebê pode distinguir entre claro e escuro.",
+      "dica": "Exponha a barriga à luz solar suave.",
+      "acompanhe": "Inchaço pode se tornar mais evidente.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#0097A7"
+    },
+    "31": {
+      "titulo": "Semana 31 da gestação",
+      "descricao": "O bebê pratica movimentos de respiração mais coordenados.",
+      "dica": "Faça exercícios de respiração para o trabalho de parto.",
+      "acompanhe": "Azia e indigestão podem piorar.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#EC407A"
+    },
+    "32": {
+      "titulo": "Semana 32 da gestação",
+      "descricao": "O bebê está na posição fetal e pode estar de cabeça para baixo.",
+      "dica": "Pratique posições confortáveis para o parto.",
+      "acompanhe": "Consultas pré-natais semanais em breve.",
+      "imagens": [],
+      "bgColor": "#E3F2FD",
+      "textColor": "#2196F3"
+    },
+    "33": {
+      "titulo": "Semana 33 da gestação",
+      "descricao": "O bebê tem padrões de sono definidos, incluindo fase REM.",
+      "dica": "Descanse quando o bebê estiver quieto.",
+      "acompanhe": "Aumento da frequência urinária.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#4CAF50"
+    },
+    "34": {
+      "titulo": "Semana 34 da gestação",
+      "descricao": "Sistema imunológico do bebê está se fortalecendo.",
+      "dica": "Lave as mãos frequentemente para prevenir infecções.",
+      "acompanhe": "Contrações de treinamento mais frequentes.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#FF9800"
+    },
+    "35": {
+      "titulo": "Semana 35 da gestação",
+      "descricao": "O bebê está quase pronto para nascer! Ganho de peso acelerado.",
+      "dica": "Tenha contatos importantes sempre à mão.",
+      "acompanhe": "Desconforto pélvico e lombar comum.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#7E57C2"
+    },
+    "36": {
+      "titulo": "Semana 36 da gestação",
+      "descricao": "O bebê está considerado a termo precoce. Pulmões quase maduros.",
+      "dica": "Finalize preparativos do quarto do bebê.",
+      "acompanhe": "Consultas pré-natais semanais começam.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#00BCD4"
+    },
+    "37": {
+      "titulo": "Semana 37 da gestação",
+      "descricao": "O bebê está a termo! Pode nascer a qualquer momento.",
+      "dica": "Mantenha mala da maternidade pronta.",
+      "acompanhe": "Sinal de parto iminente - perda do tampão mucoso.",
+      "imagens": [],
+      "bgColor": "#F3E5F5",
+      "textColor": "#9C27B0"
+    },
+    "38": {
+      "titulo": "Semana 38 da gestação",
+      "descricao": "O bebê está completamente desenvolvido e pronto para nascer.",
+      "dica": "Descanse e preserve energias para o parto.",
+      "acompanhe": "Qualquer contração regular pode ser trabalho de parto.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#FBC02D"
+    },
+    "39": {
+      "titulo": "Semana 39 da gestação",
+      "descricao": "O bebê está na posição ideal para o nascimento.",
+      "dica": "Caminhadas leves podem ajudar a induzir o parto naturalmente.",
+      "acompanhe": "Paciente observação dos sinais de parto.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#388E3C"
+    },
+    "40": {
+      "titulo": "Semana 40 da gestação - Data Prevista do Parto!",
+      "descricao": "Chegou o grande dia! O bebê está pronto para conhecer o mundo.",
+      "dica": "Mantenha calma e confie no seu corpo e na equipe médica.",
+      "acompanhe": "Monitoramento frequente até o início do trabalho de parto.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#F57C00"
+    }
+  }
+}
