@@ -2,80 +2,89 @@
   "bebe": {
     "1": {
       "titulo": "Semana 1 do bebê",
-      "descricao": "O bebê nasceu recentemente e está se adaptando ao mundo exterior.",
-      "dica": "Observe sinais de fome e sono. O contato pele a pele é muito importante.",
-      "acompanhe": "Primeira semana de adaptação. Peso pode diminuir levemente.",
-      "imagens": ["https://media.giphy.com/media/3o6ZtpxSZbQRRnwCKQ/giphy.gif"],
+      "empatia": "Respira. Você não precisa dar conta de tudo hoje.",
+      "descricao": "O bebê acabou de chegar ao mundo e está se adaptando fora do útero. Tudo é novo: luz, sons, temperatura e colo.",
+      "dica": "Contato pele a pele acalma o bebê e ajuda você a criar vínculo. Confie no básico.",
+      "acompanhe": "É normal perder um pouco de peso nos primeiros dias e dormir a maior parte do tempo.",
+      "imagens": [],
       "bgColor": "#FFFDE7",
       "textColor": "#F57F17"
     },
     "2": {
       "titulo": "Semana 2 do bebê",
-      "descricao": "Ajustes iniciais de alimentação e sono começam a se estabelecer.",
-      "dica": "Mantenha rotina de amamentação a cada 2-3 horas.",
-      "acompanhe": "Pequenos ganhos de peso começam a aparecer.",
-      "imagens": ["https://via.placeholder.com/150"],
+      "empatia": "Se parece confuso agora, é porque realmente é.",
+      "descricao": "O bebê começa a se adaptar melhor ao ritmo da casa, mas ainda vive em ciclos curtos de sono e alimentação.",
+      "dica": "Observe sinais de fome e sono em vez de seguir horários rígidos.",
+      "acompanhe": "O ganho de peso começa a se estabilizar e o choro ainda é a principal forma de comunicação.",
+      "imagens": [],
       "bgColor": "#E8F5E9",
       "textColor": "#1B5E20"
     },
     "3": {
       "titulo": "Semana 3 do bebê",
-      "descricao": "O bebê começa a se adaptar melhor à rotina familiar.",
-      "dica": "Preste atenção nos sinais de sono para estabelecer bons hábitos.",
-      "acompanhe": "Ganhos de peso e altura mais consistentes.",
+      "empatia": "Você não está atrasado. Está aprendendo.",
+      "descricao": "O bebê começa a reconhecer vozes familiares e reage melhor ao toque e ao colo.",
+      "dica": "Fale com o bebê durante os cuidados diários. Ele reconhece sua voz.",
+      "acompanhe": "Períodos curtos de alerta começam a aparecer.",
       "imagens": [],
       "bgColor": "#FFF3E0",
       "textColor": "#E65100"
     },
     "4": {
       "titulo": "Semana 4 do bebê",
-      "descricao": "Com aproximadamente um mês de vida, o bebê começa a ficar mais atento aos sons e aos rostos.",
-      "dica": "Fale olhando nos olhos do bebê. Esse contato fortalece o vínculo.",
-      "acompanhe": "É comum o bebê ainda não dormir bem à noite.",
-      "imagens": ["https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"],
+      "empatia": "Um mês já passou. Parece pouco, mas não é.",
+      "descricao": "Com cerca de um mês, o bebê começa a ficar mais atento a sons, rostos e movimentos.",
+      "dica": "Olhar nos olhos do bebê enquanto fala fortalece o vínculo emocional.",
+      "acompanhe": "O sono noturno ainda é irregular — e isso é esperado.",
+      "imagens": [],
       "bgColor": "#EDE7F6",
       "textColor": "#5E35B1"
     },
     "5": {
       "titulo": "Semana 5 do bebê",
-      "descricao": "O bebê começa a reconhecer vozes familiares e demonstra mais interesse pelo ambiente.",
-      "dica": "Cante canções suaves e leia para o bebê regularmente.",
-      "acompanhe": "Ganhos de peso e altura continuam de forma constante.",
+      "empatia": "Você já está fazendo mais do que imagina.",
+      "descricao": "O bebê demonstra mais interesse pelo ambiente e começa a reagir melhor a estímulos.",
+      "dica": "Converse, cante ou leia algo simples. Não é sobre performance, é presença.",
+      "acompanhe": "Ganhos de peso e altura seguem constantes.",
       "imagens": [],
       "bgColor": "#E0F7FA",
       "textColor": "#006064"
     },
     "6": {
       "titulo": "Semana 6 do bebê",
-      "descricao": "Sorrisos sociais começam a aparecer, encantando toda a família.",
-      "dica": "Responda aos sorrisos do bebê para estimular a comunicação.",
-      "acompanhe": "Maior controle da cabeça e pescoço.",
+      "empatia": "Quando o sorriso vem, tudo faz mais sentido.",
+      "descricao": "Sorrisos sociais começam a surgir como resposta a vozes e rostos familiares.",
+      "dica": "Responda aos sorrisos e sons do bebê. Isso fortalece a comunicação.",
+      "acompanhe": "Maior controle da cabeça, ainda que por curtos períodos.",
       "imagens": [],
       "bgColor": "#FCE4EC",
       "textColor": "#C2185B"
     },
     "7": {
       "titulo": "Semana 7 do bebê",
-      "descricao": "O bebê começa a emitir sons guturais e demonstra mais expressões faciais.",
-      "dica": "Imitar os sons do bebê estimula o desenvolvimento da fala.",
-      "acompanhe": "Períodos de alerta mais longos durante o dia.",
+      "empatia": "Você está criando um espaço seguro, mesmo nos dias difíceis.",
+      "descricao": "O bebê passa a emitir sons diferentes e demonstra mais expressões faciais.",
+      "dica": "Imitar os sons do bebê ajuda no desenvolvimento da linguagem.",
+      "acompanhe": "Períodos de alerta um pouco mais longos durante o dia.",
       "imagens": [],
       "bgColor": "#E3F2FD",
       "textColor": "#1565C0"
     },
     "8": {
       "titulo": "Semana 8 do bebê",
-      "descricao": "Coordenação entre mãos e olhos começa a se desenvolver.",
-      "dica": "Ofereça brinquedos coloridos e de diferentes texturas.",
-      "acompanhe": "Movimentos mais intencionais com as mãos.",
+      "empatia": "Nem todo dia é bonito — e tudo bem.",
+      "descricao": "A coordenação entre mãos e olhos começa a se desenvolver.",
+      "dica": "Ofereça estímulos simples: brinquedos coloridos ou o próprio rosto.",
+      "acompanhe": "Movimentos mais intencionais com braços e mãos.",
       "imagens": [],
       "bgColor": "#E8F5E9",
       "textColor": "#2E7D32"
     },
     "9": {
       "titulo": "Semana 9 do bebê",
+      "empatia": "Você está ficando bom nisso, mesmo sem perceber.",
       "descricao": "O bebê começa a acompanhar objetos em movimento com os olhos.",
-      "dica": "Móveis objetos coloridos na frente do bebê para estimular a visão.",
+      "dica": "Movimente objetos lentamente à frente do bebê para estimular a visão.",
       "acompanhe": "Melhor foco visual em objetos próximos.",
       "imagens": [],
       "bgColor": "#FFF3E0",
@@ -83,752 +92,856 @@
     },
     "10": {
       "titulo": "Semana 10 do bebê",
+      "empatia": "É normal se sentir exausto e ainda assim continuar.",
       "descricao": "O bebê demonstra mais força no tronco e começa a tentar rolar.",
-      "dica": "Deixe o bebê de bruços por curtos períodos sob supervisão.",
-      "acompanhe": "Preparação para os primeiros rolamentos.",
+      "dica": "Coloque o bebê de bruços por curtos períodos, sempre com supervisão.",
+      "acompanhe": "Preparação natural para os primeiros rolamentos.",
       "imagens": [],
       "bgColor": "#F3E5F5",
       "textColor": "#7B1FA2"
     },
     "11": {
       "titulo": "Semana 11 do bebê",
-      "descricao": "Risadas e gritinhos de alegria começam a aparecer com mais frequência.",
-      "dica": "Brincadeiras de cócegas e sons engraçados estimulam o riso.",
-      "acompanhe": "Maior interação social com a família.",
+      "empatia": "Cansaço acumulado é real. Você não está fraco por sentir isso.",
+      "descricao": "O bebê começa a demonstrar mais interesse pelo ambiente e reage melhor a estímulos visuais e sonoros.",
+      "dica": "Converse com o bebê durante as atividades do dia a dia. Isso ajuda no vínculo e no desenvolvimento.",
+      "acompanhe": "Movimentos mais coordenados e períodos de atenção um pouco mais longos.",
       "imagens": [],
       "bgColor": "#E0F2F1",
-      "textColor": "#00796B"
+      "textColor": "#00695C"
     },
     "12": {
       "titulo": "Semana 12 do bebê",
-      "descricao": "Fim do primeiro trimestre! O bebê está mais ativo e curioso.",
-      "dica": "Crie um ambiente seguro para exploração.",
-      "acompanhe": "Ritmo de crescimento mais estabilizado.",
+      "empatia": "Você já aprendeu muita coisa nesses meses, mesmo achando que não.",
+      "descricao": "Com cerca de três meses, o bebê começa a sustentar melhor a cabeça e interagir mais com sorrisos e sons.",
+      "dica": "Aproveite esses momentos de interação. Eles fortalecem o vínculo e ajudam no desenvolvimento emocional.",
+      "acompanhe": "Mais controle do corpo e respostas mais claras a vozes familiares.",
       "imagens": [],
       "bgColor": "#FFFDE7",
       "textColor": "#F9A825"
     },
     "13": {
       "titulo": "Semana 13 do bebê",
-      "descricao": "O bebê começa a levar objetos à boca para explorar texturas.",
-      "dica": "Ofereça mordedores seguros para alívio do desconforto gengival.",
-      "acompanhe": "Aumento da salivação pode indicar dentição.",
+      "empatia": "Nem todo dia é progresso. Alguns dias são só resistência.",
+      "descricao": "O bebê começa a sustentar melhor a cabeça e observar o ambiente com mais curiosidade.",
+      "dica": "Converse durante as trocas e cuidados. Sua presença ainda é o principal estímulo.",
+      "acompanhe": "Maior firmeza no pescoço e mais interação visual.",
       "imagens": [],
-      "bgColor": "#E8EAF6",
-      "textColor": "#303F9F"
+      "bgColor": "#E3F2FD",
+      "textColor": "#1565C0"
     },
     "14": {
       "titulo": "Semana 14 do bebê",
-      "descricao": "Rolamentos podem começar a acontecer, surpreendendo o bebê e os pais.",
-      "dica": "Nunca deixe o bebê sozinho em superfícies elevadas.",
-      "acompanhe": "Grande desenvolvimento motor nesta fase.",
+      "empatia": "Você não precisa estar bem o tempo todo para ser um bom pai.",
+      "descricao": "O bebê demonstra mais interesse por sons e começa a reconhecer rotinas.",
+      "dica": "Mantenha pequenas repetições no dia. Bebês se sentem seguros com previsibilidade.",
+      "acompanhe": "Sons mais variados e atenção prolongada.",
       "imagens": [],
-      "bgColor": "#F1F8E9",
-      "textColor": "#689F38"
+      "bgColor": "#FFF3E0",
+      "textColor": "#EF6C00"
     },
     "15": {
       "titulo": "Semana 15 do bebê",
-      "descricao": "O bebê começa a demonstrar preferências por brinquedos e pessoas.",
-      "dica": "Respeite as preferências do bebê enquanto apresenta novidades.",
-      "acompanhe": "Personalidade única começando a se mostrar.",
-      "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#FB8C00"
-    },
-    "16": {
-      "titulo": "Semana 16 do bebê",
-      "descricao": "Maior coordenação para pegar e segurar objetos intencionalmente.",
-      "dica": "Ofereça objetos de diferentes tamanhos para desenvolver a preensão.",
-      "acompanhe": "Desenvolvimento da pinça digital começando.",
-      "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#0097A7"
-    },
-    "17": {
-      "titulo": "Semana 17 do bebê",
-      "descricao": "O bebê começa a se sentar com apoio e tem melhor equilíbrio.",
-      "dica": "Use travesseiros ou almofadas para apoio durante a sessão.",
-      "acompanhe": "Fortalecimento dos músculos do core.",
+      "empatia": "O cansaço não invalida o amor.",
+      "descricao": "O bebê começa a levar as mãos à boca com mais frequência.",
+      "dica": "Isso faz parte do desenvolvimento, não é ansiedade ou fome o tempo todo.",
+      "acompanhe": "Exploração corporal mais ativa.",
       "imagens": [],
       "bgColor": "#FCE4EC",
       "textColor": "#C2185B"
     },
+    "16": {
+      "titulo": "Semana 16 do bebê",
+      "empatia": "Você também está crescendo junto com ele.",
+      "descricao": "O bebê passa mais tempo acordado e atento ao redor.",
+      "dica": "Aproveite esses momentos para interagir, mesmo que seja em silêncio.",
+      "acompanhe": "Maior resistência ao ficar de bruços.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#2E7D32"
+    },
+    "17": {
+      "titulo": "Semana 17 do bebê",
+      "empatia": "Nem tudo precisa ser resolvido hoje.",
+      "descricao": "O bebê começa a demonstrar preferências por pessoas e vozes.",
+      "dica": "Sua constância importa mais do que a quantidade de tempo.",
+      "acompanhe": "Reconhecimento claro de cuidadores próximos.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#5E35B1"
+    },
     "18": {
       "titulo": "Semana 18 do bebê",
-      "descricao": "Balbucios mais complexos começam a surgir, incluindo consoantes.",
-      "dica": "Converse muito com o bebê, nomeando objetos e ações.",
-      "acompanhe": "Desenvolvimento linguístico acelerado.",
+      "empatia": "Você é referência, mesmo quando se sente perdido.",
+      "descricao": "O bebê começa a rolar com mais intenção.",
+      "dica": "Garanta um ambiente seguro no chão para essas novas descobertas.",
+      "acompanhe": "Primeiros rolamentos mais frequentes.",
       "imagens": [],
-      "bgColor": "#E3F2FD",
-      "textColor": "#1976D2"
+      "bgColor": "#FFFDE7",
+      "textColor": "#F57F17"
     },
     "19": {
       "titulo": "Semana 19 do bebê",
-      "descricao": "Reconhecimento do próprio nome e resposta quando chamado.",
-      "dica": "Use o nome do bebê frequentemente nas interações.",
-      "acompanhe": "Desenvolvimento da autoconsciência.",
+      "empatia": "A rotina muda. Você se adapta.",
+      "descricao": "O bebê demonstra mais curiosidade e reage a estímulos diferentes.",
+      "dica": "Menos estímulo às vezes é melhor do que excesso.",
+      "acompanhe": "Maior tempo de atenção focada.",
       "imagens": [],
-      "bgColor": "#E8F5E9",
-      "textColor": "#388E3C"
+      "bgColor": "#E0F7FA",
+      "textColor": "#006064"
     },
     "20": {
       "titulo": "Semana 20 do bebê",
-      "descricao": "Metade do primeiro ano! O bebê está mais sociável e comunicativo.",
-      "dica": "Leve o bebê para socializar em ambientes seguros.",
-      "acompanhe": "Habilidades sociais em desenvolvimento.",
+      "empatia": "Nem sempre vai parecer suficiente. Ainda assim é.",
+      "descricao": "O bebê começa a tentar sentar com apoio.",
+      "dica": "Respeite o ritmo. Não antecipe etapas.",
+      "acompanhe": "Força no tronco em desenvolvimento.",
       "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#F57C00"
+      "bgColor": "#F3E5F5",
+      "textColor": "#7B1FA2"
     },
     "21": {
       "titulo": "Semana 21 do bebê",
-      "descricao": "Primeiros dentes podem começar a aparecer, causando desconforto.",
-      "dica": "Mordedores gelados podem aliviar o desconforto gengival.",
-      "acompanhe": "Sintomas de dentição como salivação excessiva.",
+      "empatia": "Você não precisa ter todas as respostas.",
+      "descricao": "O bebê se envolve mais com o ambiente e demonstra curiosidade ativa.",
+      "dica": "Permita exploração segura, mesmo que faça bagunça.",
+      "acompanhe": "Movimentos mais coordenados.",
       "imagens": [],
-      "bgColor": "#EDE7F6",
-      "textColor": "#7E57C2"
+      "bgColor": "#E3F2FD",
+      "textColor": "#0D47A1"
     },
     "22": {
       "titulo": "Semana 22 do bebê",
-      "descricao": "O bebê começa a se movimentar mais, engatinhando ou arrastando.",
-      "dica": "Crie um espaço seguro para exploração motora.",
-      "acompanhe": "Preparação para engatinhar propriamente.",
+      "empatia": "Cuidar também cansa. Isso não é falha.",
+      "descricao": "O bebê começa a reagir mais claramente às emoções dos adultos.",
+      "dica": "Seu tom de voz comunica mais do que palavras.",
+      "acompanhe": "Reconhecimento emocional básico.",
       "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#00ACC1"
+      "bgColor": "#FFF3E0",
+      "textColor": "#E65100"
     },
     "23": {
       "titulo": "Semana 23 do bebê",
-      "descricao": "Maior interesse por alimentos sólidos e texturas diferentes.",
-      "dica": "Introduza novos alimentos um de cada vez.",
-      "acompanhe": "Transição para alimentação complementar.",
-      "imagens": [],
-      "bgColor": "#F3E5F5",
-      "textColor": "#8E24AA"
-    },
-    "24": {
-      "titulo": "Semana 24 do bebê",
-      "descricao": "Engatinhar pode estar mais coordenado e eficiente.",
-      "dica": "Proteja tomadas e quinas com protetores.",
-      "acompanhe": "Exploração ativa do ambiente.",
-      "imagens": [],
-      "bgColor": "#FFFDE7",
-      "textColor": "#FBC02D"
-    },
-    "25": {
-      "titulo": "Semana 25 do bebê",
-      "descricao": "O bebê começa a puxar para ficar em pé com apoio.",
-      "dica": "Móveis estáveis podem servir de apoio seguro.",
-      "acompanhe": "Fortalecimento das pernas para futuros passos.",
-      "imagens": [],
-      "bgColor": "#E8F5E9",
-      "textColor": "#43A047"
-    },
-    "26": {
-      "titulo": "Semana 26 do bebê",
-      "descricao": "Palavras simples como 'mama' ou 'papa' podem surgir.",
-      "dica": "Comemore e repita as primeiras palavras do bebê.",
-      "acompanhe": "Explosão linguística começando.",
-      "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#FF9800"
-    },
-    "27": {
-      "titulo": "Semana 27 do bebê",
-      "descricao": "Compreensão de comandos simples como 'não' e 'vem'.",
-      "dica": "Use gestos junto com palavras para facilitar compreensão.",
-      "acompanhe": "Desenvolvimento da compreensão linguística.",
-      "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#0097A7"
-    },
-    "28": {
-      "titulo": "Semana 28 do bebê",
-      "descricao": "Bebê mais independente nas brincadeiras e explorando sozinho.",
-      "dica": "Permita exploração independente sob supervisão.",
-      "acompanhe": "Desenvolvimento da autonomia.",
-      "imagens": [],
-      "bgColor": "#FCE4EC",
-      "textColor": "#D81B60"
-    },
-    "29": {
-      "titulo": "Semana 29 do bebê",
-      "descricao": "Pegada em pinça mais refinada para pegar objetos pequenos.",
-      "dica": "Ofereça alimentos que estimulem a pinça, como pedaços de fruta.",
-      "acompanhe": "Refinamento das habilidades motoras finas.",
-      "imagens": [],
-      "bgColor": "#E3F2FD",
-      "textColor": "#1E88E5"
-    },
-    "30": {
-      "titulo": "Semana 30 do bebê",
-      "descricao": "Fim do sétimo mês! O bebê está mais comunicativo e ativo.",
-      "dica": "Estabeleça rotinas consistentes para segurança emocional.",
-      "acompanhe": "Crescimento constante e desenvolvimento acelerado.",
-      "imagens": [],
-      "bgColor": "#E8F5E9",
-      "textColor": "#4CAF50"
-    },
-    "31": {
-      "titulo": "Semana 31 do bebê",
-      "descricao": "Permanência de objeto mais compreendida - busca objetos escondidos.",
-      "dica": "Brincadeiras de esconder objetos estimulam essa habilidade.",
-      "acompanhe": "Desenvolvimento cognitivo avançado.",
-      "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#FFB300"
-    },
-    "32": {
-      "titulo": "Semana 32 do bebê",
-      "descricao": "Primeiros passos com apoio ou 'cruzinha' pelos móveis.",
-      "dica": "Calçados antiderrapantes ou pés no chão são ideais.",
-      "acompanhe": "Preparação para caminhar independentemente.",
-      "imagens": [],
-      "bgColor": "#EDE7F6",
-      "textColor": "#7E57C2"
-    },
-    "33": {
-      "titulo": "Semana 33 do bebê",
-      "descricao": "Imitação de gestos e sons se torna mais frequente.",
-      "dica": "Faça gestos simples como 'tchau' e 'não' para imitação.",
-      "acompanhe": "Aprendizado por observação e imitação.",
-      "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#00BCD4"
-    },
-    "34": {
-      "titulo": "Semana 34 do bebê",
-      "descricao": "Maior seletividade alimentar e preferências mais definidas.",
-      "dica": "Continue oferecendo variedade, mesmo que rejeitada inicialmente.",
-      "acompanhe": "Desenvolvimento do paladar e preferências.",
-      "imagens": [],
-      "bgColor": "#F3E5F5",
-      "textColor": "#9C27B0"
-    },
-    "35": {
-      "titulo": "Semana 35 do bebê",
-      "descricao": "Brincadeiras mais complexas e interativas com os pais.",
-      "dica": "Jogos simples como 'cadê-achou' são muito apreciados.",
-      "acompanhe": "Desenvolvimento do raciocínio lógico.",
-      "imagens": [],
-      "bgColor": "#FFFDE7",
-      "textColor": "#FDD835"
-    },
-    "36": {
-      "titulo": "Semana 36 do bebê",
-      "descricao": "Primeiros passos independentes podem começar a aparecer.",
-      "dica": "Celebre cada tentativa, mesmo que termine em queda.",
-      "acompanhe": "Marco importante do desenvolvimento motor.",
-      "imagens": [],
-      "bgColor": "#E8F5E9",
-      "textColor": "#66BB6A"
-    },
-    "37": {
-      "titulo": "Semana 37 do bebê",
-      "descricao": "Vocabulário expandindo com algumas palavras compreensíveis.",
-      "dica": "Nomeie tudo ao redor para expandir o vocabulário.",
-      "acompanhe": "Progresso linguístico acelerado.",
-      "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#FFA000"
-    },
-    "38": {
-      "titulo": "Semana 38 do bebê",
-      "descricao": "Maior independência nas brincadeiras e explorações.",
-      "dica": "Ofereça brinquedos que desafiem habilidades em desenvolvimento.",
-      "acompanhe": "Crescimento da autonomia e confiança.",
-      "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#0097A7"
-    },
-    "39": {
-      "titulo": "Semana 39 do bebê",
-      "descricao": "Compreensão de instruções mais complexas com dois passos.",
-      "dica": "Dê instruções simples como 'pegue a bola e traga para mim'.",
-      "acompanhe": "Desenvolvimento da memória e compreensão.",
-      "imagens": [],
-      "bgColor": "#FCE4EC",
-      "textColor": "#EC407A"
-    },
-    "40": {
-      "titulo": "Semana 40 do bebê",
-      "descricao": "Fim do décimo mês! Caminhada mais confiante e estável.",
-      "dica": "Continue celebrando cada conquista do desenvolvimento.",
-      "acompanhe": "Consolidação das habilidades motoras grossas.",
-      "imagens": [],
-      "bgColor": "#E3F2FD",
-      "textColor": "#2196F3"
-    },
-    "41": {
-      "titulo": "Semana 41 do bebê",
-      "descricao": "Curiosidade aumentada e exploração ativa de todos os ambientes.",
-      "dica": "Mantenha a casa segura para exploração livre.",
-      "acompanhe": "Desenvolvimento da curiosidade e investigação.",
-      "imagens": [],
-      "bgColor": "#E8F5E9",
-      "textColor": "#4CAF50"
-    },
-    "42": {
-      "titulo": "Semana 42 do bebê",
-      "descricao": "Imitação de atividades domésticas e rotinas familiares.",
-      "dica": "Ofereça brinquedos que imitem objetos domésticos seguros.",
-      "acompanhe": "Aprendizado por observação do mundo adulto.",
-      "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#FF9800"
-    },
-    "43": {
-      "titulo": "Semana 43 do bebê",
-      "descricao": "Maior interesse por livros e histórias com figuras coloridas.",
-      "dica": "Estabeleça rotina de leitura diária.",
-      "acompanhe": "Desenvolvimento do interesse por leitura.",
-      "imagens": [],
-      "bgColor": "#EDE7F6",
-      "textColor": "#7E57C2"
-    },
-    "44": {
-      "titulo": "Semana 44 do bebê",
-      "descricao": "Habilidades motoras finas mais refinadas para atividades precisas.",
-      "dica": "Ofereça brinquedos de encaixe e construção.",
-      "acompanhe": "Coordenação olho-mão aprimorada.",
-      "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#00BCD4"
-    },
-    "45": {
-      "titulo": "Semana 45 do bebê",
-      "descricao": "Comunicação mais eficiente através de gestos e palavras simples.",
-      "dica": "Ensine linguagem de sinais infantil para comunicação.",
-      "acompanhe": "Expansão das formas de comunicação.",
-      "imagens": [],
-      "bgColor": "#F3E5F5",
-      "textColor": "#9C27B0"
-    },
-    "46": {
-      "titulo": "Semana 46 do bebê",
-      "descricao": "Brincadeiras simbólicas começam a aparecer.",
-      "dica": "Ofereça bonecos, carrinhos e brinquedos que estimulem imaginação.",
-      "acompanhe": "Desenvolvimento do pensamento simbólico.",
-      "imagens": [],
-      "bgColor": "#FFFDE7",
-      "textColor": "#FBC02D"
-    },
-    "47": {
-      "titulo": "Semana 47 do bebê",
-      "descricao": "Primeiro aniversário se aproximando! Crescimento e desenvolvimento notáveis.",
-      "dica": "Documente as conquistas do primeiro ano.",
-      "acompanhe": "Reflexão sobre o crescimento do primeiro ano.",
-      "imagens": [],
-      "bgColor": "#E8F5E9",
-      "textColor": "#388E3C"
-    },
-    "48": {
-      "titulo": "Semana 48 do bebê",
-      "descricao": "Personalidade única mais definida com gostos e aversões claros.",
-      "dica": "Respeite a individualidade enquanto estabelece limites.",
-      "acompanhe": "Formação da identidade pessoal.",
-      "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#F57C00"
-    },
-    "49": {
-      "titulo": "Semana 49 do bebê",
-      "descricao": "Habilidades sociais em desenvolvimento com interações mais complexas.",
-      "dica": "Promova encontros com outras crianças para socialização.",
-      "acompanhe": "Aprendizado de compartilhamento e turnos.",
-      "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#0097A7"
-    },
-    "50": {
-      "titulo": "Semana 50 do bebê",
-      "descricao": "Vocabulário em expansão com combinação de sons e tentativas de frases.",
-      "dica": "Converse em frases completas para modelar a linguagem.",
-      "acompanhe": "Transição de palavras soltas para frases.",
-      "imagens": [],
-      "bgColor": "#FCE4EC",
-      "textColor": "#D81B60"
-    },
-    "51": {
-      "titulo": "Semana 51 do bebê",
-      "descricao": "Coordenação motora mais refinada para atividades complexas.",
-      "dica": "Atividades como rabiscar e empilhar blocos são benéficas.",
-      "acompanhe": "Aprimoramento das habilidades motoras finas.",
-      "imagens": [],
-      "bgColor": "#E3F2FD",
-      "textColor": "#1976D2"
-    },
-    "52": {
-      "titulo": "Semana 52 do bebê - Primeiro Aniversário!",
-      "descricao": "Celebração de um ano de vida! O bebê se transformou completamente.",
-      "dica": "Comemore cada conquista e planeje os próximos passos.",
-      "acompanhe": "Reflexão sobre o incrível desenvolvimento do primeiro ano.",
+      "empatia": "Você está construindo confiança, dia após dia.",
+      "descricao": "O bebê começa a testar limites com sons e movimentos.",
+      "dica": "Responda com calma. Isso é aprendizado, não desafio.",
+      "acompanhe": "Exploração ativa de causa e efeito.",
       "imagens": [],
       "bgColor": "#E8F5E9",
       "textColor": "#1B5E20"
+    },
+    "24": {
+      "titulo": "Semana 24 do bebê",
+      "empatia": "Nem todo vínculo é barulhento. Alguns são silenciosos.",
+      "descricao": "O bebê demonstra mais autonomia nos movimentos.",
+      "dica": "Observe antes de intervir. Autonomia nasce assim.",
+      "acompanhe": "Transições mais fluidas entre posições.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#AD1457"
+    },
+    "25": {
+      "titulo": "Semana 25 do bebê",
+      "empatia": "Você não está sozinho, mesmo quando parece.",
+      "descricao": "O bebê começa a repetir sons e gestos.",
+      "dica": "Repetição é aprendizado. Responda sempre que possível.",
+      "acompanhe": "Base para o desenvolvimento da linguagem.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#4527A0"
+    },
+    "26": {
+      "titulo": "Semana 26 do bebê",
+      "empatia": "Chegar até aqui já diz muito sobre você.",
+      "descricao": "O bebê demonstra personalidade mais clara e vínculos definidos.",
+      "dica": "Respeite quem ele está se tornando, mesmo tão pequeno.",
+      "acompanhe": "Interações mais intencionais e expressivas.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#F9A825"
+    },
+    "27": {
+      "titulo": "Semana 27 do bebê",
+      "empatia": "Nem sempre você vai reconhecer quem era antes. E tudo bem.",
+      "descricao": "O bebê demonstra mais intenção ao se mover e interagir.",
+      "dica": "Estimule, mas não pressione. Segurança vem antes de desempenho.",
+      "acompanhe": "Movimentos mais coordenados e curiosidade ativa.",
+      "imagens": [],
+      "bgColor": "#E3F2FD",
+      "textColor": "#1565C0"
+    },
+    "28": {
+      "titulo": "Semana 28 do bebê",
+      "empatia": "Você está aprendendo enquanto faz.",
+      "descricao": "O bebê começa a responder melhor a comandos simples pelo tom de voz.",
+      "dica": "Fale com calma e clareza. Ele entende mais do que parece.",
+      "acompanhe": "Reconhecimento de padrões de fala.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#EF6C00"
+    },
+    "29": {
+      "titulo": "Semana 29 do bebê",
+      "empatia": "Constância constrói mais do que perfeição.",
+      "descricao": "O bebê demonstra mais firmeza ao sentar com apoio.",
+      "dica": "Deixe que ele tente. Cair faz parte do processo.",
+      "acompanhe": "Melhor equilíbrio de tronco.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#2E7D32"
+    },
+    "30": {
+      "titulo": "Semana 30 do bebê",
+      "empatia": "Tem dias que o melhor é só estar presente.",
+      "descricao": "O bebê explora objetos com mais intenção e curiosidade.",
+      "dica": "Menos brinquedo, mais interação.",
+      "acompanhe": "Exploração ativa com mãos e boca.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#C2185B"
+    },
+    "31": {
+      "titulo": "Semana 31 do bebê",
+      "empatia": "Você não precisa dar conta de tudo sozinho.",
+      "descricao": "O bebê começa a demonstrar preferências claras.",
+      "dica": "Respeite gostos e ritmos. Isso também é cuidado.",
+      "acompanhe": "Expressões emocionais mais definidas.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#5E35B1"
+    },
+    "32": {
+      "titulo": "Semana 32 do bebê",
+      "empatia": "O vínculo cresce nos detalhes.",
+      "descricao": "O bebê responde com mais clareza a estímulos familiares.",
+      "dica": "Rotina simples ajuda mais do que grandes planejamentos.",
+      "acompanhe": "Reconhecimento de ambientes e pessoas.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#F57F17"
+    },
+    "33": {
+      "titulo": "Semana 33 do bebê",
+      "empatia": "Nem tudo vai sair como planejado.",
+      "descricao": "O bebê começa a tentar se deslocar mais.",
+      "dica": "Prepare a casa para o movimento que está chegando.",
+      "acompanhe": "Tentativas de engatinhar ou arrastar.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#006064"
+    },
+    "34": {
+      "titulo": "Semana 34 do bebê",
+      "empatia": "Você está fazendo o melhor possível hoje.",
+      "descricao": "O bebê demonstra curiosidade intensa pelo ambiente.",
+      "dica": "Supervisione sem impedir. Confiança nasce assim.",
+      "acompanhe": "Exploração mais ampla do espaço.",
+      "imagens": [],
+      "bgColor": "#F3E5F5",
+      "textColor": "#7B1FA2"
+    },
+    "35": {
+      "titulo": "Semana 35 do bebê",
+      "empatia": "Paternidade também é reaprender a ter paciência.",
+      "descricao": "O bebê começa a entender limites simples.",
+      "dica": "Seja firme e calmo. O tom ensina mais que a regra.",
+      "acompanhe": "Reação a orientações básicas.",
+      "imagens": [],
+      "bgColor": "#E3F2FD",
+      "textColor": "#0D47A1"
+    },
+    "36": {
+      "titulo": "Semana 36 do bebê",
+      "empatia": "Você também muda com ele.",
+      "descricao": "O bebê demonstra mais autonomia ao brincar.",
+      "dica": "Observe antes de intervir.",
+      "acompanhe": "Brincadeiras mais independentes.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#E65100"
+    },
+    "37": {
+      "titulo": "Semana 37 do bebê",
+      "empatia": "Nem todo progresso é visível.",
+      "descricao": "O bebê começa a imitar ações simples.",
+      "dica": "Demonstre comportamentos que você quer estimular.",
+      "acompanhe": "Imitação básica de gestos.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#1B5E20"
+    },
+    "38": {
+      "titulo": "Semana 38 do bebê",
+      "empatia": "Você é referência, mesmo em silêncio.",
+      "descricao": "O bebê reconhece emoções com mais clareza.",
+      "dica": "Cuide do seu estado emocional quando possível.",
+      "acompanhe": "Respostas emocionais mais evidentes.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#AD1457"
+    },
+    "39": {
+      "titulo": "Semana 39 do bebê",
+      "empatia": "Nem sempre vai ser leve. Ainda assim é valioso.",
+      "descricao": "O bebê demonstra mais intenção ao se comunicar.",
+      "dica": "Responda aos sons como se fossem conversa.",
+      "acompanhe": "Balbucios mais variados.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#4527A0"
+    },
+    "40": {
+      "titulo": "Semana 40 do bebê",
+      "empatia": "Você chegou longe. Mesmo cansado.",
+      "descricao": "O bebê interage mais ativamente com quem convive.",
+      "dica": "Presença vale mais do que estímulo excessivo.",
+      "acompanhe": "Vínculo afetivo bem estabelecido.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#F9A825"
+    },
+    "41": {
+      "titulo": "Semana 41 do bebê",
+      "empatia": "Você não precisa provar nada para ninguém.",
+      "descricao": "O bebê começa a testar reações.",
+      "dica": "Mantenha previsibilidade nas respostas.",
+      "acompanhe": "Compreensão básica de causa e efeito.",
+      "imagens": [],
+      "bgColor": "#E3F2FD",
+      "textColor": "#1565C0"
+    },
+    "42": {
+      "titulo": "Semana 42 do bebê",
+      "empatia": "Limites também são cuidado.",
+      "descricao": "O bebê reage a pequenas frustrações.",
+      "dica": "Acolha sem resolver tudo.",
+      "acompanhe": "Expressão clara de emoções.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#EF6C00"
+    },
+    "43": {
+      "titulo": "Semana 43 do bebê",
+      "empatia": "Você está construindo segurança.",
+      "descricao": "O bebê demonstra mais confiança para explorar.",
+      "dica": "Ambiente seguro libera autonomia.",
+      "acompanhe": "Exploração mais ousada.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#2E7D32"
+    },
+    "44": {
+      "titulo": "Semana 44 do bebê",
+      "empatia": "Nem todo dia precisa render.",
+      "descricao": "O bebê começa a repetir comportamentos observados.",
+      "dica": "Você ensina pelo exemplo.",
+      "acompanhe": "Imitação mais consistente.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#C2185B"
+    },
+    "45": {
+      "titulo": "Semana 45 do bebê",
+      "empatia": "O vínculo não é medido em marcos.",
+      "descricao": "O bebê demonstra preferência clara por cuidadores.",
+      "dica": "A presença constante constrói essa base.",
+      "acompanhe": "Busca ativa por figuras de referência.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#5E35B1"
+    },
+    "46": {
+      "titulo": "Semana 46 do bebê",
+      "empatia": "Você também aprende com os erros.",
+      "descricao": "O bebê começa a entender rotinas mais longas.",
+      "dica": "Rotina simples traz segurança.",
+      "acompanhe": "Antecipação de eventos diários.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#F57F17"
+    },
+    "47": {
+      "titulo": "Semana 47 do bebê",
+      "empatia": "Você não precisa estar no controle o tempo todo.",
+      "descricao": "O bebê demonstra mais iniciativa ao brincar.",
+      "dica": "Permita escolhas simples.",
+      "acompanhe": "Autonomia crescente.",
+      "imagens": [],
+      "bgColor": "#E0F7FA",
+      "textColor": "#006064"
+    },
+    "48": {
+      "titulo": "Semana 48 do bebê",
+      "empatia": "Estar disponível já é muito.",
+      "descricao": "O bebê reage a pequenas orientações.",
+      "dica": "Seja claro e consistente.",
+      "acompanhe": "Compreensão inicial de regras simples.",
+      "imagens": [],
+      "bgColor": "#F3E5F5",
+      "textColor": "#7B1FA2"
+    },
+    "49": {
+      "titulo": "Semana 49 do bebê",
+      "empatia": "O vínculo se fortalece no cotidiano.",
+      "descricao": "O bebê demonstra mais personalidade.",
+      "dica": "Observe quem ele está se tornando.",
+      "acompanhe": "Expressões individuais mais claras.",
+      "imagens": [],
+      "bgColor": "#E3F2FD",
+      "textColor": "#0D47A1"
+    },
+    "50": {
+      "titulo": "Semana 50 do bebê",
+      "empatia": "Nem tudo precisa ser corrigido.",
+      "descricao": "O bebê experimenta limites e reações.",
+      "dica": "Seja previsível nas respostas.",
+      "acompanhe": "Teste de comportamentos.",
+      "imagens": [],
+      "bgColor": "#FFF3E0",
+      "textColor": "#E65100"
+    },
+    "51": {
+      "titulo": "Semana 51 do bebê",
+      "empatia": "Você construiu algo sólido.",
+      "descricao": "O bebê reconhece vínculos com clareza.",
+      "dica": "Celebre silenciosamente esse vínculo.",
+      "acompanhe": "Segurança emocional visível.",
+      "imagens": [],
+      "bgColor": "#E8F5E9",
+      "textColor": "#1B5E20"
+    },
+    "52": {
+      "titulo": "Semana 52 do bebê",
+      "empatia": "Um ano não te tornou perfeito. Te tornou pai.",
+      "descricao": "O bebê completa seu primeiro ano de vida.",
+      "dica": "Olhe para trás e reconheça o caminho percorrido.",
+      "acompanhe": "Desenvolvimento emocional e físico significativo.",
+      "imagens": [],
+      "bgColor": "#FFFDE7",
+      "textColor": "#F9A825"
     }
-  },
+},
   "gestante": {
     "1": {
       "titulo": "Semana 1 da gestação",
-      "descricao": "A jornada começa! A fecundação ocorre e o zigoto se forma.",
-      "dica": "Comece a tomar ácido fólico se ainda não começou.",
-      "acompanhe": "Sintomas ainda não são perceptíveis.",
+      "empatia": "Respira. Você não precisa resolver tudo hoje.",
+      "descricao": "Mesmo que nada pareça diferente ainda, algo importante já começou. Essa semana é mais sobre expectativa do que sobre ação. Para muitos pais, é quando a ficha começa a cair — junto com dúvidas, medo e até um certo silêncio interno.",
+      "dica": "Não tente planejar tudo agora. Foque em entender o que está acontecendo e esteja disponível.",
+      "acompanhe": "É comum não sentir nada de concreto ainda. Isso não diminui a importância desse começo.",
       "imagens": ["https://via.placeholder.com/150"],
       "bgColor": "#E0F7FA",
       "textColor": "#006064"
     },
     "2": {
       "titulo": "Semana 2 da gestação",
-      "descricao": "O embrião se implanta no útero e começa a se desenvolver.",
-      "dica": "Mantenha hábitos saudáveis e evite álcool e cigarro.",
-      "acompanhe": "Teste de gravidez pode detectar níveis de HCG.",
+      "empatia": "Se você está ansioso sem saber exatamente por quê, faz parte.",
+      "descricao": "O corpo começa a se preparar para grandes mudanças, mesmo que ainda não seja visível. Para você, pai, essa fase costuma vir acompanhada de uma sensação estranha: a vida segue normal, mas algo importante já está em andamento.",
+      "dica": "Comece a observar mais e falar menos. Às vezes, estar atento já é uma grande ajuda.",
+      "acompanhe": "A ansiedade pode aparecer antes mesmo das confirmações. Isso é mais comum do que parece.",
       "imagens": ["https://via.placeholder.com/150"],
       "bgColor": "#FFF3E0",
       "textColor": "#E65100"
     },
     "3": {
       "titulo": "Semana 3 da gestação",
-      "descricao": "O bebê é agora um embrião com desenvolvimento celular acelerado.",
-      "dica": "Agende sua primeira consulta pré-natal.",
-      "acompanhe": "Sintomas leves como cansaço podem surgir.",
+      "empatia": "É normal se sentir meio fora do controle nessa fase.",
+      "descricao": "As coisas começam a acontecer em um nível que você não vê, mas sente. Muitos pais relatam aqui uma mistura de empolgação com insegurança. Não saber exatamente qual é o seu papel agora pode gerar desconforto.",
+      "dica": "Mostre interesse genuíno. Perguntar como o outro está se sentindo já cria conexão.",
+      "acompanhe": "Cansaço e mudanças de humor podem começar a aparecer do outro lado — e te pegar de surpresa.",
       "imagens": [],
       "bgColor": "#F3E5F5",
       "textColor": "#6A1B9A"
     },
     "4": {
       "titulo": "Semana 4 da gestação",
-      "descricao": "O embrião está se fixando firmemente no útero.",
-      "dica": "Evite alimentos ultraprocessados e mantenha hidratação.",
-      "acompanhe": "Pequenas mudanças hormonais podem causar sensibilidade.",
+      "empatia": "Você não precisa ter todas as respostas agora.",
+      "descricao": "A confirmação da gestação costuma tornar tudo mais real. Com isso, surgem perguntas sobre futuro, dinheiro, rotina e relacionamento. É comum sentir o peso da responsabilidade antes mesmo de saber como lidar com ela.",
+      "dica": "Evite minimizar sentimentos — os seus e os do outro. Escutar sem corrigir já ajuda muito.",
+      "acompanhe": "Oscilações emocionais podem surgir. Nem tudo precisa ser resolvido imediatamente.",
       "imagens": [],
       "bgColor": "#FFFDE7",
       "textColor": "#F57F17"
     },
     "5": {
       "titulo": "Semana 5 da gestação",
-      "descricao": "O coração do bebê começa a bater! Sistema nervoso em desenvolvimento.",
-      "dica": "Descanse sempre que possível - o cansaço é normal.",
-      "acompanhe": "Náuseas matinais podem começar a aparecer.",
+      "empatia": "Se o cansaço bateu antes mesmo do bebê chegar, você não está sozinho.",
+      "descricao": "Agora as mudanças começam a impactar mais o dia a dia. Para muitos pais, surge a sensação de precisar ser forte o tempo todo. Mas força também é saber reconhecer quando algo está difícil.",
+      "dica": "Assuma pequenas responsabilidades práticas. Isso traz segurança para os dois.",
+      "acompanhe": "Náuseas, indisposição e sensibilidade emocional podem aumentar — e afetar a dinâmica da casa.",
       "imagens": [],
       "bgColor": "#E8F5E9",
       "textColor": "#1B5E20"
     },
+
     "6": {
       "titulo": "Semana 6 da gestação",
-      "descricao": "O embrião mede cerca de 4-6mm. Braços e pernas começam a se formar.",
-      "dica": "Faça pequenas refeições frequentes para controlar náuseas.",
-      "acompanhe": "Sensibilidade a odores pode aumentar.",
+      "empatia": "Nem todo dia você vai saber o que fazer — e tudo bem.",
+      "descricao": "Os sintomas costumam ficar mais evidentes agora, e a rotina pode começar a mudar. Para muitos pais, surge a sensação de estar sempre tentando ajudar, mas nunca do jeito certo. Isso não te torna ausente — te torna humano.",
+      "dica": "Pergunte antes de agir. Às vezes, apoio não é solução, é presença.",
+      "acompanhe": "Náuseas, sono excessivo e irritação podem se intensificar.",
+      "imagens": [],
+      "bgColor": "#E1F5FE",
+      "textColor": "#01579B"
+    },
+    "7": {
+      "titulo": "Semana 7 da gestação",
+      "empatia": "Se você se sente meio inútil às vezes, saiba: isso passa.",
+      "descricao": "O corpo trabalha em ritmo acelerado, e o impacto emocional acompanha. É comum o pai se sentir de fora ou sem função clara. Essa sensação não define seu papel — ela faz parte do processo.",
+      "dica": "Cuide do ambiente. Pequenos gestos trazem conforto real.",
+      "acompanhe": "Enjoo e sensibilidade emocional podem dominar os dias.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#880E4F"
+    },
+    "8": {
+      "titulo": "Semana 8 da gestação",
+      "empatia": "Nem tudo precisa ser resolvido agora.",
+      "descricao": "A gravidez começa a ocupar mais espaço nos pensamentos — e nas conversas. Muitos pais sentem a pressão de 'dar conta' de tudo, mesmo sem saber por onde começar.",
+      "dica": "Organize pequenas coisas práticas. Ordem externa ajuda a acalmar a mente.",
+      "acompanhe": "Cansaço extremo e variações de humor podem continuar.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#4527A0"
+    },
+    "9": {
+      "titulo": "Semana 9 da gestação",
+      "empatia": "Você não precisa ser perfeito para ser presente.",
+      "descricao": "Essa fase pode trazer mais insegurança do que alegria visível. Pensamentos sobre dinheiro, futuro e responsabilidade começam a pesar. Isso não é fraqueza — é consciência.",
+      "dica": "Converse sobre medos, não só sobre planos.",
+      "acompanhe": "O emocional pode oscilar bastante, sem motivo aparente.",
+      "imagens": [],
+      "bgColor": "#FFF8E1",
+      "textColor": "#FF6F00"
+    },
+    "10": {
+      "titulo": "Semana 10 da gestação",
+      "empatia": "Se você está cansado antes mesmo de tudo começar, é compreensível.",
+      "descricao": "A gravidez já influencia decisões e expectativas. Muitos pais começam a sentir que algo da vida antiga está ficando para trás — e isso pode gerar conflito interno.",
+      "dica": "Reconheça o que está mudando, sem culpa.",
+      "acompanhe": "Alguns sintomas podem estabilizar, outros ainda persistem.",
+      "imagens": [],
+      "bgColor": "#E0F2F1",
+      "textColor": "#004D40"
+    },
+    "11": {
+      "titulo": "Semana 11 da gestação",
+      "empatia": "Nem toda empolgação vem no tempo que a gente espera.",
+      "descricao": "Enquanto para alguns tudo parece mais leve agora, para outros a ansiedade continua. Comparar experiências só aumenta a pressão — cada jornada é única.",
+      "dica": "Evite comparações. O que funciona para outros pode não servir para vocês.",
+      "acompanhe": "O corpo começa a se adaptar, mas o emocional ainda pede cuidado.",
+      "imagens": [],
+      "bgColor": "#F1F8E9",
+      "textColor": "#33691E"
+    },
+    "12": {
+      "titulo": "Semana 12 da gestação",
+      "empatia": "Você não precisa demonstrar segurança o tempo todo.",
+      "descricao": "Muitas pessoas consideram esse um marco importante. Com ele, vem um alívio, mas também novas preocupações. É normal sentir que a responsabilidade só aumenta.",
+      "dica": "Esteja presente nas decisões, mesmo quando não souber opinar.",
+      "acompanhe": "A energia pode começar a voltar aos poucos.",
       "imagens": [],
       "bgColor": "#FFF3E0",
       "textColor": "#EF6C00"
     },
-    "7": {
-      "titulo": "Semana 7 da gestação",
-      "descricao": "O bebê dobra de tamanho! Características faciais começam a se definir.",
-      "dica": "Mantenha alimentação balanceada com proteínas e ferro.",
-      "acompanhe": "Alterações de humor são comuns devido aos hormônios.",
-      "imagens": [],
-      "bgColor": "#EDE7F6",
-      "textColor": "#5E35B1"
-    },
-    "8": {
-      "titulo": "Semana 8 da gestação",
-      "descricao": "Todos os órgãos principais estão formados. O bebê mexe-se muito.",
-      "dica": "Use roupas confortáveis que não apertem a barriga.",
-      "acompanhe": "Primeiro ultrassom pode ser realizado.",
-      "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#006064"
-    },
-    "9": {
-      "titulo": "Semana 9 da gestação",
-      "descricao": "O embrião agora é chamado de feto. Dedos das mãos e pés se formam.",
-      "dica": "Pratique exercícios leves como caminhada ou ioga pré-natal.",
-      "acompanhe": "Aumento do apetite pode começar.",
-      "imagens": [],
-      "bgColor": "#FCE4EC",
-      "textColor": "#C2185B"
-    },
-    "10": {
-      "titulo": "Semana 10 da gestação",
-      "descricao": "Fim do período embrionário! O bebê tem todos os órgãos formados.",
-      "dica": "Converse com seu bebê - ele já pode ouvir sua voz.",
-      "acompanhe": "Risco de aborto espontâneo diminui significativamente.",
+    "13": {
+      "titulo": "Semana 13 da gestação",
+      "empatia": "A jornada está andando, mesmo quando parece lenta.",
+      "descricao": "O segundo trimestre se aproxima, trazendo expectativa de dias mais tranquilos. Para o pai, pode ser um bom momento para respirar e reorganizar pensamentos.",
+      "dica": "Use esse período para alinhar expectativas como casal.",
+      "acompanhe": "Alguns sintomas diminuem, outros dão espaço ao cansaço mental.",
       "imagens": [],
       "bgColor": "#E3F2FD",
-      "textColor": "#1565C0"
+      "textColor": "#0D47A1"
     },
-    "11": {
-      "titulo": "Semana 11 da gestação",
-      "descricao": "O bebê começa a engolir e chupar o dedo. Genitais externos se desenvolvem.",
-      "dica": "Mantenha hidratação adequada - beba bastante água.",
-      "acompanhe": "Enjoo pode começar a diminuir para algumas mulheres.",
+    "14": {
+      "titulo": "Semana 14 da gestação",
+      "empatia": "A sensação de alívio não elimina as dúvidas — e está tudo bem.",
+      "descricao": "Com menos desconfortos físicos, a atenção se volta mais para o futuro. Planejamento começa a ganhar força, junto com a preocupação de fazer tudo certo.",
+      "dica": "Planeje, mas aceite que nem tudo sairá como o esperado.",
+      "acompanhe": "O humor tende a estabilizar, mas oscilações ainda podem acontecer.",
+      "imagens": [],
+      "bgColor": "#F9FBE7",
+      "textColor": "#827717"
+    },
+    "15": {
+      "titulo": "Semana 15 da gestação",
+      "empatia": "Você não precisa carregar tudo sozinho.",
+      "descricao": "Essa fase marca uma transição importante. O bebê cresce, e a realidade da paternidade começa a ficar mais concreta. Muitos pais sentem orgulho misturado com medo — e isso é parte do vínculo se formando.",
+      "dica": "Compartilhe responsabilidades e sentimentos.",
+      "acompanhe": "A rotina pode começar a encontrar um novo equilíbrio.",
       "imagens": [],
       "bgColor": "#E8F5E9",
       "textColor": "#2E7D32"
     },
-    "12": {
-      "titulo": "Semana 12 da gestação",
-      "descricao": "Fim do primeiro trimestre! O bebê está completamente formado.",
-      "dica": "Compartilhe a notícia com familiares e amigos se desejar.",
-      "acompanhe": "Energia geralmente retorna nesta fase.",
-      "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#F57C00"
-    },
-    "13": {
-      "titulo": "Semana 13 da gestação",
-      "descricao": "O bebê desenvolve reflexos e pode responder a estímulos externos.",
-      "dica": "Comece a pensar no enxoval do bebê.",
-      "acompanhe": "Barriguinha pode começar a aparecer.",
-      "imagens": [],
-      "bgColor": "#EDE7F6",
-      "textColor": "#7B1FA2"
-    },
-    "14": {
-      "titulo": "Semana 14 da gestação",
-      "descricao": "O bebê pratica expressões faciais e movimentos respiratórios.",
-      "dica": "Use cremes hidratantes para prevenir estrias.",
-      "acompanhe": "Aumento da libido pode ocorrer.",
-      "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#00838F"
-    },
-    "15": {
-      "titulo": "Semana 15 da gestação",
-      "descricao": "O bebê ouve sons externos e pode responder à luz.",
-      "dica": "Ouça músicas calmas - o bebê pode se acalmar com elas.",
-      "acompanhe": "Exames do segundo trimestre podem ser solicitados.",
-      "imagens": [],
-      "bgColor": "#F3E5F5",
-      "textColor": "#8E24AA"
-    },
     "16": {
       "titulo": "Semana 16 da gestação",
-      "descricao": "O bebê está mais ativo! Movimentos podem ser sentidos pela mãe.",
-      "dica": "Tente identificar os primeiros movimentos do bebê.",
-      "acompanhe": "Ultrassom morfológico pode ser realizado.",
+      "empatia": "Nem tudo está sob controle — e isso não é um fracasso.",
+      "descricao": "O crescimento do bebê começa a ficar mais evidente, e a gravidez entra numa fase mais visível para o mundo. Para o pai, pode surgir a sensação de que agora não tem mais volta. E não tem mesmo — mas isso não precisa ser assustador.",
+      "dica": "Aceite o compromisso sem tentar controlar cada detalhe.",
+      "acompanhe": "Mais energia pode aparecer, junto com maior disposição.",
+      "imagens": [],
+      "bgColor": "#E1F5FE",
+      "textColor": "#0277BD"
+    },
+    "17": {
+      "titulo": "Semana 17 da gestação",
+      "empatia": "Você pode estar indo bem, mesmo com dúvidas.",
+      "descricao": "O dia a dia começa a encontrar um novo ritmo. Muitos pais entram no modo automático: trabalho, casa, preocupação. Cuidado para não se desconectar emocionalmente tentando ser apenas funcional.",
+      "dica": "Pergunte como ela está se sentindo — de verdade.",
+      "acompanhe": "O corpo segue se adaptando às mudanças.",
+      "imagens": [],
+      "bgColor": "#FCE4EC",
+      "textColor": "#AD1457"
+    },
+    "18": {
+      "titulo": "Semana 18 da gestação",
+      "empatia": "Sentir medo não te torna menos pai.",
+      "descricao": "Alguns pais começam a se imaginar no papel com mais clareza. Outros travam. Nenhuma das duas reações é errada. A paternidade não começa com certeza, começa com tentativa.",
+      "dica": "Não esconda o medo atrás de silêncio.",
+      "acompanhe": "O bebê cresce rápido e os exames ficam mais frequentes.",
+      "imagens": [],
+      "bgColor": "#EDE7F6",
+      "textColor": "#512DA8"
+    },
+    "19": {
+      "titulo": "Semana 19 da gestação",
+      "empatia": "Nem sempre você vai saber o que dizer.",
+      "descricao": "Essa fase pode trazer mais conversas sobre futuro, decisões e mudanças práticas. Às vezes, ouvir é mais importante do que ter respostas.",
+      "dica": "Escuta ativa vale mais do que conselhos.",
+      "acompanhe": "Movimentos do bebê podem começar a ser percebidos.",
       "imagens": [],
       "bgColor": "#FFFDE7",
       "textColor": "#F9A825"
     },
-    "17": {
-      "titulo": "Semana 17 da gestação",
-      "descricao": "O bebê desenvolve gordura corporal para regulação térmica.",
-      "dica": "Durma do lado esquerdo para melhor circulação.",
-      "acompanhe": "Azia e indigestão podem começar.",
-      "imagens": [],
-      "bgColor": "#E8F5E9",
-      "textColor": "#43A047"
-    },
-    "18": {
-      "titulo": "Semana 18 da gestação",
-      "descricao": "O bebê ouve sons cada vez melhor e reconhece vozes familiares.",
-      "dica": "Peça ao parceiro para conversar com a barriga.",
-      "acompanhe": "Sexo do bebê pode ser identificado no ultrassom.",
-      "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#FF9800"
-    },
-    "19": {
-      "titulo": "Semana 19 da gestação",
-      "descricao": "Vernix caseosa protege a pele do bebê do líquido amniótico.",
-      "dica": "Faça exercícios de Kegel para fortalecer o assoalho pélvico.",
-      "acompanhe": "Aumento do apetite e possíveis desejos alimentares.",
-      "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#0097A7"
-    },
     "20": {
       "titulo": "Semana 20 da gestação",
-      "descricao": "Metade da gestação! O bebê está mais ativo e responsivo.",
-      "dica": "Comece a planejar o chá de bebê.",
-      "acompanhe": "Movimentos fetais mais evidentes e frequentes.",
+      "empatia": "Metade do caminho também cansa.",
+      "descricao": "Chegar até aqui é um marco, mas não significa que tudo esteja resolvido. O peso da responsabilidade pode aumentar exatamente agora, quando todos esperam tranquilidade.",
+      "dica": "Reconheça o esforço que vocês já fizeram.",
+      "acompanhe": "Exames importantes costumam acontecer nesse período.",
       "imagens": [],
-      "bgColor": "#FCE4EC",
-      "textColor": "#D81B60"
+      "bgColor": "#E0F2F1",
+      "textColor": "#00695C"
     },
     "21": {
       "titulo": "Semana 21 da gestação",
-      "descricao": "O bebê desenvolve padrões de sono e vigília regulares.",
-      "dica": "Estabeleça rotina de sono consistente.",
-      "acompanhe": "Aumento da pressão sobre a bexiga.",
+      "empatia": "Você não precisa provar que está pronto.",
+      "descricao": "A ideia de preparo pode virar uma cobrança interna constante. A verdade é que ninguém se sente totalmente pronto — e mesmo assim dá certo.",
+      "dica": "Troque cobrança por presença.",
+      "acompanhe": "A barriga cresce e o conforto pode diminuir.",
       "imagens": [],
-      "bgColor": "#E3F2FD",
-      "textColor": "#1E88E5"
+      "bgColor": "#F1F8E9",
+      "textColor": "#558B2F"
     },
     "22": {
       "titulo": "Semana 22 da gestação",
-      "descricao": "Sentidos do bebê se desenvolvem - paladar, olfato e tato.",
-      "dica": "Alimente-se com variedade para expor o bebê a diferentes sabores.",
-      "acompanhe": "Inchaço leve nos pés e tornozelos pode ocorrer.",
+      "empatia": "Nem todo pai sente conexão imediata.",
+      "descricao": "Se você ainda não sente aquele vínculo forte que todo mundo fala, saiba: isso não te define. Para muitos pais, a conexão vem com o tempo, com o cuidado diário.",
+      "dica": "Permita-se sentir no seu tempo.",
+      "acompanhe": "A rotina começa a exigir mais adaptações.",
       "imagens": [],
-      "bgColor": "#E8F5E9",
-      "textColor": "#4CAF50"
+      "bgColor": "#FFF3E0",
+      "textColor": "#F57C00"
     },
     "23": {
       "titulo": "Semana 23 da gestação",
-      "descricao": "O bebê pratica movimentos respiratórios e engole líquido amniótico.",
-      "dica": "Faça curso preparatório para o parto.",
-      "acompanhe": "Crescimento acelerado da barriga.",
+      "empatia": "Você não está atrasado na sua própria jornada.",
+      "descricao": "Comparações com outros pais, outras famílias ou até expectativas internas podem gerar ansiedade. Cada vivência tem seu ritmo — inclusive a sua.",
+      "dica": "Silencie comparações sempre que puder.",
+      "acompanhe": "O bebê reage mais a estímulos externos.",
       "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#FFB300"
+      "bgColor": "#E3F2FD",
+      "textColor": "#1565C0"
     },
     "24": {
       "titulo": "Semana 24 da gestação",
-      "descricao": "O bebê está praticamente viável! Pulmões se desenvolvem rapidamente.",
-      "dica": "Monitore movimentos fetais diariamente.",
-      "acompanhe": "Teste de tolerância à glicose pode ser realizado.",
+      "empatia": "Cuidar também é aprender a descansar.",
+      "descricao": "O cansaço mental pode aparecer mesmo quando tudo parece ir bem. Estar atento a isso é parte da responsabilidade — não um sinal de fraqueza.",
+      "dica": "Reserve momentos de pausa real.",
+      "acompanhe": "Desconfortos físicos podem aumentar gradualmente.",
       "imagens": [],
-      "bgColor": "#EDE7F6",
-      "textColor": "#7E57C2"
+      "bgColor": "#F9FBE7",
+      "textColor": "#9E9D24"
     },
     "25": {
       "titulo": "Semana 25 da gestação",
-      "descricao": "O bebê responde a vozes familiares e sons externos.",
-      "dica": "Leia histórias em voz alta para o bebê.",
-      "acompanhe": "Dores nas costas podem se intensificar.",
+      "empatia": "Você está construindo algo, mesmo sem perceber.",
+      "descricao": "A paternidade começa muito antes do nascimento. Cada conversa difícil, cada preocupação e cada cuidado silencioso já fazem parte dessa construção.",
+      "dica": "Reconheça seu próprio esforço.",
+      "acompanhe": "O bebê cresce rápido e a rotina segue mudando.",
       "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#00BCD4"
+      "bgColor": "#E8F5E9",
+      "textColor": "#2E7D32"
     },
     "26": {
       "titulo": "Semana 26 da gestação",
-      "descricao": "Olhos do bebê começam a se abrir e piscar.",
-      "dica": "Use sutiãs de apoio confortáveis.",
-      "acompanhe": "Contrações de Braxton Hicks podem começar.",
+      "empatia": "Você não precisa ter todas as respostas agora.",
+      "descricao": "A reta final começa a se desenhar no horizonte. Pensamentos sobre dinheiro, trabalho e mudanças reais na rotina tendem a ficar mais presentes. Isso é responsabilidade, não paranoia.",
+      "dica": "Converse sobre expectativas práticas, não só emoções.",
+      "acompanhe": "O bebê responde mais a sons e estímulos.",
       "imagens": [],
-      "bgColor": "#F3E5F5",
-      "textColor": "#9C27B0"
+      "bgColor": "#E3F2FD",
+      "textColor": "#1565C0"
     },
     "27": {
       "titulo": "Semana 27 da gestação",
-      "descricao": "Fim do segundo trimestre! O bebê reconhece a voz da mãe.",
-      "dica": "Descanse sempre que possível - o terceiro trimestre exige mais energia.",
-      "acompanhe": "Aumento do desconforto para dormir.",
+      "empatia": "Estar preocupado também é uma forma de cuidado.",
+      "descricao": "Muitos pais entram num estado de alerta constante. O desafio aqui é não confundir cuidado com controle excessivo.",
+      "dica": "Faça o que está ao seu alcance — o resto não depende só de você.",
+      "acompanhe": "O crescimento do bebê segue acelerado.",
       "imagens": [],
-      "bgColor": "#FFFDE7",
-      "textColor": "#FDD835"
+      "bgColor": "#F1F8E9",
+      "textColor": "#558B2F"
     },
     "28": {
       "titulo": "Semana 28 da gestação",
-      "descricao": "Terceiro trimestre começa! O bebê está praticamente formado.",
-      "dica": "Comece a preparar a mala da maternidade.",
-      "acompanhe": "Consultas pré-natais tornam-se quinzenais.",
+      "empatia": "O medo de errar é sinal de que você se importa.",
+      "descricao": "O terceiro trimestre começa. A realidade do nascimento fica mais concreta e pode vir acompanhada de ansiedade silenciosa.",
+      "dica": "Fale sobre seus medos, nem que seja com alguém de confiança.",
+      "acompanhe": "Consultas podem ficar mais frequentes.",
       "imagens": [],
-      "bgColor": "#E8F5E9",
-      "textColor": "#66BB6A"
+      "bgColor": "#FFFDE7",
+      "textColor": "#F9A825"
     },
     "29": {
       "titulo": "Semana 29 da gestação",
-      "descricao": "O bebê ganha peso rapidamente e ocupa mais espaço.",
-      "dica": "Alimente-se com pequenas porções frequentes.",
-      "acompanhe": "Falta de ar pode ocorrer devido à pressão no diafragma.",
+      "empatia": "Você não precisa ser forte o tempo todo.",
+      "descricao": "A cobrança para ser o apoio emocional pode cansar. Cuidar também inclui reconhecer quando você precisa de apoio.",
+      "dica": "Permita-se descansar emocionalmente.",
+      "acompanhe": "Desconfortos físicos tendem a aumentar.",
       "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#FFA000"
+      "bgColor": "#FCE4EC",
+      "textColor": "#AD1457"
     },
     "30": {
       "titulo": "Semana 30 da gestação",
-      "descricao": "O bebê pode distinguir entre claro e escuro.",
-      "dica": "Exponha a barriga à luz solar suave.",
-      "acompanhe": "Inchaço pode se tornar mais evidente.",
+      "empatia": "Nem tudo vai sair como planejado — e tudo bem.",
+      "descricao": "Planos de parto, expectativas e cenários começam a se formar. Eles ajudam, mas não garantem controle.",
+      "dica": "Prepare-se, mas mantenha flexibilidade.",
+      "acompanhe": "O bebê ganha peso de forma mais intensa.",
       "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#0097A7"
+      "bgColor": "#EDE7F6",
+      "textColor": "#512DA8"
     },
     "31": {
       "titulo": "Semana 31 da gestação",
-      "descricao": "O bebê pratica movimentos de respiração mais coordenados.",
-      "dica": "Faça exercícios de respiração para o trabalho de parto.",
-      "acompanhe": "Azia e indigestão podem piorar.",
+      "empatia": "O cansaço não diminui o seu valor.",
+      "descricao": "O ritmo pode desacelerar para todos. O desafio é respeitar limites, inclusive os seus.",
+      "dica": "Menos cobrança, mais presença.",
+      "acompanhe": "Sono pode ficar mais irregular.",
       "imagens": [],
-      "bgColor": "#FCE4EC",
-      "textColor": "#EC407A"
+      "bgColor": "#E0F2F1",
+      "textColor": "#00695C"
     },
     "32": {
       "titulo": "Semana 32 da gestação",
-      "descricao": "O bebê está na posição fetal e pode estar de cabeça para baixo.",
-      "dica": "Pratique posições confortáveis para o parto.",
-      "acompanhe": "Consultas pré-natais semanais em breve.",
+      "empatia": "Você está aprendendo antes mesmo de começar.",
+      "descricao": "Pequenas decisões do dia a dia já moldam o tipo de pai que você será. Não existe treino melhor do que isso.",
+      "dica": "Observe mais, reaja menos.",
+      "acompanhe": "Movimentos do bebê ficam bem perceptíveis.",
       "imagens": [],
-      "bgColor": "#E3F2FD",
-      "textColor": "#2196F3"
+      "bgColor": "#FFF3E0",
+      "textColor": "#F57C00"
     },
     "33": {
       "titulo": "Semana 33 da gestação",
-      "descricao": "O bebê tem padrões de sono definidos, incluindo fase REM.",
-      "dica": "Descanse quando o bebê estiver quieto.",
-      "acompanhe": "Aumento da frequência urinária.",
+      "empatia": "A espera também exige esforço.",
+      "descricao": "A ansiedade pelo nascimento pode misturar empolgação e medo. Essa ambivalência é normal.",
+      "dica": "Foque no hoje, não só no grande dia.",
+      "acompanhe": "O bebê se prepara para a posição de nascimento.",
       "imagens": [],
       "bgColor": "#E8F5E9",
-      "textColor": "#4CAF50"
+      "textColor": "#2E7D32"
     },
     "34": {
       "titulo": "Semana 34 da gestação",
-      "descricao": "Sistema imunológico do bebê está se fortalecendo.",
-      "dica": "Lave as mãos frequentemente para prevenir infecções.",
-      "acompanhe": "Contrações de treinamento mais frequentes.",
+      "empatia": "Nem todo silêncio significa que está tudo bem.",
+      "descricao": "As emoções podem ficar mais intensas para ambos. Nem sempre será fácil entender o que o outro precisa.",
+      "dica": "Pergunte antes de assumir.",
+      "acompanhe": "O corpo se prepara para o parto.",
       "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#FF9800"
+      "bgColor": "#F9FBE7",
+      "textColor": "#9E9D24"
     },
     "35": {
       "titulo": "Semana 35 da gestação",
-      "descricao": "O bebê está quase pronto para nascer! Ganho de peso acelerado.",
-      "dica": "Tenha contatos importantes sempre à mão.",
-      "acompanhe": "Desconforto pélvico e lombar comum.",
+      "empatia": "Você pode estar pronto e ainda sentir medo.",
+      "descricao": "A proximidade do nascimento torna tudo mais real. O medo aqui não é falta de preparo, é consciência.",
+      "dica": "Confie no processo e na parceria.",
+      "acompanhe": "Consultas podem ser semanais.",
       "imagens": [],
-      "bgColor": "#EDE7F6",
-      "textColor": "#7E57C2"
+      "bgColor": "#E3F2FD",
+      "textColor": "#1976D2"
     },
     "36": {
       "titulo": "Semana 36 da gestação",
-      "descricao": "O bebê está considerado a termo precoce. Pulmões quase maduros.",
-      "dica": "Finalize preparativos do quarto do bebê.",
-      "acompanhe": "Consultas pré-natais semanais começam.",
+      "empatia": "Nem tudo precisa estar perfeito.",
+      "descricao": "A ideia de que tudo precisa estar pronto pode gerar tensão desnecessária. O essencial já está aí.",
+      "dica": "Priorize o que realmente importa.",
+      "acompanhe": "O bebê já é considerado quase a termo.",
       "imagens": [],
-      "bgColor": "#E0F7FA",
-      "textColor": "#00BCD4"
+      "bgColor": "#FCE4EC",
+      "textColor": "#C2185B"
     },
     "37": {
       "titulo": "Semana 37 da gestação",
-      "descricao": "O bebê está a termo! Pode nascer a qualquer momento.",
-      "dica": "Mantenha mala da maternidade pronta.",
-      "acompanhe": "Sinal de parto iminente - perda do tampão mucoso.",
+      "empatia": "A espera final também testa a paciência.",
+      "descricao": "Agora pode acontecer a qualquer momento — ou não. A imprevisibilidade faz parte.",
+      "dica": "Esteja disponível, não em alerta máximo.",
+      "acompanhe": "Sinais de trabalho de parto podem surgir.",
       "imagens": [],
-      "bgColor": "#F3E5F5",
-      "textColor": "#9C27B0"
+      "bgColor": "#E0F7FA",
+      "textColor": "#00838F"
     },
     "38": {
       "titulo": "Semana 38 da gestação",
-      "descricao": "O bebê está completamente desenvolvido e pronto para nascer.",
-      "dica": "Descanse e preserve energias para o parto.",
-      "acompanhe": "Qualquer contração regular pode ser trabalho de parto.",
+      "empatia": "Você não controla o tempo — só a presença.",
+      "descricao": "Cada dia extra pode parecer eterno. Respire. Esse momento também passa.",
+      "dica": "Apoie sem pressionar.",
+      "acompanhe": "O bebê está pronto para nascer.",
+      "imagens": [],
+      "bgColor": "#F1F8E9",
+      "textColor": "#689F38"
+    },
+    "39": {
+      "titulo": "Semana 39 da gestação",
+      "empatia": "O agora é suficiente.",
+      "descricao": "A ansiedade pode bater forte, mas tudo o que você precisa fazer agora é estar presente.",
+      "dica": "Confie no que foi construído até aqui.",
+      "acompanhe": "O parto pode acontecer a qualquer momento.",
       "imagens": [],
       "bgColor": "#FFFDE7",
       "textColor": "#FBC02D"
     },
-    "39": {
-      "titulo": "Semana 39 da gestação",
-      "descricao": "O bebê está na posição ideal para o nascimento.",
-      "dica": "Caminhadas leves podem ajudar a induzir o parto naturalmente.",
-      "acompanhe": "Paciente observação dos sinais de parto.",
-      "imagens": [],
-      "bgColor": "#E8F5E9",
-      "textColor": "#388E3C"
-    },
     "40": {
-      "titulo": "Semana 40 da gestação - Data Prevista do Parto!",
-      "descricao": "Chegou o grande dia! O bebê está pronto para conhecer o mundo.",
-      "dica": "Mantenha calma e confie no seu corpo e na equipe médica.",
-      "acompanhe": "Monitoramento frequente até o início do trabalho de parto.",
+      "titulo": "Semana 40 da gestação",
+      "empatia": "Você chegou até aqui.",
+      "descricao": "Independente de como foi a jornada, você está aqui. E isso importa. A paternidade não começa perfeita — começa real.",
+      "dica": "Respire. Um novo capítulo começa.",
+      "acompanhe": "O nascimento pode estar muito próximo.",
       "imagens": [],
-      "bgColor": "#FFF3E0",
-      "textColor": "#F57C00"
+      "bgColor": "#E8EAF6",
+      "textColor": "#303F9F"
+    },
+    "41": {
+      "titulo": "Semana 41 da gestação",
+      "empatia": "A espera cansa mais do que parece.",
+      "descricao": "Nem todo nascimento acontece no tempo que a gente imagina. Passar das 40 semanas é mais comum do que se fala, apesar da pressão externa.",
+      "dica": "Proteja vocês dois de comparações e palpites.",
+      "acompanhe": "A equipe médica costuma acompanhar mais de perto.",
+      "imagens": [],
+      "bgColor": "#ECEFF1",
+      "textColor": "#37474F"
+    },
+    "42": {
+      "titulo": "Semana 42 da gestação",
+      "empatia": "Nada disso apaga o caminho que vocês percorreram.",
+      "descricao": "Esse momento pode trazer decisões diferentes do que o plano inicial. Isso não significa fracasso — significa cuidado.",
+      "dica": "Confie nas orientações médicas e no que faz sentido pra vocês.",
+      "acompanhe": "Indução ou outras condutas podem ser discutidas.",
+      "imagens": [],
+      "bgColor": "#E0E0E0",
+      "textColor": "#424242"
     }
   }
 }

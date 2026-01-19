@@ -22,9 +22,6 @@ export default function LoginPage() {
     setErro("");
 
     try {
-      console.log("🔐 Iniciando login...");
-
-      // 1. Fazer login
       const { error: loginError } = await supabase.auth.signInWithPassword({
         email,
         password: senha,
@@ -32,107 +29,88 @@ export default function LoginPage() {
 
       if (loginError) throw loginError;
 
-      console.log("✅ Login bem-sucedido");
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-      // 2. Pequeno delay para garantir que o auth state foi atualizado
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Não foi possível identificar o usuário.");
 
-      // 3. Buscar usuário
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError || !user) throw new Error("Usuário não encontrado");
-
-      console.log("👤 Usuário:", user?.id);
-
-      // 4. Verificar/Criar perfil
-      let profile = null;
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('onboarding_complete')
-        .eq('id', user.id)
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("onboarding_complete")
+        .eq("id", user.id)
         .single();
 
-      console.log("📊 Perfil encontrado:", profileData);
-      console.log("❌ Erro ao buscar perfil:", profileError);
-
-      if (profileError) {
-        // Perfil não existe, criar um
-        if (profileError.code === 'PGRST116') {
-          console.log("🆕 Criando perfil para usuário novo...");
-          const { error: insertError } = await supabase
-            .from('profiles')
-            .insert({ id: user.id, onboarding_complete: false });
-          
-          console.log("❌ Erro ao criar perfil:", insertError);
-          
-          if (insertError) throw insertError;
-          profile = { onboarding_complete: false };
-        } else {
-          throw profileError;
-        }
-      } else {
-        profile = profileData;
-      }
-
-      // 5. Redirecionar baseado no status
-      console.log("🎯 Status do onboarding:", profile?.onboarding_complete);
-      
-      if (profile && !profile.onboarding_complete) {
-        console.log("➡️ Redirecionando para onboarding (incompleto)");
+      if (!profile || !profile.onboarding_complete) {
         router.push("/onboarding");
       } else {
-        console.log("➡️ Onboarding completo, redirecionando para verificação transparente");
         router.push("/dashboard");
       }
 
     } catch (error) {
-      console.error("❌ Erro no login:", error);
-      setErro(error.message);
+      setErro("E-mail ou senha inválidos. Tente novamente.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="max-w-md mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-4 text-center">Entrar</h1>
-
-      {erro && <p className="text-red-600 mb-3 text-center">{erro}</p>}
-
-      <form onSubmit={handleLogin} className="flex flex-col gap-4">
-        <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-
-        <Input
-          type="password"
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          required
-        />
-
-        <Button type="submit" disabled={loading}>
-          {loading ? "Entrando..." : "Entrar"}
-        </Button>
-      </form>
-
-      <div className="mt-4 space-y-3 text-center">
-        {/* ✅ LINK PARA RECUPERAÇÃO DE SENHA */}
-        <p className="text-sm">
-          <Link href="/auth/forgot-password" className="text-blue-600 underline hover:text-blue-800">
-            Esqueci minha senha
-          </Link>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm p-8">
+        
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
+          Bem-vindo de volta 👋
+        </h1>
+        <p className="text-center text-gray-600 mb-8">
+          É bom te ver por aqui. Vamos continuar essa jornada juntos.
         </p>
 
-        <p className="text-sm">
-          Não tem conta?{" "}
-          <Link href="/auth/register" className="text-blue-600 underline">
-            Criar conta
+        {erro && (
+          <p className="text-red-600 text-sm text-center mb-4">{erro}</p>
+        )}
+
+        <form onSubmit={handleLogin} className="space-y-4">
+          <Input
+            type="email"
+            placeholder="Seu e-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <Input
+            type="password"
+            placeholder="Sua senha"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            required
+          />
+
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? "Entrando..." : "Entrar"}
+          </Button>
+        </form>
+
+        <div className="mt-6 text-center space-y-3">
+          <Link
+            href="/auth/forgot-password"
+            className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            Esqueci minha senha
           </Link>
+
+          <p className="text-sm text-gray-600">
+            Ainda não faz parte?{" "}
+            <Link
+              href="/auth/register"
+              className="font-medium text-blue-600 hover:text-blue-800"
+            >
+              Criar minha conta
+            </Link>
+          </p>
+        </div>
+
+        <p className="text-xs text-gray-400 text-center mt-8">
+          Seus dados ficam seguros. Prometido.
         </p>
       </div>
     </div>

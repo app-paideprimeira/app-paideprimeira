@@ -1,10 +1,18 @@
-import { Suspense } from "react";
-import BebeClient from "./bebe/BebeClient";
+"use client";
 
-export default function BebePage() {
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export default function HomePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/dashboard");
+  }, [router]);
+
   return (
-    <Suspense fallback={<p className="p-6 text-center">Carregando...</p>}>
-      <BebeClient />
-    </Suspense>
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-gray-500">Redirecionando...</p>
+    </div>
   );
 }

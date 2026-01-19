@@ -5,164 +5,174 @@ import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "../../lib/supabase/client";
 
 export default function Onboarding() {
-  const [tipo, setTipo] = useState("gravidez");
-  const [data, setData] = useState("");
-  const [genero, setGenero] = useState("menino");
+  const router = useRouter();
+  const supabase = supabaseBrowser();
+
+  const [stage, setStage] = useState("gestante"); // gestante | bebe
+  const [eventDate, setEventDate] = useState("");
+  const [gender, setGender] = useState("menino");
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
-
-  async function salvar() {
-    if (!data) {
-      alert("Por favor, informe a data!");
+  async function finalizarOnboarding() {
+    if (!eventDate) {
+      alert("Escolha uma data para a gente continuar juntos 🙂");
       return;
     }
 
     setLoading(true);
 
-    const supabase = supabaseBrowser();
-
     try {
-      // 🔐 Buscar usuário atual (logado)
-      const { data: userData } = await supabase.auth.getUser();
-      const user = userData?.user;
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       if (!user) {
-        alert("Você precisa estar logado.");
         router.push("/auth/login");
         return;
       }
 
-      console.log("💾 Salvando dados do onboarding...");
-
-      // 🧾 Salvar escolha no banco
-      const { error } = await supabase.from("parent_profile").insert({
-        user_id: user.id,
-        tipo,
-        data_evento: data,
-        genero,
-      });
-
-      if (error) {
-        console.error("❌ Erro ao salvar parent_profile:", error);
-        alert("Erro ao salvar informações.");
-        setLoading(false);
-        return;
-      }
-
-      // ✅ ATUALIZAR STATUS DO ONBOARDING PARA COMPLETO
-      console.log("✅ Atualizando status do onboarding...");
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ onboarding_complete: true })
-        .eq('id', user.id);
-
-      if (profileError) {
-        console.error('❌ Erro ao atualizar onboarding:', profileError);
-      } else {
-        console.log('✅ Onboarding marcado como completo!');
-      }
-
-      // 📅 Cálculo de semanas e REDIRECIONAMENTO CORRETO
       const hoje = new Date();
-      const dataEvento = new Date(data);
+      const dataEvento = new Date(eventDate);
 
-      if (tipo === "nascimento") {
-        // 👶 Bebê já nasceu - calcular semanas de vida
-        const diffDias = Math.floor((hoje - dataEvento) / (1000 * 60 * 60 * 24));
-        let semanas = Math.max(0, Math.floor(diffDias / 7));
-        
-        console.log(`🎯 Bebê nascido - ${diffDias} dias de vida (${semanas} semanas)`);
-        
-        // 🔧 CORREÇÃO: Redirecionar para semana específica quando aplicável
-        if (semanas === 0) {
-          // Bebê nasceu hoje ou tem menos de 1 semana
-          console.log(`➡️ Redirecionando para /semanas/bebe/1 (recém-nascido)`);
-          router.push("/semanas/bebe/1");
-        } else if (semanas <= 52) {
-          // Bebê tem até 1 ano - redirecionar para semana específica
-          console.log(`➡️ Redirecionando para /semanas/bebe/${semanas}`);
-          router.push(`/semanas/bebe/${semanas}`);
-        } else {
-          // Bebê tem mais de 1 ano - redirecionar para área geral do bebê
-          console.log(`➡️ Redirecionando para /bebe (mais de 1 ano)`);
-          router.push("/bebe");
-        }
+      let currentWeek = 1;
+
+      if (stage === "bebe") {
+        // 👶 bebê já nasceu
+        const diffDias = Math.floor(
+          (hoje - dataEvento) / (1000 * 60 * 60 * 24)
+        );
+
+        currentWeek = Math.max(1, Math.floor(diffDias / 7) + 1);
+        currentWeek = Math.min(currentWeek, 52);
       } else {
-        // 🤰 Gestante - redirecionar para semana específica
+        // 🤰 gestação
         const dataUltimaMenstruacao = new Date(dataEvento);
-        dataUltimaMenstruacao.setDate(dataUltimaMenstruacao.getDate() - 280);
+        dataUltimaMenstruacao.setDate(
+          dataUltimaMenstruacao.getDate() - 280
+        );
 
         const diffDias = Math.floor(
           (hoje - dataUltimaMenstruacao) / (1000 * 60 * 60 * 24)
         );
 
-        const semanas = Math.min(40, Math.max(1, Math.floor(diffDias / 7))); // Mínimo semana 1
-
-        console.log(`🎯 Gestante - ${semanas} semanas de gestação`);
-        console.log(`➡️ Redirecionando para /semanas/gestante/${semanas}`);
-        router.push(`/semanas/gestante/${semanas}`);
+        currentWeek = Math.max(1, Math.floor(diffDias / 7) + 1);
+        currentWeek = Math.min(currentWeek, 40);
       }
 
-    } catch (error) {
-      console.error("❌ Erro no onboarding:", error);
-      alert("Erro ao processar informações.");
+      const { error } = await supabase.from("profiles").upsert({
+        id: user.id,
+        onboarding_complete: true,
+        stage,
+        current_week: currentWeek,
+        event_date: eventDate,
+        baby_gender: gender,
+        updated_at: new Date().toISOString(),
+      });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      router.push(
+        stage === "bebe"
+          ? `/semanas/bebe/${currentWeek}`
+          : `/semanas/gestante/${currentWeek}`
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Algo deu errado. Tenta de novo?");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6 text-center">Complete seu Perfil</h1>
-      <p className="text-gray-600 mb-6 text-center">
-        Conte-nos mais sobre você para personalizarmos sua experiência
-      </p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="max-w-xl w-full bg-white rounded-2xl shadow-sm p-8">
+        {/* TÍTULO */}
+        <h1 className="text-3xl font-bold text-center mb-3">
+          Bem-vindo ao Pai de Primeira 🤍
+        </h1>
 
-      {/* Tipo */}
-      <label className="block mb-2 font-medium">Você está:</label>
-      <select
-        className="p-2 border rounded mb-4 w-full"
-        value={tipo}
-        onChange={(e) => setTipo(e.target.value)}
-      >
-        <option value="gravidez">Aguardando o nascimento</option>
-        <option value="nascimento">Com o bebê já nascido</option>
-      </select>
+        <p className="text-gray-600 text-center mb-8">
+          A gente só precisa de algumas informações para caminhar com você da
+          forma certa. Sem pressão. Sem julgamentos.
+        </p>
 
-      {/* Data */}
-      <label className="block mb-2 font-medium">
-        {tipo === "gravidez"
-          ? "Data provável do parto"
-          : "Data de nascimento do bebê"}
-      </label>
+        {/* ESTÁGIO */}
+        <div className="mb-6">
+          <label className="block mb-2 font-semibold text-gray-800">
+            Em que momento você está agora?
+          </label>
 
-      <input
-        type="date"
-        className="p-2 border rounded mb-4 w-full"
-        value={data}
-        onChange={(e) => setData(e.target.value)}
-        required
-      />
+          <select
+            className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={stage}
+            onChange={(e) => setStage(e.target.value)}
+          >
+            <option value="gestante">
+              🤰 A gravidez já começou
+            </option>
+            <option value="bebe">
+              👶 O bebê já nasceu
+            </option>
+          </select>
 
-      {/* Gênero */}
-      <label className="block mb-2 font-medium">Gênero do bebê:</label>
-      <select
-        className="p-2 border rounded mb-6 w-full"
-        value={genero}
-        onChange={(e) => setGenero(e.target.value)}
-      >
-        <option value="menino">Menino</option>
-        <option value="menina">Menina</option>
-      </select>
+          <p className="text-sm text-gray-500 mt-2">
+            Isso nos ajuda a mostrar conteúdos mais relevantes para você.
+          </p>
+        </div>
 
-      <button
-        onClick={salvar}
-        disabled={loading}
-        className="w-full bg-blue-600 text-white p-3 rounded font-semibold hover:bg-blue-700 disabled:bg-blue-400"
-      >
-        {loading ? "Salvando..." : "Completar Cadastro"}
-      </button>
+        {/* DATA */}
+        <div className="mb-6">
+          <label className="block mb-2 font-semibold text-gray-800">
+            {stage === "gestante"
+              ? "Data provável do parto"
+              : "Data de nascimento do bebê"}
+          </label>
+
+          <input
+            type="date"
+            className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={eventDate}
+            onChange={(e) => setEventDate(e.target.value)}
+          />
+
+          <p className="text-sm text-gray-500 mt-2">
+            Não precisa ser exato. Se mudar depois, tudo bem.
+          </p>
+        </div>
+
+        {/* GÊNERO */}
+        <div className="mb-8">
+          <label className="block mb-2 font-semibold text-gray-800">
+            Gênero do bebê
+          </label>
+
+          <select
+            className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+          >
+            <option value="menino">💙 Menino</option>
+            <option value="menina">💗 Menina</option>
+          </select>
+        </div>
+
+        {/* CTA */}
+        <button
+          onClick={finalizarOnboarding}
+          disabled={loading}
+          className="w-full bg-blue-600 text-white p-4 rounded-xl font-semibold hover:bg-blue-700 transition disabled:bg-blue-400"
+        >
+          {loading ? "Preparando tudo..." : "Entrar na minha jornada"}
+        </button>
+
+        <p className="text-xs text-gray-500 text-center mt-4">
+          Você pode ajustar essas informações depois, quando quiser.
+        </p>
+      </div>
     </div>
   );
 }
