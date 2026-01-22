@@ -55,7 +55,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1E3A8A] flex flex-col items-center justify-start px-4 pt-16">
+    <div
+  className="
+    min-h-screen
+    bg-[#1E3A8A]
+    flex flex-col
+    items-center
+    justify-start
+    px-4
+    pt-16
+    pb-6
+    [padding-bottom:calc(env(safe-area-inset-bottom)+1.5rem)]
+  "
+>
 
       {/* LOGO NO FUNDO AZUL */}
       <div className="mb-16 p-2">
