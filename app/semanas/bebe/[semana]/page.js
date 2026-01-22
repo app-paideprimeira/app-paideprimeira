@@ -5,6 +5,7 @@ import semanaData from "../../../../data/semanas.json";
 import UserMenu from "../../../components/UserMenu";
 import WeekCard from "../../../components/WeekCard";
 import { useGoToToday } from "../../../../lib/navigation/useGoToToday";
+import Image from "next/image";
 
 export default function SemanaBebe({ params }) {
   const router = useRouter();
@@ -28,18 +29,20 @@ export default function SemanaBebe({ params }) {
     >
       {/* HEADER */}
       <header className="max-w-4xl mx-auto flex justify-between items-center mb-8">
-        <button
-          onClick={() => router.push("/dashboard")}
-          className="font-medium hover:opacity-80"
-          style={{ color: infoSemana.textColor }}
-        >
-          ← Voltar
-        </button>
+        {/* LOGO */}
+        <Image
+          src="/logo/logo-app.svg"
+          alt="Pai de Primeira"
+          width={120}
+          height={40}
+          className="opacity-90"
+          priority
+        />
 
-        <div className="flex items-center gap-3">
-          <UserMenu />
-        </div>
+        {/* MENU DO USUÁRIO */}
+        <UserMenu />
       </header>
+
 
       <main className="max-w-3xl mx-auto space-y-8">
         <WeekCard data={infoSemana} />

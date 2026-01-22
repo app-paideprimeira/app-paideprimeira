@@ -1,7 +1,15 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // Configurações do Next.js
-  // Server Actions já estão habilitadas por padrão no Next.js 14
-};
+const withPWA = require("next-pwa")({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+  importScripts:["/custom-sw.js"],
 
-module.exports = nextConfig;
+  // ✅ IGNORA ARQUIVOS QUE NÃO EXISTEM NO APP ROUTER
+  buildExcludes: [
+    /app-build-manifest\.json$/,
+  ],
+});
+
+module.exports = withPWA({
+  reactStrictMode: true,
+});

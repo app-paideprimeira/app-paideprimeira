@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabaseBrowser } from "../../../lib/supabase/client";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
+import Image from "next/image";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -64,13 +65,26 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#1E3A8A] flex flex-col items-center justify-start px-4 pt-16">
+    
+          {/* LOGO NO FUNDO AZUL */}
+          <div className="mb-16 p-2">
+            <Image
+              src="/logo/logo-app.svg"
+              alt="Pai de Primeira"
+              width={400}
+              height={200}
+              className="w-72 mx-auto drop-shadow-md"
+              priority
+            />
+          </div>
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm p-8">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
           Seja bem-vindo ao Pai de Primeira 💙
         </h1>
         <p className="text-center text-gray-600 mb-8">
-          Não é sobre ser perfeito. É sobre estar presente.
+          Não é sobre ser perfeito.<br />
+          É sobre estar presente.
         </p>
 
         {erro && (

@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabaseBrowser } from "../../../lib/supabase/client";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
+import Image from "next/image";
 
 export default function ForgotPasswordPage() {
-  const router = useRouter();
   const supabase = supabaseBrowser();
 
   const [email, setEmail] = useState("");
@@ -23,28 +22,20 @@ export default function ForgotPasswordPage() {
     setMessage("");
 
     try {
-      console.log("📧 Enviando email de recuperação...");
-
-      // 🔐 Solicitar reset de senha via Supabase
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/update-password`,
       });
 
       if (error) {
-        console.error("❌ Erro ao enviar email:", error);
         setErro(error.message);
-        setLoading(false);
         return;
       }
 
-      console.log("✅ Email de recuperação enviado com sucesso!");
-      setMessage("📧 Email de recuperação enviado! Verifique sua caixa de entrada.");
-      
-      // Limpar o campo de email
+      setMessage(
+        "📧 Enviamos um email com as instruções para redefinir sua senha."
+      );
       setEmail("");
-
     } catch (error) {
-      console.error("❌ Erro inesperado:", error);
       setErro("Erro ao processar solicitação. Tente novamente.");
     } finally {
       setLoading(false);
@@ -52,52 +43,75 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-4 text-center">Recuperar Senha</h1>
-
-      {erro && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {erro}
-        </div>
-      )}
-
-      {message && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-          {message}
-        </div>
-      )}
-
-      <p className="text-gray-600 mb-6 text-center">
-        Digite seu email abaixo e enviaremos um link para redefinir sua senha.
-      </p>
-
-      <form onSubmit={handleResetPassword} className="flex flex-col gap-4">
-        <Input
-          type="email"
-          placeholder="Seu email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-
-        <Button type="submit" disabled={loading}>
-          {loading ? "Enviando..." : "Enviar Link de Recuperação"}
-        </Button>
-      </form>
-
-      <div className="mt-6 text-center space-y-3">
-        <p className="text-sm">
-          Lembrou sua senha?{" "}
-          <Link href="/auth/login" className="text-blue-600 underline hover:text-blue-800">
-            Fazer login
-          </Link>
-        </p>
+    <div className="min-h-screen bg-[#1E3A8A] flex flex-col items-center justify-start px-4 pt-16">
+    
+          {/* LOGO NO FUNDO AZUL */}
+          <div className="mb-16 p-2">
+            <Image
+              src="/logo/logo-app.svg"
+              alt="Pai de Primeira"
+              width={400}
+              height={200}
+              className="w-72 mx-auto drop-shadow-md"
+              priority
+            />
+          </div>
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8 border border-[#10B981]">
         
-        <p className="text-sm">
-          Não tem conta?{" "}
-          <Link href="/auth/register" className="text-blue-600 underline">
-            Criar conta
-          </Link>
+        <h1 className="text-3xl font-bold text-center text-[#111827] mb-2">
+          Recuperar senha 🔐
+        </h1>
+
+        <p className="text-center text-[#6B7280] mb-8">
+          Fica tranquilo. Vamos te ajudar a acessar sua conta novamente.
+        </p>
+
+        {erro && (
+          <p className="text-red-600 text-sm text-center mb-4">{erro}</p>
+        )}
+
+        {message && (
+          <p className="text-green-600 text-sm text-center mb-4">{message}</p>
+        )}
+
+        <form onSubmit={handleResetPassword} className="space-y-4">
+          <Input
+            type="email"
+            placeholder="Seu e-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? "Enviando..." : "Enviar link de recuperação"}
+          </Button>
+        </form>
+
+        <div className="mt-6 text-center space-y-3">
+          <p className="text-sm text-[#6B7280]">
+            Lembrou da senha?{" "}
+            <Link
+              href="/auth/login"
+              className="font-medium text-[#1E3A8A] hover:text-[#172554]"
+            >
+              Fazer login
+            </Link>
+          </p>
+
+          <p className="text-sm text-[#6B7280]">
+            Ainda não tem conta?{" "}
+            <Link
+              href="/auth/register"
+              className="font-medium text-[#1E3A8A] hover:text-[#172554]"
+            >
+              Criar minha conta
+            </Link>
+          </p>
+        </div>
+
+        <p className="text-xs text-[#6B7280] text-center mt-8">
+          Seus dados estão protegidos. Sempre.
         </p>
       </div>
     </div>

@@ -1,26 +1,27 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '../../lib/supabase/client';
+import Image from 'next/image';
 
 const supabase = supabaseBrowser();
 
-const Diario = () => {
+export default function Diario() {
   const router = useRouter();
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [entradas, setEntradas] = useState([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [editandoId, setEditandoId] = useState(null);
-  
-  // Estado para nova entrada
+  const [entradaSelecionada, setEntradaSelecionada] = useState(null);
+
   const [novaEntrada, setNovaEntrada] = useState({
     titulo: '',
     conteudo: '',
-    data: new Date().toISOString().split('T')[0] // Data atual
   });
 
-  // Carregar entradas do diário
   useEffect(() => {
     carregarDados();
   }, []);
@@ -28,23 +29,22 @@ const Diario = () => {
   const carregarDados = async () => {
     try {
       setLoading(true);
-      
-      // Verificar usuário
+
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
 
-      if (user) {
-        // Carregar entradas do diário
-        const { data, error } = await supabase
-          .from('diario')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('data', { ascending: false })
-          .order('created_at', { ascending: false });
+      if (!user) return;
 
-        if (error) throw error;
-        setEntradas(data || []);
-      }
+      const { data, error } = await supabase
+        .from('diario')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('data', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setEntradas(data || []);
     } catch (error) {
       console.error('Erro ao carregar diário:', error);
     } finally {
@@ -52,87 +52,63 @@ const Diario = () => {
     }
   };
 
-  // Salvar nova entrada
   const salvarEntrada = async (e) => {
     e.preventDefault();
-    
-    if (!user) {
-      alert('Usuário não autenticado');
-      return;
-    }
 
     if (!novaEntrada.titulo.trim() || !novaEntrada.conteudo.trim()) {
-      alert('Por favor, preencha título e conteúdo');
+      alert('Preencha título e conteúdo');
       return;
     }
 
     try {
       setLoading(true);
 
+      const hoje = new Date().toISOString().split('T')[0];
+
       if (editandoId) {
-        // Editar entrada existente
         const { error } = await supabase
           .from('diario')
           .update({
             titulo: novaEntrada.titulo,
             conteudo: novaEntrada.conteudo,
-            data: novaEntrada.data,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', editandoId)
           .eq('user_id', user.id);
 
         if (error) throw error;
-        alert('Entrada atualizada com sucesso!');
       } else {
-        // Criar nova entrada
-        const { error } = await supabase
-          .from('diario')
-          .insert({
-            user_id: user.id,
-            titulo: novaEntrada.titulo,
-            conteudo: novaEntrada.conteudo,
-            data: novaEntrada.data
-          });
+        const { error } = await supabase.from('diario').insert({
+          user_id: user.id,
+          titulo: novaEntrada.titulo,
+          conteudo: novaEntrada.conteudo,
+          data: hoje, // ✅ data automática
+        });
 
         if (error) throw error;
-        alert('Entrada salva com sucesso!');
       }
 
-      // Recarregar dados e resetar formulário
       await carregarDados();
-      setMostrarFormulario(false);
-      setEditandoId(null);
-      setNovaEntrada({
-        titulo: '',
-        conteudo: '',
-        data: new Date().toISOString().split('T')[0]
-      });
-
+      cancelar();
     } catch (error) {
-      console.error('Erro ao salvar entrada:', error);
-      alert('Erro ao salvar: ' + error.message);
+      console.error(error);
+      alert('Erro ao salvar entrada');
     } finally {
       setLoading(false);
     }
   };
 
-  // Editar entrada
   const editarEntrada = (entrada) => {
     setNovaEntrada({
       titulo: entrada.titulo,
       conteudo: entrada.conteudo,
-      data: entrada.data
     });
     setEditandoId(entrada.id);
     setMostrarFormulario(true);
   };
 
-  // Excluir entrada
   const excluirEntrada = async (id) => {
-    if (!confirm('Tem certeza que deseja excluir esta entrada?')) {
-      return;
-    }
+    if (!confirm('Tem certeza que deseja excluir?')) return;
 
     try {
       const { error } = await supabase
@@ -143,138 +119,120 @@ const Diario = () => {
 
       if (error) throw error;
 
-      alert('Entrada excluída com sucesso!');
       await carregarDados();
     } catch (error) {
-      console.error('Erro ao excluir:', error);
-      alert('Erro ao excluir: ' + error.message);
+      alert('Erro ao excluir');
     }
   };
 
-  // Cancelar edição/criação
   const cancelar = () => {
     setMostrarFormulario(false);
     setEditandoId(null);
     setNovaEntrada({
       titulo: '',
       conteudo: '',
-      data: new Date().toISOString().split('T')[0]
     });
   };
 
-  // Formatar data para exibição
   const formatarData = (dataString) => {
     const data = new Date(dataString);
     return data.toLocaleDateString('pt-BR', {
       weekday: 'long',
-      year: 'numeric',
+      day: 'numeric',
       month: 'long',
-      day: 'numeric'
+      year: 'numeric',
     });
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando seu diário...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin h-10 w-10 border-b-2 border-blue-600 rounded-full" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <button 
-            onClick={() => router.back()}
-            className="flex items-center text-gray-600 hover:text-gray-800"
-          >
-            <span className="text-xl">←</span>
-            <span className="ml-2">Voltar</span>
-          </button>
-          <h1 className="text-3xl font-bold text-gray-800">Meu Diário</h1>
-          <div className="w-20"></div>
-        </div>
+    <div className="min-h-screen bg-[#1E3A8A] flex flex-col items-center justify-start px-4 pt-10">
+        
+              {/* LOGO NO FUNDO AZUL */}
+              <div className="mb-8">
+                <Image
+                  src="/logo/logo-app.svg"
+                  alt="Pai de Primeira"
+                  width={400}
+                  height={200}
+                  className="w-72 mx-auto drop-shadow-md"
+                  priority
+                />
+              </div>
+      <div className="max-w-4xl mx-auto">
 
-        {/* Botão Nova Entrada */}
-        {!mostrarFormulario && (
-          <div className="mb-6">
-            <button
-              onClick={() => setMostrarFormulario(true)}
-              className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors font-semibold flex items-center"
-            >
-              <span className="text-xl mr-2">+</span>
-              Nova Entrada
-            </button>
-          </div>
-        )}
+            {/* HEADER */}
+      <div className="mb-4">
+        {/* TÍTULO */}
+        <h1 className="text-center text-3xl font-bold text-[#F9FAFB] mb-8">
+          Meu Diário
+        </h1>
 
-        {/* Formulário de Nova Entrada */}
+  {/* BOTÕES */}
+  <div className="flex flex-col sm:flex-row gap-4 sm:justify-between">
+    <button
+      onClick={() => router.back()}
+      className="bg-green-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-400"
+    >
+      Voltar
+    </button>
+
+    {!mostrarFormulario && (
+      <button
+        onClick={() => setMostrarFormulario(true)}
+        className="bg-green-500 text-white px-6 py-1 rounded-xl font-semibold hover:bg-blue-400"
+      >
+        + Nova Reflexão
+      </button>
+    )}
+  </div>
+</div>
+
         {mostrarFormulario && (
-          <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-            <h2 className="text-xl font-semibold mb-4">
-              {editandoId ? 'Editar Entrada' : 'Nova Entrada no Diário'}
+          <div className="bg-[#1E3A8A] rounded-2xl p-6 mb-8 shadow-sm">
+            <h2 className="text-[#F9FAFB] font-semibold mb-4 ">
+              {editandoId ? 'Editar Entrada' : 'Nova Entrada'}
             </h2>
-            
+
             <form onSubmit={salvarEntrada} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Data
-                </label>
-                <input
-                  type="date"
-                  value={novaEntrada.data}
-                  onChange={(e) => setNovaEntrada({...novaEntrada, data: e.target.value})}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
+              <input
+                type="text"
+                placeholder="Título"
+                value={novaEntrada.titulo}
+                onChange={(e) =>
+                  setNovaEntrada({ ...novaEntrada, titulo: e.target.value })
+                }
+                className="w-full p-3 border rounded-lg"
+              />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Título
-                </label>
-                <input
-                  type="text"
-                  value={novaEntrada.titulo}
-                  onChange={(e) => setNovaEntrada({...novaEntrada, titulo: e.target.value})}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Dê um título para esta entrada..."
-                  required
-                />
-              </div>
+              <textarea
+                rows={7}
+                placeholder="Escreva livremente..."
+                value={novaEntrada.conteudo}
+                onChange={(e) =>
+                  setNovaEntrada({ ...novaEntrada, conteudo: e.target.value })
+                }
+                className="w-full p-3 border rounded-lg resize-none"
+              />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Conteúdo
-                </label>
-                <textarea
-                  value={novaEntrada.conteudo}
-                  onChange={(e) => setNovaEntrada({...novaEntrada, conteudo: e.target.value})}
-                  rows={8}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                  placeholder="Escreva seus pensamentos, alegrias, frustrações, reflexões..."
-                  required
-                />
-              </div>
-
-              <div className="flex space-x-4">
+              <div className="flex gap-4">
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 disabled:bg-blue-300 transition-colors font-semibold"
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg"
                 >
-                  {loading ? 'Salvando...' : (editandoId ? 'Atualizar' : 'Salvar Entrada')}
+                  Salvar
                 </button>
-                
                 <button
                   type="button"
                   onClick={cancelar}
-                  className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors font-semibold"
+                  className="bg-gray-200 px-6 py-2 rounded-lg"
                 >
                   Cancelar
                 </button>
@@ -283,73 +241,101 @@ const Diario = () => {
           </div>
         )}
 
-        {/* Lista de Entradas */}
         <div className="space-y-6">
-          {entradas.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-              <div className="text-6xl mb-4">📔</div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                Seu diário está vazio
+          {entradas.map((entrada) => (
+            <div
+              key={entrada.id}
+              onClick={() => setEntradaSelecionada(entrada)}
+              className="bg-white p-6 rounded-2xl shadow-sm cursor-pointer hover:shadow-md transition"
+            >
+              <h3 className="text-xl font-semibold text-gray-800">
+                {entrada.titulo}
               </h3>
-              <p className="text-gray-500 mb-4">
-                Comece escrevendo sua primeira entrada para registrar seus pensamentos e sentimentos.
+              <p className="text-sm text-gray-500 mb-2">
+                {formatarData(entrada.data)}
               </p>
-              <button
-                onClick={() => setMostrarFormulario(true)}
-                className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors"
-              >
-                Escrever Primeira Entrada
-              </button>
-            </div>
-          ) : (
-            entradas.map((entrada) => (
-              <div key={entrada.id} className="bg-white rounded-xl shadow-sm p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-1">
-                      {entrada.titulo}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {formatarData(entrada.data)}
-                    </p>
-                  </div>
-                  
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => editarEntrada(entrada)}
-                      className="text-blue-500 hover:text-blue-700 p-2"
-                      title="Editar"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      onClick={() => excluirEntrada(entrada.id)}
-                      className="text-red-500 hover:text-red-700 p-2"
-                      title="Excluir"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="prose max-w-none">
-                  <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                    {entrada.conteudo}
-                  </p>
-                </div>
-                
-                {entrada.updated_at && (
-                  <p className="text-xs text-gray-400 mt-4">
-                    Última edição: {new Date(entrada.updated_at).toLocaleString('pt-BR')}
-                  </p>
-                )}
+
+              <p className="text-gray-600 text-sm line-clamp-3">
+                {entrada.conteudo}
+              </p>
+
+              <p className="text-blue-600 text-sm mt-2 font-medium">
+                Ler mais →
+              </p>
+
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    editarEntrada(entrada);
+                  }}
+                  className="text-blue-600"
+                >
+                  ✏️
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    excluirEntrada(entrada.id);
+                  }}
+                  className="text-red-600"
+                >
+                  🗑️
+                </button>
               </div>
-            ))
-          )}
+            </div>
+          ))}
         </div>
       </div>
+
+      {/* Modal de leitura */}
+      {entradaSelecionada && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
+          <div className="bg-white max-w-2xl w-full rounded-2xl p-6 shadow-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h2 className="text-2xl font-bold">
+                  {entradaSelecionada.titulo}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  {formatarData(entradaSelecionada.data)}
+                </p>
+              </div>
+
+              <button
+                onClick={() => setEntradaSelecionada(null)}
+                className="text-xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+              {entradaSelecionada.conteudo}
+            </p>
+
+            <div className="flex justify-end gap-4 mt-6">
+              <button
+                onClick={() => {
+                  setEntradaSelecionada(null);
+                  editarEntrada(entradaSelecionada);
+                }}
+                className="bg-blue-600 text-white px-5 py-2 rounded-lg"
+              >
+                Editar
+              </button>
+
+              <button
+                onClick={() => setEntradaSelecionada(null)}
+                className="bg-gray-200 px-5 py-2 rounded-lg"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
-
-export default Diario;
+}

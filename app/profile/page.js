@@ -1,15 +1,26 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabaseBrowser } from '../../lib/supabase/client';
+'use client'
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { supabaseBrowser } from '../../lib/supabase/client'
+import Image from 'next/image'
 
-const supabase = supabaseBrowser();
+const supabase = supabaseBrowser()
 
 const Profile = () => {
-  const router = useRouter();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
+  const router = useRouter()
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [uploading, setUploading] = useState(false)
+
+  const [openSection, setOpenSection] = useState(null)
+
+  const [profileMeta, setProfileMeta] = useState({
+    stage: 'gestante',
+    event_date: '',
+    base_week: null,
+    base_week_date: null,
+  })
+
   const [userData, setUserData] = useState({
     nome: '',
     data_nascimento: '',
@@ -17,283 +28,284 @@ const Profile = () => {
     data_nascimento_esposa: '',
     tem_outros_filhos: false,
     foto_url: null,
-  });
-  const [filhos, setFilhos] = useState([]);
-  const [novoFilho, setNovoFilho] = useState({ nome: '', data_nascimento: '' });
-  const [imageKey, setImageKey] = useState(0);
+  })
+
+  const [filhos, setFilhos] = useState([])
+  const [novoFilho, setNovoFilho] = useState({ nome: '', data_nascimento: '' })
+  const [imageKey, setImageKey] = useState(0)
+
+  const toggleSection = (section) => {
+    setOpenSection(openSection === section ? null : section)
+  }
 
   // ==================== UPLOAD DE FOTO ====================
 
   const handleFileSelect = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+    const file = event.target.files[0]
+    if (!file || !user) return
 
     try {
-      setUploading(true);
-      
-      // Fazer upload para o Supabase Storage
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      const filePath = `profile-photos/${fileName}`;
+      setUploading(true)
 
-      const { error: uploadError } = await supabase.storage
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`
+      const filePath = `profile-photos/${fileName}`
+
+      const { error } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file);
+        .upload(filePath, file, { upsert: true })
 
-      if (uploadError) throw uploadError;
+      if (error) throw error
 
-      // Obter URL pública
-      const { data: { publicUrl } } = supabase.storage
+      const { data } = supabase.storage
         .from('avatars')
-        .getPublicUrl(filePath);
+        .getPublicUrl(filePath)
 
-      // Atualizar banco de dados
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ foto_url: publicUrl })
-        .eq('id', user.id);
-
-      if (updateError) throw updateError;
-
-      // Atualizar estado local
-      const timestamp = Date.now();
-      setUserData(prev => ({
-        ...prev,
-        foto_url: `${publicUrl}?t=${timestamp}`
-      }));
-      
-      setImageKey(prev => prev + 1);
-
-      alert('Foto atualizada com sucesso!');
-
-    } catch (error) {
-      console.error('Erro:', error);
-      alert('Erro ao fazer upload da foto: ' + error.message);
-    } finally {
-      setUploading(false);
-      event.target.value = '';
-    }
-  };
-
-  const handleRemovePhoto = async () => {
-    if (!userData.foto_url) return;
-
-    try {
-      setUploading(true);
-      
-      const baseUrl = userData.foto_url.split('?')[0];
-      const urlParts = baseUrl.split('/');
-      const fileName = urlParts[urlParts.length - 1];
-      const filePath = `profile-photos/${fileName}`;
-
-      // Deletar do storage
-      await supabase.storage
-        .from('avatars')
-        .remove([filePath]);
-
-      // Remover URL do perfil
       await supabase
         .from('profiles')
-        .update({ foto_url: null })
-        .eq('id', user.id);
+        .update({ foto_url: data.publicUrl })
+        .eq('id', user.id)
 
-      // Atualizar estado
-      setUserData(prev => ({ ...prev, foto_url: null }));
-      setImageKey(prev => prev + 1);
-      
-      alert('Foto removida com sucesso!');
-      
-    } catch (error) {
-      console.error('Erro ao remover foto:', error);
-      alert('Erro ao remover foto: ' + error.message);
+      setUserData(prev => ({
+        ...prev,
+        foto_url: `${data.publicUrl}?t=${Date.now()}`
+      }))
+
+      setImageKey(prev => prev + 1)
+
+    } catch {
+      alert('Erro ao enviar foto')
     } finally {
-      setUploading(false);
+      setUploading(false)
+      event.target.value = ''
     }
-  };
+  }
 
-  // ==================== FUNCIONALIDADE DE FILHOS ====================
-
-  const adicionarFilho = async () => {
-    if (!novoFilho.nome.trim() || !user) {
-      alert('Por favor, digite o nome do filho');
-      return;
-    }
+  const handleRemovePhoto = async () => {
+    if (!userData.foto_url || !user) return
 
     try {
-      const { data, error } = await supabase
-        .from('filhos')
-        .insert({
-          user_id: user.id,
-          nome: novoFilho.nome,
-          data_nascimento: novoFilho.data_nascimento,
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.log('Tabela filhos não configurada:', error);
-        alert('Funcionalidade de filhos ainda não configurada');
-        return;
-      }
-
-      setFilhos([...filhos, data]);
-      setNovoFilho({ nome: '', data_nascimento: '' });
-      alert('Filho adicionado com sucesso!');
-      
-    } catch (error) {
-      console.error('Erro ao adicionar filho:', error);
-      alert('Erro ao adicionar filho: ' + error.message);
+      setUploading(true)
+      await supabase.from('profiles').update({ foto_url: null }).eq('id', user.id)
+      setUserData(prev => ({ ...prev, foto_url: null }))
+      setImageKey(prev => prev + 1)
+    } finally {
+      setUploading(false)
     }
-  };
+  }
 
-  const removerFilho = async (id) => {
-    try {
-      const { error } = await supabase
-        .from('filhos')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
-      setFilhos(filhos.filter(filho => filho.id !== id));
-      alert('Filho removido com sucesso!');
-      
-    } catch (error) {
-      console.error('Erro ao remover filho:', error);
-      alert('Erro ao remover filho: ' + error.message);
-    }
-  };
-
-  // ==================== CARREGAR DADOS ====================
+  // ==================== LOAD ====================
 
   useEffect(() => {
-    loadUserData();
-  }, []);
+    loadUserData()
+  }, [])
 
   const loadUserData = async () => {
-    try {
-      setLoading(true);
-      
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+    setLoading(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    setUser(user)
+    if (!user) return
 
-      if (user) {
-        // Carregar perfil
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single()
 
-        if (profile) {
-          const fotoUrl = profile.foto_url 
-            ? `${profile.foto_url}?load=${Date.now()}`
-            : null;
+    if (profile) {
+      setUserData({
+        nome: profile.nome || '',
+        data_nascimento: profile.data_nascimento || '',
+        nome_esposa: profile.nome_esposa || '',
+        data_nascimento_esposa: profile.data_nascimento_esposa || '',
+        tem_outros_filhos: profile.tem_outros_filhos || false,
+        foto_url: profile.foto_url || null,
+      })
 
-          setUserData({
-            nome: profile.nome || '',
-            data_nascimento: profile.data_nascimento || '',
-            nome_esposa: profile.nome_esposa || '',
-            data_nascimento_esposa: profile.data_nascimento_esposa || '',
-            tem_outros_filhos: profile.tem_outros_filhos || false,
-            foto_url: fotoUrl,
-          });
-        }
-
-        // Carregar filhos
-        try {
-          const { data: filhosData, error: filhosError } = await supabase
-            .from('filhos')
-            .select('*')
-            .eq('user_id', user.id);
-
-          if (!filhosError && filhosData) {
-            setFilhos(filhosData);
-          }
-        } catch (e) {
-          console.log('Tabela filhos não existe ainda');
-        }
-      }
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    
-    if (!user) {
-      alert('Usuário não autenticado');
-      return;
+      setProfileMeta({
+        stage: profile.stage,
+        event_date: profile.event_date || '',
+        base_week: profile.base_week,
+        base_week_date: profile.base_week_date,
+      })
     }
 
-    try {
-      setLoading(true);
+    const { data: filhosData } = await supabase
+      .from('filhos')
+      .select('*')
+      .eq('user_id', user.id)
 
-      const profileData = {
-        id: user.id,
-        nome: userData.nome,
-        data_nascimento: userData.data_nascimento,
-        nome_esposa: userData.nome_esposa,
-        data_nascimento_esposa: userData.data_nascimento_esposa,
-        tem_outros_filhos: userData.tem_outros_filhos,
-        updated_at: new Date().toISOString(),
-      };
+    if (filhosData) setFilhos(filhosData)
+    setLoading(false)
+  }
 
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert(profileData);
+  // ==================== SAVE ====================
 
-      if (profileError) {
-        throw profileError;
-      }
+const handleSave = async (e) => {
+  e.preventDefault()
 
-      alert('Perfil atualizado com sucesso!');
-      router.push('/dashboard');
-      
-    } catch (error) {
-      console.error('Erro ao salvar perfil:', error);
-      alert('Erro ao salvar perfil: ' + error.message);
-    } finally {
-      setLoading(false);
+  console.log('🟢 handleSave disparou')
+  console.log('profileMeta:', profileMeta)
+  console.log('user:', user)
+
+  if (!user?.id) {
+    alert('Usuário não encontrado')
+    return
+  }
+
+  let baseWeek = profileMeta.base_week
+  let baseWeekDate = profileMeta.base_week_date
+
+  if (profileMeta.event_date) {
+    const hoje = new Date()
+    const evento = new Date(profileMeta.event_date)
+
+    if (profileMeta.stage === 'bebe') {
+      baseWeek = Math.min(52, Math.floor((hoje - evento) / 604800000) + 1)
+    } else {
+      const dum = new Date(evento)
+      dum.setDate(dum.getDate() - 280)
+      baseWeek = Math.min(42, Math.floor((hoje - dum) / 604800000) + 1)
     }
-  };
+
+    baseWeekDate = hoje.toISOString().split('T')[0]
+  }
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .update({
+      stage: profileMeta.stage,
+      event_date: profileMeta.event_date,
+      base_week: baseWeek,
+      base_week_date: baseWeekDate,
+      current_week: baseWeek,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', user.id)
+    .select()
+
+  console.log('🧠 UPDATE RESULT:', data, error)
+
+  if (error) {
+    alert(error.message)
+    return
+  }
+
+  if (!data || data.length === 0) {
+    alert('Nada foi atualizado (RLS ou ID incorreto)')
+    return
+  }
+
+  alert('Perfil atualizado com sucesso!')
+  router.push('/dashboard')
+}
+
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Carregando…</div>
+  }
 
   // ==================== RENDER ====================
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
-        </div>
-      </div>
-    );
+  const Section = ({ id, title, children }) => (
+    <div className="bg-white rounded-xl shadow-sm">
+      <button
+        type="button"
+        onClick={() => toggleSection(id)}
+        className="w-full flex justify-between items-center p-6 font-semibold text-lg"
+      >
+        {title}
+        <span>{openSection === id ? '−' : '+'}</span>
+      </button>
+
+      {openSection === id && (
+        <div className="px-6 pb-6">{children}</div>
+      )}
+    </div>
+  )
+
+
+  // ==================== FILHOS ====================
+
+const adicionarFilho = async () => {
+  if (!novoFilho.nome || !novoFilho.data_nascimento || !user) {
+    alert('Preencha nome e data de nascimento do filho')
+    return
   }
 
+  const { data, error } = await supabase
+    .from('filhos')
+    .insert({
+      user_id: user.id,
+      nome: novoFilho.nome,
+      data_nascimento: novoFilho.data_nascimento,
+    })
+    .select()
+    .single()
+
+  if (error) {
+    alert('Erro ao adicionar filho')
+    return
+  }
+
+  setFilhos(prev => [...prev, data])
+  setNovoFilho({ nome: '', data_nascimento: '' })
+}
+
+const removerFilho = async (id) => {
+  const { error } = await supabase
+    .from('filhos')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    alert('Erro ao remover filho')
+    return
+  }
+
+  setFilhos(prev => prev.filter(filho => filho.id !== id))
+}
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-2xl mx-auto px-4">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <button 
+    <div className="min-h-screen bg-[#1E3A8A] py-8">
+      {/* LOGO NO FUNDO AZUL */}
+                <div className="mb-8">
+                  <Image
+                    src="/logo/logo-app.svg"
+                    alt="Pai de Primeira"
+                    width={400}
+                    height={200}
+                    className="w-72 mx-auto drop-shadow-md"
+                    priority
+                  />
+                </div>
+      <div className="max-w-2xl mx-auto px-4 space-y-6">
+
+        <div className="flex items-center justify-between">
+          <button
             onClick={() => router.back()}
-            className="flex items-center text-gray-600 hover:text-gray-800"
+            className="bg-green-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-400"
           >
-            <span className="text-xl">←</span>
-            <span className="ml-2">Voltar</span>
+            Voltar
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Editar Perfil</h1>
-          <div className="w-20"></div>
+          <h1 className="text-2xl font-bold text-[#F9FAFB]">Editar Perfil</h1>
+          <div />
         </div>
 
         <form onSubmit={handleSave} className="space-y-6">
-          {/* Upload de Foto */}
+
+          <Section id="bebê" title="Atualize as Informações">
+            <input
+              type="date"
+              value={profileMeta.event_date}
+              onChange={(e) => setProfileMeta({ ...profileMeta, event_date: e.target.value })}
+              className="w-full p-3 border rounded-lg"
+            />
+          </Section>
+
+          <Section id="foto" title="Foto de Perfil">
+            {/* Upload de Foto */}
           <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-lg font-semibold mb-4">Foto de Perfil</h2>
             <div className="flex items-center space-x-6">
               
               {/* Preview da Imagem */}
@@ -347,13 +359,14 @@ const Profile = () => {
               </div>
             </div>
           </div>
+          </Section>
 
-          {/* Dados Pessoais */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-lg font-semibold mb-4">Seus Dados</h2>
+          <Section id="dados" title="Seus Dados">
+            {/* Dados Pessoais */}
+          <div className="bg-white rounded-xl shadow-sm p-2">
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-">
                   Seu Nome
                 </label>
                 <input
@@ -378,14 +391,15 @@ const Profile = () => {
               </div>
             </div>
           </div>
+          </Section>
 
-          {/* Dados da Companheira */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-lg font-semibold mb-4">Dados da Companheira</h2>
+          <Section id="companheira" title="Dados da Gestante">
+          {/* Dados da Gestante */}
+          <div className="bg-white rounded-xl shadow-sm p-2">
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nome da Companheira
+                  Nome da Gestante
                 </label>
                 <input
                   type="text"
@@ -409,21 +423,25 @@ const Profile = () => {
               </div>
             </div>
           </div>
+          </Section>
 
-          {/* Outros Filhos */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Outros Filhos</h2>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">Tem outros filhos?</span>
-                <input
-                  type="checkbox"
-                  checked={userData.tem_outros_filhos}
-                  onChange={(e) => setUserData({...userData, tem_outros_filhos: e.target.checked})}
-                  className="w-4 h-4 text-blue-500 rounded focus:ring-blue-500"
-                />
-              </div>
+          <Section id="filhos" title="Outros Filhos">
+            <div className="flex items-center gap-2 mb-4">
+              <input
+                type="checkbox"
+                checked={userData.tem_outros_filhos}
+                onChange={(e) => {
+                  setUserData({ ...userData, tem_outros_filhos: e.target.checked })
+                  setOpenSection('filhos')
+                }}
+              />
+              <span>Tem outros filhos?</span>
             </div>
+
+            {userData.tem_outros_filhos && (
+              <div className="space-y-4">
+          {/* Outros Filhos */}
+          <div className="bg-white rounded-xl shadow-sm p-2">
 
             {userData.tem_outros_filhos && (
               <div className="space-y-4">
@@ -475,19 +493,21 @@ const Profile = () => {
               </div>
             )}
           </div>
+              </div>
+            )}
+          </Section>
 
-          {/* Botão Salvar */}
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 text-white py-4 rounded-xl hover:bg-blue-600 disabled:bg-blue-300 transition-colors font-semibold text-lg"
+            className="w-full bg-blue-500 text-white py-4 rounded-xl font-semibold text-lg"
           >
-            {loading ? 'Salvando...' : 'Salvar Alterações'}
+            Salvar Alterações
           </button>
+
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Profile;
+export default Profile
