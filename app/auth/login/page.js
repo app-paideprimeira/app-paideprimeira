@@ -70,7 +70,7 @@ export default function LoginPage() {
 >
 
       {/* LOGO NO FUNDO AZUL */}
-      <div className="mb-16 p-2">
+      <div className="mb-8">
         <Image
           src="/logo/logo-app.svg"
           alt="Pai de Primeira"
