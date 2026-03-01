@@ -528,17 +528,15 @@
       "descricao": "Mesmo que nada pareça diferente ainda, algo importante já começou. Essa semana é mais sobre expectativa do que sobre ação. Para muitos pais, é quando a ficha começa a cair — junto com dúvidas, medo e até um certo silêncio interno.",
       "dica": "Não tente planejar tudo agora. Foque em entender o que está acontecendo e esteja disponível.",
       "acompanhe": "É comum não sentir nada de concreto ainda. Isso não diminui a importância desse começo.",
-      "imagens": ["https://via.placeholder.com/150"],
       "bgColor": "#E0F7FA",
       "textColor": "#006064"
     },
     "2": {
       "titulo": "Semana 2 da gestação",
       "empatia": "Se você está ansioso sem saber exatamente por quê, faz parte.",
-      "descricao": "O corpo começa a se preparar para grandes mudanças, mesmo que ainda não seja visível. Para você, pai, essa fase costuma vir acompanhada de uma sensação estranha: a vida segue normal, mas algo importante já está em andamento.",
+      "descricao": "O corpo da gestante começa a se preparar para grandes mudanças, mesmo que ainda não seja visível. Para você, pai, essa fase costuma vir acompanhada de uma sensação estranha: a vida segue normal, mas algo importante já está em andamento.",
       "dica": "Comece a observar mais e falar menos. Às vezes, estar atento já é uma grande ajuda.",
       "acompanhe": "A ansiedade pode aparecer antes mesmo das confirmações. Isso é mais comum do que parece.",
-      "imagens": ["https://via.placeholder.com/150"],
       "bgColor": "#FFF3E0",
       "textColor": "#E65100"
     },
@@ -547,18 +545,16 @@
       "empatia": "É normal se sentir meio fora do controle nessa fase.",
       "descricao": "As coisas começam a acontecer em um nível que você não vê, mas sente. Muitos pais relatam aqui uma mistura de empolgação com insegurança. Não saber exatamente qual é o seu papel agora pode gerar desconforto.",
       "dica": "Mostre interesse genuíno. Perguntar como o outro está se sentindo já cria conexão.",
-      "acompanhe": "Cansaço e mudanças de humor podem começar a aparecer do outro lado — e te pegar de surpresa.",
-      "imagens": [],
+      "acompanhe": "Cansaço, sono em excesso e mudanças de humor podem começar a aparecer do outro lado — e te pegar de surpresa, favoreça o ambiente para ela descansar.",
       "bgColor": "#F3E5F5",
       "textColor": "#6A1B9A"
     },
     "4": {
       "titulo": "Semana 4 da gestação",
       "empatia": "Você não precisa ter todas as respostas agora.",
-      "descricao": "A confirmação da gestação costuma tornar tudo mais real. Com isso, surgem perguntas sobre futuro, dinheiro, rotina e relacionamento. É comum sentir o peso da responsabilidade antes mesmo de saber como lidar com ela.",
-      "dica": "Evite minimizar sentimentos — os seus e os do outro. Escutar sem corrigir já ajuda muito.",
+      "descricao": "A confirmação da gestação costuma tornar tudo mais real. Com isso, podem surgir perguntas sobre futuro, dinheiro, rotina e relacionamento. É comum sentir o peso da responsabilidade antes mesmo de saber como lidar com ela.",
+      "dica": "Evite minimizar sentimentos — os seus e os da outra pessoa. Escutar sem corrigir já ajuda.",
       "acompanhe": "Oscilações emocionais podem surgir. Nem tudo precisa ser resolvido imediatamente.",
-      "imagens": [],
       "bgColor": "#FFFDE7",
       "textColor": "#F57F17"
     },
@@ -566,9 +562,8 @@
       "titulo": "Semana 5 da gestação",
       "empatia": "Se o cansaço bateu antes mesmo do bebê chegar, você não está sozinho.",
       "descricao": "Agora as mudanças começam a impactar mais o dia a dia. Para muitos pais, surge a sensação de precisar ser forte o tempo todo. Mas força também é saber reconhecer quando algo está difícil.",
-      "dica": "Assuma pequenas responsabilidades práticas. Isso traz segurança para os dois.",
+      "dica": "Assuma pequenas responsabilidades práticas. Isso traz segurança para os dois, se não sabe cozinhar, aprenda.",
       "acompanhe": "Náuseas, indisposição e sensibilidade emocional podem aumentar — e afetar a dinâmica da casa.",
-      "imagens": [],
       "bgColor": "#E8F5E9",
       "textColor": "#1B5E20"
     },
@@ -579,7 +574,6 @@
       "descricao": "Os sintomas costumam ficar mais evidentes agora, e a rotina pode começar a mudar. Para muitos pais, surge a sensação de estar sempre tentando ajudar, mas nunca do jeito certo. Isso não te torna ausente — te torna humano.",
       "dica": "Pergunte antes de agir. Às vezes, apoio não é solução, é presença.",
       "acompanhe": "Náuseas, sono excessivo e irritação podem se intensificar.",
-      "imagens": [],
       "bgColor": "#E1F5FE",
       "textColor": "#01579B"
     },
@@ -589,7 +583,6 @@
       "descricao": "O corpo trabalha em ritmo acelerado, e o impacto emocional acompanha. É comum o pai se sentir de fora ou sem função clara. Essa sensação não define seu papel — ela faz parte do processo.",
       "dica": "Cuide do ambiente. Pequenos gestos trazem conforto real.",
       "acompanhe": "Enjoo e sensibilidade emocional podem dominar os dias.",
-      "imagens": [],
       "bgColor": "#FCE4EC",
       "textColor": "#880E4F"
     },
@@ -598,28 +591,25 @@
       "empatia": "Nem tudo precisa ser resolvido agora.",
       "descricao": "A gravidez começa a ocupar mais espaço nos pensamentos — e nas conversas. Muitos pais sentem a pressão de 'dar conta' de tudo, mesmo sem saber por onde começar.",
       "dica": "Organize pequenas coisas práticas. Ordem externa ajuda a acalmar a mente.",
-      "acompanhe": "Cansaço extremo e variações de humor podem continuar.",
-      "imagens": [],
+      "acompanhe": "Se a ansiedade de saber o sexo do bebê estiver grande, nessa semana pode ser feito o exame de sexagem fetal",
       "bgColor": "#EDE7F6",
       "textColor": "#4527A0"
     },
     "9": {
       "titulo": "Semana 9 da gestação",
       "empatia": "Você não precisa ser perfeito para ser presente.",
-      "descricao": "Essa fase pode trazer mais insegurança do que alegria visível. Pensamentos sobre dinheiro, futuro e responsabilidade começam a pesar. Isso não é fraqueza — é consciência.",
+      "descricao": "Essa fase pode trazer mais insegurança do que alegria visível. Pensamentos sobre dinheiro, futuro e responsabilidade podem começam a pesar. Isso não é fraqueza — é consciência.",
       "dica": "Converse sobre medos, não só sobre planos.",
-      "acompanhe": "O emocional pode oscilar bastante, sem motivo aparente.",
-      "imagens": [],
+      "acompanhe": "O emocional pode oscilar bastante, sem motivo real aparente.",
       "bgColor": "#FFF8E1",
       "textColor": "#FF6F00"
     },
     "10": {
       "titulo": "Semana 10 da gestação",
       "empatia": "Se você está cansado antes mesmo de tudo começar, é compreensível.",
-      "descricao": "A gravidez já influencia decisões e expectativas. Muitos pais começam a sentir que algo da vida antiga está ficando para trás — e isso pode gerar conflito interno.",
+      "descricao": "A gravidez já influencia decisões e expectativas. Muitos pais começam a sentir que algo da vida antiga está ficando para trás — e isso bom, mas pode gerar conflito interno.",
       "dica": "Reconheça o que está mudando, sem culpa.",
-      "acompanhe": "Alguns sintomas podem estabilizar, outros ainda persistem.",
-      "imagens": [],
+      "acompanhe": "Fique ligado para marcar os exames necessários na próxima semana.",
       "bgColor": "#E0F2F1",
       "textColor": "#004D40"
     },
@@ -628,8 +618,7 @@
       "empatia": "Nem toda empolgação vem no tempo que a gente espera.",
       "descricao": "Enquanto para alguns tudo parece mais leve agora, para outros a ansiedade continua. Comparar experiências só aumenta a pressão — cada jornada é única.",
       "dica": "Evite comparações. O que funciona para outros pode não servir para vocês.",
-      "acompanhe": "O corpo começa a se adaptar, mas o emocional ainda pede cuidado.",
-      "imagens": [],
+      "acompanhe": "O corpo pode começar a se adaptar, mas o emocional ainda pede cuidado.",
       "bgColor": "#F1F8E9",
       "textColor": "#33691E"
     },
@@ -639,7 +628,6 @@
       "descricao": "Muitas pessoas consideram esse um marco importante. Com ele, vem um alívio, mas também novas preocupações. É normal sentir que a responsabilidade só aumenta.",
       "dica": "Esteja presente nas decisões, mesmo quando não souber opinar.",
       "acompanhe": "A energia pode começar a voltar aos poucos.",
-      "imagens": [],
       "bgColor": "#FFF3E0",
       "textColor": "#EF6C00"
     },
@@ -647,9 +635,8 @@
       "titulo": "Semana 13 da gestação",
       "empatia": "A jornada está andando, mesmo quando parece lenta.",
       "descricao": "O segundo trimestre se aproxima, trazendo expectativa de dias mais tranquilos. Para o pai, pode ser um bom momento para respirar e reorganizar pensamentos.",
-      "dica": "Use esse período para alinhar expectativas como casal.",
+      "dica": "Use esse período para alinhar expectativas como casal para o futuro da sua família.",
       "acompanhe": "Alguns sintomas diminuem, outros dão espaço ao cansaço mental.",
-      "imagens": [],
       "bgColor": "#E3F2FD",
       "textColor": "#0D47A1"
     },
@@ -659,7 +646,6 @@
       "descricao": "Com menos desconfortos físicos, a atenção se volta mais para o futuro. Planejamento começa a ganhar força, junto com a preocupação de fazer tudo certo.",
       "dica": "Planeje, mas aceite que nem tudo sairá como o esperado.",
       "acompanhe": "O humor tende a estabilizar, mas oscilações ainda podem acontecer.",
-      "imagens": [],
       "bgColor": "#F9FBE7",
       "textColor": "#827717"
     },
@@ -669,7 +655,6 @@
       "descricao": "Essa fase marca uma transição importante. O bebê cresce, e a realidade da paternidade começa a ficar mais concreta. Muitos pais sentem orgulho misturado com medo — e isso é parte do vínculo se formando.",
       "dica": "Compartilhe responsabilidades e sentimentos.",
       "acompanhe": "A rotina pode começar a encontrar um novo equilíbrio.",
-      "imagens": [],
       "bgColor": "#E8F5E9",
       "textColor": "#2E7D32"
     },
@@ -679,7 +664,6 @@
       "descricao": "O crescimento do bebê começa a ficar mais evidente, e a gravidez entra numa fase mais visível para o mundo. Para o pai, pode surgir a sensação de que agora não tem mais volta. E não tem mesmo — mas isso não precisa ser assustador.",
       "dica": "Aceite o compromisso sem tentar controlar cada detalhe.",
       "acompanhe": "Mais energia pode aparecer, junto com maior disposição.",
-      "imagens": [],
       "bgColor": "#E1F5FE",
       "textColor": "#0277BD"
     },
@@ -689,7 +673,6 @@
       "descricao": "O dia a dia começa a encontrar um novo ritmo. Muitos pais entram no modo automático: trabalho, casa, preocupação. Cuidado para não se desconectar emocionalmente tentando ser apenas funcional.",
       "dica": "Pergunte como ela está se sentindo — de verdade.",
       "acompanhe": "O corpo segue se adaptando às mudanças.",
-      "imagens": [],
       "bgColor": "#FCE4EC",
       "textColor": "#AD1457"
     },
@@ -699,7 +682,6 @@
       "descricao": "Alguns pais começam a se imaginar no papel com mais clareza. Outros travam. Nenhuma das duas reações é errada. A paternidade não começa com certeza, começa com tentativa.",
       "dica": "Não esconda o medo atrás de silêncio.",
       "acompanhe": "O bebê cresce rápido e os exames ficam mais frequentes.",
-      "imagens": [],
       "bgColor": "#EDE7F6",
       "textColor": "#512DA8"
     },
@@ -709,7 +691,6 @@
       "descricao": "Essa fase pode trazer mais conversas sobre futuro, decisões e mudanças práticas. Às vezes, ouvir é mais importante do que ter respostas.",
       "dica": "Escuta ativa vale mais do que conselhos.",
       "acompanhe": "Movimentos do bebê podem começar a ser percebidos.",
-      "imagens": [],
       "bgColor": "#FFFDE7",
       "textColor": "#F9A825"
     },
@@ -719,7 +700,6 @@
       "descricao": "Chegar até aqui é um marco, mas não significa que tudo esteja resolvido. O peso da responsabilidade pode aumentar exatamente agora, quando todos esperam tranquilidade.",
       "dica": "Reconheça o esforço que vocês já fizeram.",
       "acompanhe": "Exames importantes costumam acontecer nesse período.",
-      "imagens": [],
       "bgColor": "#E0F2F1",
       "textColor": "#00695C"
     },
@@ -729,17 +709,15 @@
       "descricao": "A ideia de preparo pode virar uma cobrança interna constante. A verdade é que ninguém se sente totalmente pronto — e mesmo assim dá certo.",
       "dica": "Troque cobrança por presença.",
       "acompanhe": "A barriga cresce e o conforto pode diminuir.",
-      "imagens": [],
       "bgColor": "#F1F8E9",
       "textColor": "#558B2F"
     },
     "22": {
       "titulo": "Semana 22 da gestação",
       "empatia": "Nem todo pai sente conexão imediata.",
-      "descricao": "Se você ainda não sente aquele vínculo forte que todo mundo fala, saiba: isso não te define. Para muitos pais, a conexão vem com o tempo, com o cuidado diário.",
-      "dica": "Permita-se sentir no seu tempo.",
+      "descricao": "Se você ainda não sente aquele vínculo forte que todo mundo fala, saiba: isso não te define. Para muitos pais, a conexão vem com o tempo, as vezes somente após o nascimento, com o cuidado diário.",
+      "dica": "Permita-se sentir no seu tempo, conecte-se com a sua companheira.",
       "acompanhe": "A rotina começa a exigir mais adaptações.",
-      "imagens": [],
       "bgColor": "#FFF3E0",
       "textColor": "#F57C00"
     },
@@ -748,18 +726,16 @@
       "empatia": "Você não está atrasado na sua própria jornada.",
       "descricao": "Comparações com outros pais, outras famílias ou até expectativas internas podem gerar ansiedade. Cada vivência tem seu ritmo — inclusive a sua.",
       "dica": "Silencie comparações sempre que puder.",
-      "acompanhe": "O bebê reage mais a estímulos externos.",
-      "imagens": [],
+      "acompanhe": "O bebê reage mais a estímulos externos, converse com ele.",
       "bgColor": "#E3F2FD",
       "textColor": "#1565C0"
     },
     "24": {
       "titulo": "Semana 24 da gestação",
       "empatia": "Cuidar também é aprender a descansar.",
-      "descricao": "O cansaço mental pode aparecer mesmo quando tudo parece ir bem. Estar atento a isso é parte da responsabilidade — não um sinal de fraqueza.",
-      "dica": "Reserve momentos de pausa real.",
+      "descricao": "O cansaço mental para os dois pode aparecer mesmo quando tudo parece ir bem, seja paciente. Estar atento a isso é parte da responsabilidade — não um sinal de fraqueza.",
+      "dica": "Reserve momentos de pausa real e passeios a dois para relaxar.",
       "acompanhe": "Desconfortos físicos podem aumentar gradualmente.",
-      "imagens": [],
       "bgColor": "#F9FBE7",
       "textColor": "#9E9D24"
     },
@@ -767,19 +743,17 @@
       "titulo": "Semana 25 da gestação",
       "empatia": "Você está construindo algo, mesmo sem perceber.",
       "descricao": "A paternidade começa muito antes do nascimento. Cada conversa difícil, cada preocupação e cada cuidado silencioso já fazem parte dessa construção.",
-      "dica": "Reconheça seu próprio esforço.",
+      "dica": "Reconheça seu próprio esforço, apenas continue.",
       "acompanhe": "O bebê cresce rápido e a rotina segue mudando.",
-      "imagens": [],
       "bgColor": "#E8F5E9",
       "textColor": "#2E7D32"
     },
     "26": {
       "titulo": "Semana 26 da gestação",
       "empatia": "Você não precisa ter todas as respostas agora.",
-      "descricao": "A reta final começa a se desenhar no horizonte. Pensamentos sobre dinheiro, trabalho e mudanças reais na rotina tendem a ficar mais presentes. Isso é responsabilidade, não paranoia.",
+      "descricao": "A reta final começa a se desenhar no horizonte. Pensamentos sobre dinheiro, trabalho e mudanças reais na rotina tendem a ficar mais presentes. Isso é responsabilidade, não paranóia.",
       "dica": "Converse sobre expectativas práticas, não só emoções.",
       "acompanhe": "O bebê responde mais a sons e estímulos.",
-      "imagens": [],
       "bgColor": "#E3F2FD",
       "textColor": "#1565C0"
     },
@@ -789,7 +763,6 @@
       "descricao": "Muitos pais entram num estado de alerta constante. O desafio aqui é não confundir cuidado com controle excessivo.",
       "dica": "Faça o que está ao seu alcance — o resto não depende só de você.",
       "acompanhe": "O crescimento do bebê segue acelerado.",
-      "imagens": [],
       "bgColor": "#F1F8E9",
       "textColor": "#558B2F"
     },
@@ -799,7 +772,6 @@
       "descricao": "O terceiro trimestre começa. A realidade do nascimento fica mais concreta e pode vir acompanhada de ansiedade silenciosa.",
       "dica": "Fale sobre seus medos, nem que seja com alguém de confiança.",
       "acompanhe": "Consultas podem ficar mais frequentes.",
-      "imagens": [],
       "bgColor": "#FFFDE7",
       "textColor": "#F9A825"
     },
@@ -809,7 +781,6 @@
       "descricao": "A cobrança para ser o apoio emocional pode cansar. Cuidar também inclui reconhecer quando você precisa de apoio.",
       "dica": "Permita-se descansar emocionalmente.",
       "acompanhe": "Desconfortos físicos tendem a aumentar.",
-      "imagens": [],
       "bgColor": "#FCE4EC",
       "textColor": "#AD1457"
     },
@@ -819,7 +790,6 @@
       "descricao": "Planos de parto, expectativas e cenários começam a se formar. Eles ajudam, mas não garantem controle.",
       "dica": "Prepare-se, mas mantenha flexibilidade.",
       "acompanhe": "O bebê ganha peso de forma mais intensa.",
-      "imagens": [],
       "bgColor": "#EDE7F6",
       "textColor": "#512DA8"
     },
@@ -829,7 +799,6 @@
       "descricao": "O ritmo pode desacelerar para todos. O desafio é respeitar limites, inclusive os seus.",
       "dica": "Menos cobrança, mais presença.",
       "acompanhe": "Sono pode ficar mais irregular.",
-      "imagens": [],
       "bgColor": "#E0F2F1",
       "textColor": "#00695C"
     },
@@ -839,7 +808,6 @@
       "descricao": "Pequenas decisões do dia a dia já moldam o tipo de pai que você será. Não existe treino melhor do que isso.",
       "dica": "Observe mais, reaja menos.",
       "acompanhe": "Movimentos do bebê ficam bem perceptíveis.",
-      "imagens": [],
       "bgColor": "#FFF3E0",
       "textColor": "#F57C00"
     },

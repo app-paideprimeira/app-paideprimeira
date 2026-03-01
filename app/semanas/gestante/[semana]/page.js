@@ -9,7 +9,6 @@ import UserMenu from "../../../components/UserMenu";
 import WeekCard from "../../../components/WeekCard";
 import { useGoToToday } from "../../../../lib/navigation/useGoToToday";
 import { supabaseBrowser } from "../../../../lib/supabase/client";
-import { registerPush } from "../../../../lib/push/registerPush";
 
 export default function SemanaGestante({ params }) {
   const router = useRouter();
@@ -18,21 +17,23 @@ export default function SemanaGestante({ params }) {
 
   const [showPushPrompt, setShowPushPrompt] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [loadingPush, setLoadingPush] = useState(false);
 
   const semana = Number(params.semana);
   const infoSemana = semanaData.gestante?.[semana];
 
   /* ────────────────────────────────
-     BUSCA USUÁRIO + CONTROLE DO PUSH
+     CONTROLE DO PROMPT DE PUSH
   ──────────────────────────────── */
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     async function init() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
       if (!user) return;
-
       setUserId(user.id);
 
       const { data: profile } = await supabase
@@ -43,7 +44,6 @@ export default function SemanaGestante({ params }) {
 
       if (!profile) return;
 
-      // Só agenda o prompt se ainda não foi mostrado nem ativado
       if (!profile.push_prompt_shown && !profile.push_enabled) {
         const timer = setTimeout(() => {
           setShowPushPrompt(true);
@@ -57,26 +57,40 @@ export default function SemanaGestante({ params }) {
   }, [supabase]);
 
   /* ────────────────────────────────
-     AÇÕES DO PROMPT
+     ATIVA PUSH COM ONESIGNAL
   ──────────────────────────────── */
   async function handleEnablePush() {
-    if (!userId) return;
+    if (!userId || loadingPush) return;
+    setLoadingPush(true);
 
-    const subscription = await registerPush(userId);
+    try {
+      const OneSignal = window.OneSignal;
+      if (!OneSignal) return;
 
-    if (subscription) {
-      await supabase.from("push_notifications").insert(subscription);
+      await OneSignal.Notifications.requestPermission();
+
+      const playerId =
+        await OneSignal.User.PushSubscription.getId();
+
+      if (!playerId) return;
+
+      await OneSignal.login(userId);
+
+      await supabase
+        .from("profiles")
+        .update({
+          push_enabled: true,
+          push_prompt_shown: true,
+          onesignal_player_id: playerId,
+        })
+        .eq("id", userId);
+
+      setShowPushPrompt(false);
+    } catch (err) {
+      console.error("Erro ao ativar push:", err);
+    } finally {
+      setLoadingPush(false);
     }
-
-    await supabase
-      .from("profiles")
-      .update({
-        push_enabled: true,
-        push_prompt_shown: true,
-      })
-      .eq("id", userId);
-
-    setShowPushPrompt(false);
   }
 
   async function handleDismissPush() {
@@ -89,8 +103,6 @@ export default function SemanaGestante({ params }) {
 
     setShowPushPrompt(false);
   }
-
-  /* ──────────────────────────────── */
 
   if (!infoSemana) {
     return (
@@ -115,7 +127,6 @@ export default function SemanaGestante({ params }) {
           className="opacity-90"
           priority
         />
-
         <UserMenu />
       </header>
 
@@ -126,7 +137,9 @@ export default function SemanaGestante({ params }) {
         <div className="flex items-center justify-center gap-3">
           <button
             disabled={semana <= 1}
-            onClick={() => router.push(`/semanas/gestante/${semana - 1}`)}
+            onClick={() =>
+              router.push(`/semanas/gestante/${semana - 1}`)
+            }
             className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition disabled:opacity-40"
             style={{ color: infoSemana.textColor }}
           >
@@ -146,7 +159,9 @@ export default function SemanaGestante({ params }) {
 
           <button
             disabled={semana >= 42}
-            onClick={() => router.push(`/semanas/gestante/${semana + 1}`)}
+            onClick={() =>
+              router.push(`/semanas/gestante/${semana + 1}`)
+            }
             className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition disabled:opacity-40"
             style={{ color: infoSemana.textColor }}
           >
@@ -155,9 +170,7 @@ export default function SemanaGestante({ params }) {
         </div>
       </main>
 
-      {/* ────────────────────────────────
-          PUSH PROMPT
-      ──────────────────────────────── */}
+      {/* PUSH PROMPT */}
       {showPushPrompt && (
         <div className="fixed inset-0 bg-black/40 flex items-end justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-t-2xl p-6 shadow-xl">
@@ -180,9 +193,10 @@ export default function SemanaGestante({ params }) {
 
               <button
                 onClick={handleEnablePush}
+                disabled={loadingPush}
                 className="flex-1 py-2 rounded-xl bg-blue-600 text-white font-semibold"
               >
-                Ativar avisos
+                {loadingPush ? "Ativando..." : "Ativar avisos"}
               </button>
             </div>
           </div>

@@ -22,7 +22,7 @@ export default function UpdatePasswordClient() {
     const accessToken = searchParams.get("access_token");
 
     if (!accessToken) {
-      setError("Link inválido ou expirado. Solicite uma nova recuperação de senha.");
+      setError("Digite sua nova senha e confirme abaixo, ela deve conter ao menos 6 caracteres");
     }
   }, [searchParams]);
 
