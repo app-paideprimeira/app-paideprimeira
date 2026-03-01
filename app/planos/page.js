@@ -2,7 +2,7 @@
 
 // app/planos/page.js
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { supabaseBrowser } from "../../lib/supabase/client";
@@ -54,11 +54,19 @@ const PLANS = [
 ];
 
 export default function PlanosPage() {
+  return (
+    <Suspense>
+      <PlanosContent />
+    </Suspense>
+  );
+}
+
+function PlanosContent() {
   const router       = useRouter();
   const searchParams = useSearchParams();
-  const [userId, setUserId]     = useState(null);
-  const [loading, setLoading]   = useState(null); // planId sendo processado
-  const [error, setError]       = useState(null);
+  const [userId, setUserId]   = useState(null);
+  const [loading, setLoading] = useState(null);
+  const [error, setError]     = useState(null);
   const failed = searchParams.get("status") === "failed";
 
   useEffect(() => {
@@ -86,7 +94,6 @@ export default function PlanosPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Erro ao iniciar checkout");
 
-      // Usa sandboxUrl em dev, init_point em produção
       const url = process.env.NODE_ENV === "development"
         ? data.sandboxUrl
         : data.checkoutUrl;
@@ -136,20 +143,17 @@ export default function PlanosPage() {
           </div>
         )}
 
-        {/* Cards de planos */}
+        {/* Cards */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {PLANS.map((plan) => (
             <div key={plan.id} style={{
               background:   plan.featured ? `linear-gradient(135deg, ${plan.color}, #3b82f6)` : "#fff",
               borderRadius: 20,
               padding:      plan.featured ? "2px" : "0",
-              boxShadow:    plan.featured
-                ? "0 8px 32px rgba(30,58,138,.25)"
-                : "0 2px 12px rgba(0,0,0,.08)",
+              boxShadow:    plan.featured ? "0 8px 32px rgba(30,58,138,.25)" : "0 2px 12px rgba(0,0,0,.08)",
               position: "relative",
             }}>
 
-              {/* Badge mais popular */}
               {plan.featured && (
                 <div style={{
                   position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
@@ -166,11 +170,10 @@ export default function PlanosPage() {
               <div style={{
                 background:   plan.featured ? "#fff" : "transparent",
                 borderRadius: plan.featured ? 18 : 20,
-                padding:      "20px 20px 20px",
+                padding:      "20px",
                 border:       plan.featured ? "none" : `2px solid ${plan.color}20`,
               }}>
 
-                {/* Nome + preço */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                   <div>
                     <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: plan.featured ? plan.color : "#64748b", textTransform: "uppercase", letterSpacing: 1 }}>
@@ -190,7 +193,6 @@ export default function PlanosPage() {
                   </div>
                 </div>
 
-                {/* Benefícios */}
                 <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 18 }}>
                   {plan.benefits.map((b) => (
                     <div key={b} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
@@ -200,7 +202,6 @@ export default function PlanosPage() {
                   ))}
                 </div>
 
-                {/* Botão */}
                 <button
                   onClick={() => handleSelectPlan(plan.id)}
                   disabled={!!loading}
@@ -209,11 +210,12 @@ export default function PlanosPage() {
                     background: plan.featured
                       ? `linear-gradient(135deg, ${plan.color}, #3b82f6)`
                       : `${plan.color}15`,
-                    color:      plan.featured ? "#fff" : plan.color,
-                    fontSize:   15, fontWeight: 800, cursor: loading ? "wait" : "pointer",
-                    opacity:    loading && loading !== plan.id ? 0.5 : 1,
+                    color:   plan.featured ? "#fff" : plan.color,
+                    fontSize: 15, fontWeight: 800,
+                    cursor:  loading ? "wait" : "pointer",
+                    opacity: loading && loading !== plan.id ? 0.5 : 1,
                     transition: "opacity .2s",
-                    boxShadow:  plan.featured ? "0 4px 16px rgba(30,58,138,.3)" : "none",
+                    boxShadow: plan.featured ? "0 4px 16px rgba(30,58,138,.3)" : "none",
                   }}
                 >
                   {loading === plan.id ? "Aguarde..." : plan.featured ? "🚀 Começar agora" : "Selecionar plano"}
@@ -223,14 +225,12 @@ export default function PlanosPage() {
           ))}
         </div>
 
-        {/* Erro */}
         {error && (
           <div style={{ marginTop: 16, padding: "12px 16px", background: "#fef2f2", borderRadius: 10, color: "#991b1b", fontSize: 13, textAlign: "center" }}>
             {error}
           </div>
         )}
 
-        {/* Rodapé */}
         <div style={{ marginTop: 24, textAlign: "center" }}>
           <p style={{ fontSize: 12, color: "#94a3b8", lineHeight: 1.6 }}>
             🔒 Pagamento seguro via Mercado Pago<br />

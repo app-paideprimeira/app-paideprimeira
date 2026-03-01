@@ -2,7 +2,7 @@
 
 // app/obrigado/page.js
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabaseBrowser } from "../../lib/supabase/client";
 
@@ -13,14 +13,22 @@ const PLAN_NAMES = {
 };
 
 export default function ObrigadoPage() {
+  return (
+    <Suspense>
+      <ObrigadoContent />
+    </Suspense>
+  );
+}
+
+function ObrigadoContent() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const [countdown, setCountdown] = useState(5);
   const [weekUrl, setWeekUrl]     = useState(null);
 
-  const status = searchParams.get("status");
-  const userId = searchParams.get("userId");
-  const planId = searchParams.get("plan");
+  const status   = searchParams.get("status");
+  const userId   = searchParams.get("userId");
+  const planId   = searchParams.get("plan");
   const approved = status === "approved";
 
   // Busca URL da semana atual
@@ -80,7 +88,6 @@ export default function ObrigadoPage() {
 
         {approved ? (
           <>
-            {/* Ícone animado */}
             <div style={{
               width: 80, height: 80, borderRadius: "50%",
               background: "linear-gradient(135deg, #22c55e, #16a34a)",
@@ -104,7 +111,6 @@ export default function ObrigadoPage() {
               Agora você tem acesso a todo o conteúdo exclusivo da sua jornada. 👶
             </p>
 
-            {/* Contador */}
             <div style={{
               background: "#f0fdf4", borderRadius: 12, padding: "14px 20px",
               marginBottom: 20, border: "1px solid #bbf7d0",
@@ -129,7 +135,6 @@ export default function ObrigadoPage() {
           </>
         ) : (
           <>
-            {/* Pagamento pendente */}
             <div style={{
               width: 80, height: 80, borderRadius: "50%",
               background: "linear-gradient(135deg, #f59e0b, #d97706)",
