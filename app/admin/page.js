@@ -17,6 +17,7 @@ const BLOCK_TYPES = [
   { value: "audio",        label: "🔊 Áudio"        },
   { value: "leitura",      label: "📖 Leitura"      },
   { value: "produto",      label: "🛒 Produto"      },
+  { value: "imagem",       label: "🖼️ Imagem"       },
 ];
 
 const EMPTY_BLOCK = {
@@ -46,14 +47,12 @@ export default function AdminPage() {
   const [editingBlock, setEditingBlock] = useState(null);
   const [headerDraft, setHeaderDraft]   = useState({ title: "", intro: "" });
 
-  // Notificação da semana
   const [notifDraft, setNotifDraft]     = useState({ title: "", body: "", url: "" });
   const [notifId, setNotifId]           = useState(null);
   const [sendingTest, setSendingTest]   = useState(false);
 
   const maxWeek = STAGES.find(s => s.key === stage)?.max ?? 42;
 
-  // ── carrega semana ────────────────────────────────────────
   const loadWeek = useCallback(async () => {
     setLoading(true);
     setHeader(null);
@@ -64,7 +63,6 @@ export default function AdminPage() {
 
     const supabase = supabaseBrowser();
 
-    // Header premium
     const { data: h } = await supabase
       .from("premium_week_materials")
       .select("id, title, intro")
@@ -85,7 +83,6 @@ export default function AdminPage() {
       setHeaderDraft({ title: "", intro: "" });
     }
 
-    // Notificação da semana
     const { data: notif } = await supabase
       .from("week_notifications")
       .select("*")
@@ -103,7 +100,6 @@ export default function AdminPage() {
 
   useEffect(() => { loadWeek(); }, [loadWeek]);
 
-  // ── salva header ──────────────────────────────────────────
   async function saveHeader() {
     if (!headerDraft.title.trim()) return toast("Título obrigatório", "err");
     setSaving(true);
@@ -124,7 +120,6 @@ export default function AdminPage() {
     loadWeek();
   }
 
-  // ── salva notificação ─────────────────────────────────────
   async function saveNotif() {
     if (!notifDraft.title.trim() || !notifDraft.body.trim()) {
       return toast("Título e mensagem obrigatórios", "err");
@@ -148,7 +143,6 @@ export default function AdminPage() {
     setSaving(false);
   }
 
-  // ── envia notificação de teste ────────────────────────────
   async function sendTestNotif() {
     if (!notifDraft.title.trim() || !notifDraft.body.trim()) {
       return toast("Salve a notificação antes de testar", "err");
@@ -158,26 +152,15 @@ export default function AdminPage() {
       const res = await fetch("/api/push/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: notifDraft.title,
-          body:  notifDraft.body,
-          url:   notifDraft.url || "/",
-        }),
+        body: JSON.stringify({ title: notifDraft.title, body: notifDraft.body, url: notifDraft.url || "/" }),
       });
       const data = await res.json();
-      if (data.ok) {
-        toast(`✓ Enviado para ${data.sent} dispositivo(s)`);
-      } else {
-        toast(data.error || "Erro ao enviar", "err");
-      }
-    } catch (err) {
-      toast("Erro ao enviar", "err");
-    } finally {
-      setSendingTest(false);
-    }
+      if (data.ok) toast(`✓ Enviado para ${data.sent} dispositivo(s)`);
+      else toast(data.error || "Erro ao enviar", "err");
+    } catch { toast("Erro ao enviar", "err"); }
+    finally { setSendingTest(false); }
   }
 
-  // ── salva bloco ───────────────────────────────────────────
   async function saveBlock(block) {
     if (!header) return toast("Salve o cabeçalho primeiro", "err");
     if (!block.title.trim()) return toast("Título do bloco obrigatório", "err");
@@ -225,7 +208,7 @@ export default function AdminPage() {
       const items = (block._checklistRaw || "").split("\n").map(s => s.trim()).filter(Boolean);
       return { items };
     }
-    if (["texto", "leitura", "produto", "podcast", "audio"].includes(block.type)) return { body: block._body || "" };
+    if (["texto", "leitura", "produto", "podcast", "audio", "imagem"].includes(block.type)) return { body: block._body || "" };
     if (block.type === "lembrete_fixo") return { note: block._body || "" };
     return {};
   }
@@ -243,14 +226,9 @@ export default function AdminPage() {
   return (
     <div style={{ fontFamily: "'DM Sans', 'Segoe UI', sans-serif", minHeight: "100vh", backgroundColor: "#0f172a", color: "#e2e8f0" }}>
 
-      {/* TOP BAR */}
       <div style={{ backgroundColor: "#1e293b", borderBottom: "1px solid #334155", padding: "16px 24px", display: "flex", alignItems: "center", gap: 16 }}>
-        <span style={{ fontSize: 22, fontWeight: 800, color: "#f8fafc", letterSpacing: "-0.5px" }}>
-          🛠️ Admin — Pai de Primeira
-        </span>
-        <span style={{ marginLeft: "auto", fontSize: 12, color: "#64748b", background: "#0f172a", padding: "4px 10px", borderRadius: 6 }}>
-          localhost only
-        </span>
+        <span style={{ fontSize: 22, fontWeight: 800, color: "#f8fafc", letterSpacing: "-0.5px" }}>🛠️ Admin — Pai de Primeira</span>
+        <span style={{ marginLeft: "auto", fontSize: 12, color: "#64748b", background: "#0f172a", padding: "4px 10px", borderRadius: 6 }}>localhost only</span>
       </div>
 
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 24px", display: "flex", flexDirection: "column", gap: 24 }}>
@@ -262,7 +240,7 @@ export default function AdminPage() {
             <div style={{ display: "flex", gap: 8 }}>
               {STAGES.map(s => (
                 <button key={s.key} onClick={() => { setStage(s.key); setSemana(1); }}
-                  style={{ padding: "8px 18px", borderRadius: 8, border: "none", cursor: "pointer", fontWeight: 600, fontSize: 14, background: stage === s.key ? "#3b82f6" : "#334155", color: stage === s.key ? "#fff" : "#94a3b8", transition: "all .15s" }}>
+                  style={{ padding: "8px 18px", borderRadius: 8, border: "none", cursor: "pointer", fontWeight: 600, fontSize: 14, background: stage === s.key ? "#3b82f6" : "#334155", color: stage === s.key ? "#fff" : "#94a3b8" }}>
                   {s.emoji} {s.label}
                 </button>
               ))}
@@ -287,7 +265,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* CABEÇALHO DA SEMANA */}
+        {/* CABEÇALHO */}
         <div style={{ background: "#1e293b", borderRadius: 14, padding: 20, border: "1px solid #334155" }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>
             📋 Cabeçalho da Semana {semana} — {stageInfo?.label}
@@ -310,7 +288,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* 🔔 NOTIFICAÇÃO DA SEMANA */}
+        {/* NOTIFICAÇÃO */}
         <div style={{ background: "#1e293b", borderRadius: 14, padding: 20, border: "1px solid #334155" }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>
             🔔 Notificação Push — Semana {semana}
@@ -318,7 +296,6 @@ export default function AdminPage() {
           <p style={{ fontSize: 12, color: "#475569", marginBottom: 14 }}>
             Enviada automaticamente às 20:30 no dia que o usuário entrar nessa semana.
           </p>
-
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div>
               <label style={labelStyle}>Título da notificação</label>
@@ -336,7 +313,6 @@ export default function AdminPage() {
               <input value={notifDraft.url} onChange={e => setNotifDraft(d => ({ ...d, url: e.target.value }))}
                 placeholder={`/semanas/${stage}/${semana}`} style={inputStyle} />
             </div>
-
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={saveNotif} disabled={saving} style={{ ...btnPrimary }}>
                 {saving ? "Salvando..." : notifId ? "💾 Salvar notificação" : "✨ Criar notificação"}
@@ -346,7 +322,6 @@ export default function AdminPage() {
                 {sendingTest ? "Enviando..." : "🧪 Testar agora"}
               </button>
             </div>
-
             {notifId && (
               <p style={{ fontSize: 11, color: "#166534", background: "#052e16", padding: "6px 12px", borderRadius: 6 }}>
                 ✓ Notificação cadastrada — será enviada automaticamente na semana {semana}
@@ -397,7 +372,6 @@ export default function AdminPage() {
         )}
       </div>
 
-      {/* MODAL DE EDIÇÃO DE BLOCO */}
       {editingBlock !== null && (
         <BlockModal block={editingBlock} onSave={saveBlock} onClose={() => setEditingBlock(null)} saving={saving} />
       )}
@@ -405,13 +379,12 @@ export default function AdminPage() {
   );
 }
 
-// ─── Modal de edição ─────────────────────────────────────────
 function BlockModal({ block: initial, onSave, onClose, saving }) {
   const [block, setBlock] = useState(initial);
   const set = (k, v) => setBlock(b => ({ ...b, [k]: v }));
 
-  const needsLink      = ["video", "podcast", "audio", "leitura", "produto"].includes(block.type);
-  const needsBody      = ["texto", "leitura", "produto", "lembrete_fixo", "podcast", "audio"].includes(block.type);
+  const needsLink      = ["video", "podcast", "audio", "leitura", "produto", "imagem"].includes(block.type);
+  const needsBody      = ["texto", "leitura", "produto", "lembrete_fixo", "podcast", "audio", "imagem"].includes(block.type);
   const needsChecklist = block.type === "checklist";
 
   return (
@@ -440,11 +413,18 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
           </div>
           {needsLink && (
             <div>
-              <label style={labelStyle}>URL</label>
-              <input value={block.url || ""} onChange={e => set("url", e.target.value)} placeholder="https://..." style={inputStyle} />
+              <label style={labelStyle}>{block.type === "imagem" ? "URL da imagem" : "URL"}</label>
+              <input value={block.url || ""} onChange={e => set("url", e.target.value)}
+                placeholder={block.type === "imagem" ? "https://exemplo.com/imagem.jpg" : "https://..."} style={inputStyle} />
             </div>
           )}
-          {needsLink && (
+          {/* Preview da imagem */}
+          {block.type === "imagem" && block.url && (
+            <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid #334155" }}>
+              <img src={block.url} alt="Preview" style={{ width: "100%", maxHeight: 200, objectFit: "cover" }} />
+            </div>
+          )}
+          {needsLink && block.type !== "imagem" && (
             <div>
               <label style={labelStyle}>Label do botão (CTA)</label>
               <input value={block.cta || ""} onChange={e => set("cta", e.target.value)}
@@ -454,9 +434,10 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
           )}
           {needsBody && (
             <div>
-              <label style={labelStyle}>{block.type === "lembrete_fixo" ? "Nota do lembrete" : "Texto completo"}</label>
+              <label style={labelStyle}>{block.type === "lembrete_fixo" ? "Nota do lembrete" : block.type === "imagem" ? "Legenda (opcional)" : "Texto completo"}</label>
               <textarea value={block._body || ""} onChange={e => set("_body", e.target.value)}
-                placeholder="Texto que aparece no card expandido..." rows={5} style={{ ...inputStyle, resize: "vertical" }} />
+                placeholder={block.type === "imagem" ? "Texto de legenda abaixo da imagem..." : "Texto que aparece no card..."}
+                rows={block.type === "imagem" ? 2 : 5} style={{ ...inputStyle, resize: "vertical" }} />
             </div>
           )}
           {needsChecklist && (
@@ -489,7 +470,6 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
   );
 }
 
-// ─── estilos ─────────────────────────────────────────────────
 const labelStyle = {
   display: "block", fontSize: 11, fontWeight: 700,
   color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 6,
