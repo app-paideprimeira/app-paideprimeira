@@ -1,14 +1,24 @@
+// public/custom-sw.js
+// Handler de push notifications para o PWA Pai de Primeira
+
 self.addEventListener("push", function (event) {
   if (!event.data) return;
 
-  const data = event.data.json();
+  let data;
+  try {
+    data = event.data.json();
+  } catch (_) {
+    data = { title: "Pai de Primeira", body: event.data.text() };
+  }
 
-  const title = data.title || "Pai de Primeira";
+  const title   = data.title || "Pai de Primeira";
   const options = {
-    body: data.body,
-    icon: "/icons/icon-192.png",
-    badge: "/icons/icon-192.png",
-    data: data.url || "/",
+    body:    data.body  || "Você tem uma novidade esta semana.",
+    icon:    "/icons/icon-192.png",
+    badge:   "/icons/icon-192.png",
+    vibrate: [200, 100, 200],
+    data:    { url: data.url || "/" },
+    actions: data.url ? [{ action: "open", title: "Ver agora" }] : [],
   };
 
   event.waitUntil(
@@ -19,7 +29,19 @@ self.addEventListener("push", function (event) {
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
 
+  const url = event.notification.data?.url || "/";
+
   event.waitUntil(
-    clients.openWindow(event.notification.data || "/")
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      // Se já tem uma aba aberta, foca nela
+      for (const client of list) {
+        if (client.url.includes(self.location.origin) && "focus" in client) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+      // Senão abre nova aba
+      return clients.openWindow(url);
+    })
   );
 });

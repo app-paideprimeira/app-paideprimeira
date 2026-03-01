@@ -128,8 +128,8 @@ export default function Onboarding() {
             value={stage}
             onChange={(e) => setStage(e.target.value)}
           >
-            <option value="gestante">🤰 A gravidez já começou</option>
-            <option value="bebe">👶 O bebê já nasceu</option>
+            <option value="gestante">🤰 Sua Companheira está Gestante.</option>
+            <option value="bebe">👶 Seu Bebê já nasceu.</option>
           </select>
         </div>
 
@@ -151,24 +151,6 @@ export default function Onboarding() {
           />
         </div>
 
-        {/* GÊNERO */}
-        <div className="mb-8">
-          <label className="block mb-2 font-semibold text-[#111827]">
-            Gênero do bebê
-          </label>
-
-          <select
-            className="w-full p-3 border border-[#E5E7EB] rounded-xl bg-white
-              text-[#111827]
-              focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]"
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
-          >
-            <option value="menino">💙 Menino</option>
-            <option value="menina">💗 Menina</option>
-          </select>
-        </div>
-
         {/* CTA */}
         <button
           onClick={finalizarOnboarding}
@@ -183,7 +165,7 @@ export default function Onboarding() {
         </button>
 
         <p className="text-xs text-[#6B7280] text-center mt-4">
-          Você pode ajustar essas informações depois, quando quiser.
+          Você pode ajustar essas informações depois, quando quiser no menu principal.
         </p>
       </div>
     </div>

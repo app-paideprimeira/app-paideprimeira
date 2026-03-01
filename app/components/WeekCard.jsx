@@ -6,7 +6,6 @@ export default function WeekCard({ data }) {
   const {
     titulo,
     empatia,
-    imagens,
     descricao,
     dica,
     acompanhe,
@@ -46,19 +45,6 @@ export default function WeekCard({ data }) {
       >
         {descricao}
       </p>
-            {/* IMAGENS / GIFS */}
-                        {imagens && imagens.length > 0 && (
-                        <div className="flex justify-center">
-                            {imagens.map((src, index) => (
-                            <img
-                                key={index}
-                                src={src}
-                                alt={`Imagem da semana - ${titulo}`}
-                                className="w-48 md:w-56 lg:w-64 h-auto object-contain"
-                            />
-                            ))}
-                        </div>
-                        )}
 
       {/* BLOCO DE DICA */}
       {dica && (

@@ -3,18 +3,19 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "../../lib/supabase/client";
+import { signOutClean } from "../../lib/session/useSession";
 
 export default function UserMenu() {
   const router = useRouter();
-  const supabase = supabaseBrowser();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const [isOpen, setIsOpen]           = useState(false);
+  const [user, setUser]               = useState(null);
   const [userProfile, setUserProfile] = useState(null);
-  const menuRef = useRef(null);
+  const menuRef                       = useRef(null);
 
   useEffect(() => {
     async function loadUser() {
+      const supabase = supabaseBrowser();
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
 
@@ -46,8 +47,9 @@ export default function UserMenu() {
     router.push(path);
   };
 
+  // Usa signOutClean para remover a sessão da tabela active_sessions
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await signOutClean();
     router.push("/auth/login");
   };
 
@@ -84,7 +86,7 @@ export default function UserMenu() {
       {/* Dropdown */}
       {isOpen && (
         <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden">
-          
+
           {/* Header */}
           <div className="px-4 py-4 border-b border-gray-100">
             <p className="text-sm font-semibold tracking-tight text-gray-900">
@@ -100,19 +102,16 @@ export default function UserMenu() {
               label="Onde estamos agora"
               onClick={() => handleNavigation("/dashboard")}
             />
-
             <MenuItem
               icon={<UserIcon />}
               label="Minhas informações"
               onClick={() => handleNavigation("/profile")}
             />
-
             <MenuItem
               icon={<BookIcon />}
               label="Meu diário de pai"
               onClick={() => handleNavigation("/diario")}
             />
-
             <MenuItem
               icon={<UsersIcon />}
               label="Outros pais"
@@ -136,8 +135,7 @@ export default function UserMenu() {
   );
 }
 
-/* ---------- ITEM ---------- */
-
+/* ── Item do menu ── */
 function MenuItem({ icon, label, onClick, danger = false }) {
   return (
     <button
@@ -151,23 +149,15 @@ function MenuItem({ icon, label, onClick, danger = false }) {
       <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center">
         {icon}
       </div>
-      <span className="text-sm font-semibold tracking-tight">
-        {label}
-      </span>
+      <span className="text-sm font-semibold tracking-tight">{label}</span>
     </button>
   );
 }
 
-/* ---------- ICONES ---------- */
-
+/* ── Ícones ── */
 function ChevronIcon({ open }) {
   return (
-    <svg
-      className={`w-4 h-4 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
+    <svg className={`w-4 h-4 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
     </svg>
   );

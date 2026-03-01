@@ -1,6 +1,7 @@
 import "./globals.css";
 import Script from "next/script";
 import SWRegister from "./sw-register";
+import InstallPWAModal from "./components/InstallPWAModal";
 
 export const metadata = {
   title: "Pai de Primeira",
@@ -25,11 +26,9 @@ export default function RootLayout({ children }) {
       </head>
 
       <body className="min-h-screen bg-gray-100">
-        {/* 🔧 Registro global do Service Worker */}
         <SWRegister />
-
-        {/* Conteúdo das páginas */}
         {children}
+        <InstallPWAModal />
       </body>
     </html>
   );

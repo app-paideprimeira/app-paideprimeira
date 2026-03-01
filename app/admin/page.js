@@ -1,0 +1,509 @@
+"use client";
+
+import { useEffect, useState, useCallback } from "react";
+import { supabaseBrowser } from "../../lib/supabase/client";
+
+const STAGES = [
+  { key: "gestante", label: "Gestante", max: 42, emoji: "🤰" },
+  { key: "bebe",     label: "Bebê",     max: 52, emoji: "👶" },
+];
+
+const BLOCK_TYPES = [
+  { value: "checklist",    label: "✅ Checklist"    },
+  { value: "texto",        label: "📝 Texto"        },
+  { value: "lembrete_fixo",label: "📌 Lembrete"     },
+  { value: "video",        label: "🎥 Vídeo"        },
+  { value: "podcast",      label: "🎧 Podcast"      },
+  { value: "audio",        label: "🔊 Áudio"        },
+  { value: "leitura",      label: "📖 Leitura"      },
+  { value: "produto",      label: "🛒 Produto"      },
+];
+
+const EMPTY_BLOCK = {
+  type: "texto", title: "", description: "", url: "", cta: "", payload: {}, sort_order: 0,
+};
+
+function toast(msg, type = "ok") {
+  const el = document.createElement("div");
+  el.textContent = msg;
+  el.style.cssText = `
+    position:fixed; bottom:24px; right:24px; z-index:9999;
+    padding:12px 20px; border-radius:10px; font-size:14px; font-weight:600;
+    background:${type === "ok" ? "#166534" : "#991b1b"};
+    color:#fff; box-shadow:0 4px 20px rgba(0,0,0,.3);
+  `;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+export default function AdminPage() {
+  const [stage, setStage]     = useState("gestante");
+  const [semana, setSemana]   = useState(1);
+  const [header, setHeader]   = useState(null);
+  const [blocks, setBlocks]   = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving]   = useState(false);
+  const [editingBlock, setEditingBlock] = useState(null);
+  const [headerDraft, setHeaderDraft]   = useState({ title: "", intro: "" });
+
+  // Notificação da semana
+  const [notifDraft, setNotifDraft]     = useState({ title: "", body: "", url: "" });
+  const [notifId, setNotifId]           = useState(null);
+  const [sendingTest, setSendingTest]   = useState(false);
+
+  const maxWeek = STAGES.find(s => s.key === stage)?.max ?? 42;
+
+  // ── carrega semana ────────────────────────────────────────
+  const loadWeek = useCallback(async () => {
+    setLoading(true);
+    setHeader(null);
+    setBlocks([]);
+    setEditingBlock(null);
+    setNotifId(null);
+    setNotifDraft({ title: "", body: "", url: "" });
+
+    const supabase = supabaseBrowser();
+
+    // Header premium
+    const { data: h } = await supabase
+      .from("premium_week_materials")
+      .select("id, title, intro")
+      .eq("stage", stage)
+      .eq("week", semana)
+      .maybeSingle();
+
+    if (h) {
+      setHeader(h);
+      setHeaderDraft({ title: h.title, intro: h.intro || "" });
+      const { data: bs } = await supabase
+        .from("premium_week_blocks")
+        .select("*")
+        .eq("week_id", h.id)
+        .order("sort_order", { ascending: true });
+      setBlocks(bs ?? []);
+    } else {
+      setHeaderDraft({ title: "", intro: "" });
+    }
+
+    // Notificação da semana
+    const { data: notif } = await supabase
+      .from("week_notifications")
+      .select("*")
+      .eq("stage", stage)
+      .eq("week", semana)
+      .maybeSingle();
+
+    if (notif) {
+      setNotifId(notif.id);
+      setNotifDraft({ title: notif.title, body: notif.body, url: notif.url || "/" });
+    }
+
+    setLoading(false);
+  }, [stage, semana]);
+
+  useEffect(() => { loadWeek(); }, [loadWeek]);
+
+  // ── salva header ──────────────────────────────────────────
+  async function saveHeader() {
+    if (!headerDraft.title.trim()) return toast("Título obrigatório", "err");
+    setSaving(true);
+    const supabase = supabaseBrowser();
+    if (header) {
+      await supabase.from("premium_week_materials")
+        .update({ title: headerDraft.title, intro: headerDraft.intro, updated_at: new Date().toISOString() })
+        .eq("id", header.id);
+      toast("Cabeçalho salvo ✓");
+    } else {
+      const { data } = await supabase.from("premium_week_materials")
+        .insert({ stage, week: semana, title: headerDraft.title, intro: headerDraft.intro })
+        .select().single();
+      setHeader(data);
+      toast("Semana criada ✓");
+    }
+    setSaving(false);
+    loadWeek();
+  }
+
+  // ── salva notificação ─────────────────────────────────────
+  async function saveNotif() {
+    if (!notifDraft.title.trim() || !notifDraft.body.trim()) {
+      return toast("Título e mensagem obrigatórios", "err");
+    }
+    setSaving(true);
+    const supabase = supabaseBrowser();
+    const url = notifDraft.url || `/${stage === "gestante" ? "semanas/gestante" : "semanas/bebe"}/${semana}`;
+
+    if (notifId) {
+      await supabase.from("week_notifications")
+        .update({ title: notifDraft.title, body: notifDraft.body, url, updated_at: new Date().toISOString() })
+        .eq("id", notifId);
+      toast("Notificação salva ✓");
+    } else {
+      const { data } = await supabase.from("week_notifications")
+        .insert({ stage, week: semana, title: notifDraft.title, body: notifDraft.body, url })
+        .select().single();
+      setNotifId(data?.id);
+      toast("Notificação criada ✓");
+    }
+    setSaving(false);
+  }
+
+  // ── envia notificação de teste ────────────────────────────
+  async function sendTestNotif() {
+    if (!notifDraft.title.trim() || !notifDraft.body.trim()) {
+      return toast("Salve a notificação antes de testar", "err");
+    }
+    setSendingTest(true);
+    try {
+      const res = await fetch("/api/push/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: notifDraft.title,
+          body:  notifDraft.body,
+          url:   notifDraft.url || "/",
+        }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        toast(`✓ Enviado para ${data.sent} dispositivo(s)`);
+      } else {
+        toast(data.error || "Erro ao enviar", "err");
+      }
+    } catch (err) {
+      toast("Erro ao enviar", "err");
+    } finally {
+      setSendingTest(false);
+    }
+  }
+
+  // ── salva bloco ───────────────────────────────────────────
+  async function saveBlock(block) {
+    if (!header) return toast("Salve o cabeçalho primeiro", "err");
+    if (!block.title.trim()) return toast("Título do bloco obrigatório", "err");
+    setSaving(true);
+    const supabase = supabaseBrowser();
+    const payload = buildPayload(block);
+
+    if (block.id) {
+      await supabase.from("premium_week_blocks")
+        .update({ type: block.type, title: block.title, description: block.description, url: block.url || null, cta: block.cta || null, payload, sort_order: block.sort_order })
+        .eq("id", block.id);
+      toast("Bloco salvo ✓");
+    } else {
+      await supabase.from("premium_week_blocks")
+        .insert({ week_id: header.id, type: block.type, title: block.title, description: block.description, url: block.url || null, cta: block.cta || null, payload, sort_order: blocks.length + 1 });
+      toast("Bloco adicionado ✓");
+    }
+    setSaving(false);
+    setEditingBlock(null);
+    loadWeek();
+  }
+
+  async function deleteBlock(blockId) {
+    if (!confirm("Remover este bloco?")) return;
+    const supabase = supabaseBrowser();
+    await supabase.from("premium_week_blocks").delete().eq("id", blockId);
+    toast("Bloco removido");
+    loadWeek();
+  }
+
+  async function moveBlock(index, dir) {
+    const newBlocks = [...blocks];
+    const target = index + dir;
+    if (target < 0 || target >= newBlocks.length) return;
+    [newBlocks[index], newBlocks[target]] = [newBlocks[target], newBlocks[index]];
+    const supabase = supabaseBrowser();
+    await Promise.all(newBlocks.map((b, i) =>
+      supabase.from("premium_week_blocks").update({ sort_order: i + 1 }).eq("id", b.id)
+    ));
+    setBlocks(newBlocks);
+  }
+
+  function buildPayload(block) {
+    if (block.type === "checklist") {
+      const items = (block._checklistRaw || "").split("\n").map(s => s.trim()).filter(Boolean);
+      return { items };
+    }
+    if (["texto", "leitura", "produto", "podcast", "audio"].includes(block.type)) return { body: block._body || "" };
+    if (block.type === "lembrete_fixo") return { note: block._body || "" };
+    return {};
+  }
+
+  function prepareForEdit(block) {
+    return {
+      ...block,
+      _body: block.payload?.body || block.payload?.note || "",
+      _checklistRaw: (block.payload?.items || []).join("\n"),
+    };
+  }
+
+  const stageInfo = STAGES.find(s => s.key === stage);
+
+  return (
+    <div style={{ fontFamily: "'DM Sans', 'Segoe UI', sans-serif", minHeight: "100vh", backgroundColor: "#0f172a", color: "#e2e8f0" }}>
+
+      {/* TOP BAR */}
+      <div style={{ backgroundColor: "#1e293b", borderBottom: "1px solid #334155", padding: "16px 24px", display: "flex", alignItems: "center", gap: 16 }}>
+        <span style={{ fontSize: 22, fontWeight: 800, color: "#f8fafc", letterSpacing: "-0.5px" }}>
+          🛠️ Admin — Pai de Primeira
+        </span>
+        <span style={{ marginLeft: "auto", fontSize: 12, color: "#64748b", background: "#0f172a", padding: "4px 10px", borderRadius: 6 }}>
+          localhost only
+        </span>
+      </div>
+
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 24px", display: "flex", flexDirection: "column", gap: 24 }}>
+
+        {/* SELETOR */}
+        <div style={{ background: "#1e293b", borderRadius: 14, padding: 20, display: "flex", gap: 16, alignItems: "flex-end", flexWrap: "wrap", border: "1px solid #334155" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <label style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>Jornada</label>
+            <div style={{ display: "flex", gap: 8 }}>
+              {STAGES.map(s => (
+                <button key={s.key} onClick={() => { setStage(s.key); setSemana(1); }}
+                  style={{ padding: "8px 18px", borderRadius: 8, border: "none", cursor: "pointer", fontWeight: 600, fontSize: 14, background: stage === s.key ? "#3b82f6" : "#334155", color: stage === s.key ? "#fff" : "#94a3b8", transition: "all .15s" }}>
+                  {s.emoji} {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <label style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>Semana (1–{maxWeek})</label>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <button onClick={() => setSemana(s => Math.max(1, s - 1))} style={{ width: 36, height: 36, borderRadius: 8, border: "none", background: "#334155", color: "#e2e8f0", fontSize: 18, cursor: "pointer", fontWeight: 700 }}>‹</button>
+              <input type="number" min={1} max={maxWeek} value={semana}
+                onChange={e => setSemana(Math.min(maxWeek, Math.max(1, Number(e.target.value))))}
+                style={{ width: 64, textAlign: "center", padding: "8px", borderRadius: 8, border: "1px solid #475569", background: "#0f172a", color: "#f8fafc", fontSize: 16, fontWeight: 700 }} />
+              <button onClick={() => setSemana(s => Math.min(maxWeek, s + 1))} style={{ width: 36, height: 36, borderRadius: 8, border: "none", background: "#334155", color: "#e2e8f0", fontSize: 18, cursor: "pointer", fontWeight: 700 }}>›</button>
+            </div>
+          </div>
+
+          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
+            {loading && <span style={{ fontSize: 13, color: "#64748b" }}>Carregando...</span>}
+            {!loading && header && <span style={{ fontSize: 12, background: "#166534", color: "#bbf7d0", padding: "4px 10px", borderRadius: 20, fontWeight: 600 }}>✓ {blocks.length} bloco{blocks.length !== 1 ? "s" : ""}</span>}
+            {!loading && !header && <span style={{ fontSize: 12, background: "#1e3a5f", color: "#93c5fd", padding: "4px 10px", borderRadius: 20, fontWeight: 600 }}>Semana vazia</span>}
+          </div>
+        </div>
+
+        {/* CABEÇALHO DA SEMANA */}
+        <div style={{ background: "#1e293b", borderRadius: 14, padding: 20, border: "1px solid #334155" }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>
+            📋 Cabeçalho da Semana {semana} — {stageInfo?.label}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div>
+              <label style={labelStyle}>Título</label>
+              <input value={headerDraft.title} onChange={e => setHeaderDraft(d => ({ ...d, title: e.target.value }))}
+                placeholder={`Ex: Semana ${semana} — Extras para o pai presente`} style={inputStyle} />
+            </div>
+            <div>
+              <label style={labelStyle}>Intro (opcional)</label>
+              <textarea value={headerDraft.intro} onChange={e => setHeaderDraft(d => ({ ...d, intro: e.target.value }))}
+                placeholder="Texto introdutório exibido no topo da página premium..." rows={2}
+                style={{ ...inputStyle, resize: "vertical" }} />
+            </div>
+            <button onClick={saveHeader} disabled={saving} style={{ ...btnPrimary, alignSelf: "flex-start" }}>
+              {saving ? "Salvando..." : header ? "💾 Salvar cabeçalho" : "✨ Criar semana"}
+            </button>
+          </div>
+        </div>
+
+        {/* 🔔 NOTIFICAÇÃO DA SEMANA */}
+        <div style={{ background: "#1e293b", borderRadius: 14, padding: 20, border: "1px solid #334155" }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>
+            🔔 Notificação Push — Semana {semana}
+          </div>
+          <p style={{ fontSize: 12, color: "#475569", marginBottom: 14 }}>
+            Enviada automaticamente às 20:30 no dia que o usuário entrar nessa semana.
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div>
+              <label style={labelStyle}>Título da notificação</label>
+              <input value={notifDraft.title} onChange={e => setNotifDraft(d => ({ ...d, title: e.target.value }))}
+                placeholder={`Ex: 🤰 Semana ${semana} chegou!`} style={inputStyle} />
+            </div>
+            <div>
+              <label style={labelStyle}>Mensagem</label>
+              <textarea value={notifDraft.body} onChange={e => setNotifDraft(d => ({ ...d, body: e.target.value }))}
+                placeholder="Ex: Seu bebê está do tamanho de um damasco. Veja o que muda essa semana."
+                rows={3} style={{ ...inputStyle, resize: "vertical" }} />
+            </div>
+            <div>
+              <label style={labelStyle}>URL ao clicar (opcional)</label>
+              <input value={notifDraft.url} onChange={e => setNotifDraft(d => ({ ...d, url: e.target.value }))}
+                placeholder={`/semanas/${stage}/${semana}`} style={inputStyle} />
+            </div>
+
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={saveNotif} disabled={saving} style={{ ...btnPrimary }}>
+                {saving ? "Salvando..." : notifId ? "💾 Salvar notificação" : "✨ Criar notificação"}
+              </button>
+              <button onClick={sendTestNotif} disabled={sendingTest || !notifDraft.title}
+                style={{ ...btnPrimary, background: "#7c3aed", opacity: (!notifDraft.title || sendingTest) ? 0.5 : 1 }}>
+                {sendingTest ? "Enviando..." : "🧪 Testar agora"}
+              </button>
+            </div>
+
+            {notifId && (
+              <p style={{ fontSize: 11, color: "#166534", background: "#052e16", padding: "6px 12px", borderRadius: 6 }}>
+                ✓ Notificação cadastrada — será enviada automaticamente na semana {semana}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* BLOCOS */}
+        {header && (
+          <div style={{ background: "#1e293b", borderRadius: 14, padding: 20, border: "1px solid #334155" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>🧩 Blocos de Conteúdo</span>
+              <button onClick={() => setEditingBlock({ ...EMPTY_BLOCK, _body: "", _checklistRaw: "" })} style={btnPrimary}>+ Novo bloco</button>
+            </div>
+
+            {blocks.length === 0 && (
+              <p style={{ color: "#475569", fontSize: 14, textAlign: "center", padding: "24px 0" }}>
+                Nenhum bloco ainda. Clique em "Novo bloco" para começar.
+              </p>
+            )}
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {blocks.map((block, i) => (
+                <div key={block.id} style={{ background: "#0f172a", borderRadius: 10, padding: "14px 16px", border: "1px solid #334155", display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <button onClick={() => moveBlock(i, -1)} disabled={i === 0} style={arrowBtn}>▲</button>
+                    <button onClick={() => moveBlock(i, 1)} disabled={i === blocks.length - 1} style={arrowBtn}>▼</button>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                      <span style={{ fontSize: 11, background: "#1e3a5f", color: "#93c5fd", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>
+                        {BLOCK_TYPES.find(t => t.value === block.type)?.label || block.type}
+                      </span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{block.title}</span>
+                    </div>
+                    {block.description && <p style={{ fontSize: 12, color: "#64748b", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{block.description}</p>}
+                    {block.url && <p style={{ fontSize: 11, color: "#3b82f6", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>🔗 {block.url}</p>}
+                  </div>
+                  <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                    <button onClick={() => setEditingBlock(prepareForEdit(block))} style={{ padding: "6px 14px", borderRadius: 7, border: "none", background: "#334155", color: "#e2e8f0", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>✏️ Editar</button>
+                    <button onClick={() => deleteBlock(block.id)} style={{ padding: "6px 14px", borderRadius: 7, border: "none", background: "#450a0a", color: "#fca5a5", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>🗑</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* MODAL DE EDIÇÃO DE BLOCO */}
+      {editingBlock !== null && (
+        <BlockModal block={editingBlock} onSave={saveBlock} onClose={() => setEditingBlock(null)} saving={saving} />
+      )}
+    </div>
+  );
+}
+
+// ─── Modal de edição ─────────────────────────────────────────
+function BlockModal({ block: initial, onSave, onClose, saving }) {
+  const [block, setBlock] = useState(initial);
+  const set = (k, v) => setBlock(b => ({ ...b, [k]: v }));
+
+  const needsLink      = ["video", "podcast", "audio", "leitura", "produto"].includes(block.type);
+  const needsBody      = ["texto", "leitura", "produto", "lembrete_fixo", "podcast", "audio"].includes(block.type);
+  const needsChecklist = block.type === "checklist";
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.7)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <div style={{ background: "#1e293b", borderRadius: 16, width: "100%", maxWidth: 600, maxHeight: "90vh", overflowY: "auto", border: "1px solid #334155", boxShadow: "0 20px 60px rgba(0,0,0,.5)" }}>
+
+        <div style={{ padding: "18px 24px", borderBottom: "1px solid #334155", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontWeight: 800, fontSize: 16, color: "#f8fafc" }}>{block.id ? "✏️ Editar bloco" : "✨ Novo bloco"}</span>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#64748b", fontSize: 20, cursor: "pointer" }}>✕</button>
+        </div>
+
+        <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
+          <div>
+            <label style={labelStyle}>Tipo de bloco</label>
+            <select value={block.type} onChange={e => set("type", e.target.value)} style={{ ...inputStyle, cursor: "pointer" }}>
+              {BLOCK_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={labelStyle}>Título *</label>
+            <input value={block.title} onChange={e => set("title", e.target.value)} placeholder="Título do bloco" style={inputStyle} />
+          </div>
+          <div>
+            <label style={labelStyle}>Descrição (subtítulo curto)</label>
+            <input value={block.description || ""} onChange={e => set("description", e.target.value)} placeholder="Uma linha descritiva opcional" style={inputStyle} />
+          </div>
+          {needsLink && (
+            <div>
+              <label style={labelStyle}>URL</label>
+              <input value={block.url || ""} onChange={e => set("url", e.target.value)} placeholder="https://..." style={inputStyle} />
+            </div>
+          )}
+          {needsLink && (
+            <div>
+              <label style={labelStyle}>Label do botão (CTA)</label>
+              <input value={block.cta || ""} onChange={e => set("cta", e.target.value)}
+                placeholder={block.type === "video" ? "Assistir no YouTube" : block.type === "produto" ? "Ver produto" : "Ver recomendação"}
+                style={inputStyle} />
+            </div>
+          )}
+          {needsBody && (
+            <div>
+              <label style={labelStyle}>{block.type === "lembrete_fixo" ? "Nota do lembrete" : "Texto completo"}</label>
+              <textarea value={block._body || ""} onChange={e => set("_body", e.target.value)}
+                placeholder="Texto que aparece no card expandido..." rows={5} style={{ ...inputStyle, resize: "vertical" }} />
+            </div>
+          )}
+          {needsChecklist && (
+            <div>
+              <label style={labelStyle}>Itens do checklist (um por linha)</label>
+              <textarea value={block._checklistRaw || ""} onChange={e => set("_checklistRaw", e.target.value)}
+                placeholder={"Pesquisar sobre pré-natal\nPerguntar como ela está\nAvisar família próxima"}
+                rows={6} style={{ ...inputStyle, resize: "vertical", fontFamily: "monospace", fontSize: 13 }} />
+              <p style={{ fontSize: 11, color: "#64748b", marginTop: 4 }}>
+                {(block._checklistRaw || "").split("\n").filter(s => s.trim()).length} itens
+              </p>
+            </div>
+          )}
+          {block.id && (
+            <div>
+              <label style={labelStyle}>Posição (ordem)</label>
+              <input type="number" value={block.sort_order} onChange={e => set("sort_order", Number(e.target.value))} style={{ ...inputStyle, width: 80 }} />
+            </div>
+          )}
+        </div>
+
+        <div style={{ padding: "16px 24px", borderTop: "1px solid #334155", display: "flex", gap: 10, justifyContent: "flex-end" }}>
+          <button onClick={onClose} style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #334155", background: "transparent", color: "#94a3b8", fontWeight: 600, fontSize: 14, cursor: "pointer" }}>Cancelar</button>
+          <button onClick={() => onSave(block)} disabled={saving} style={{ ...btnPrimary, opacity: saving ? 0.7 : 1 }}>
+            {saving ? "Salvando..." : block.id ? "💾 Salvar alterações" : "✨ Adicionar bloco"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── estilos ─────────────────────────────────────────────────
+const labelStyle = {
+  display: "block", fontSize: 11, fontWeight: 700,
+  color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 6,
+};
+const inputStyle = {
+  width: "100%", padding: "10px 12px", borderRadius: 8,
+  border: "1px solid #475569", background: "#0f172a",
+  color: "#f1f5f9", fontSize: 14, boxSizing: "border-box", outline: "none",
+};
+const btnPrimary = {
+  padding: "9px 20px", borderRadius: 8, border: "none",
+  background: "#3b82f6", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer",
+};
+const arrowBtn = {
+  width: 24, height: 22, borderRadius: 4, border: "none",
+  background: "#334155", color: "#94a3b8", fontSize: 11, cursor: "pointer", padding: 0, lineHeight: 1,
+};

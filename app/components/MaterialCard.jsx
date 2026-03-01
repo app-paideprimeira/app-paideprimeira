@@ -1,22 +1,29 @@
 "use client";
 
-export default function MaterialCard({ item }) {
+export default function MaterialCard({ item, accentColor }) {
   const { tipo, titulo, descricao, link, cta } = item;
 
+  // Compatível: se não vier accentColor, usa o azul padrão do app
+  const primary = accentColor || "#1E3A8A";
+  const softBg = `${primary}20`; // fundo leve (hex + alpha)
+
   function getTipo() {
-    if (tipo === "video") return { label: "🎥 Vídeo", color: "bg-red-50 text-red-700" };
-    if (tipo === "leitura") return { label: "📖 Leitura", color: "bg-amber-50 text-amber-700" };
-    if (tipo === "produto") return { label: "🛒 Recomendado", color: "bg-emerald-50 text-emerald-700" };
-    return { label: "📌 Conteúdo", color: "bg-gray-100 text-gray-700" };
+    if (tipo === "video") return { label: "🎥 Vídeo" };
+    if (tipo === "podcast") return { label: "🎧 Podcast" };
+    if (tipo === "audio") return { label: "🔊 Áudio" };
+    if (tipo === "leitura") return { label: "📖 Leitura" };
+    if (tipo === "produto") return { label: "🛒 Produto" };
+    return { label: "📌 Conteúdo" };
   }
 
   const tipoInfo = getTipo();
 
   return (
-    <article className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 space-y-4">
-      {/* BADGE DE TIPO */}
+    <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
+      {/* BADGE */}
       <span
-        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${tipoInfo.color}`}
+        className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
+        style={{ backgroundColor: softBg, color: primary }}
       >
         {tipoInfo.label}
       </span>
@@ -27,22 +34,27 @@ export default function MaterialCard({ item }) {
       </h2>
 
       {/* DESCRIÇÃO */}
-      <p className="text-sm md:text-base text-gray-600 leading-relaxed">
-        {descricao}
-      </p>
+      {descricao && (
+        <p className="text-sm md:text-base text-gray-700 leading-relaxed">
+          {descricao}
+        </p>
+      )}
 
       {/* CTA */}
-      <div className="pt-2">
-        <a
-          href={link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition"
-        >
-          {cta || "Ir além"}
-          <span aria-hidden>→</span>
-        </a>
-      </div>
+      {link && (
+        <div className="pt-2">
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-semibold transition hover:opacity-90"
+            style={{ color: primary }}
+          >
+            {cta || "Abrir"}
+            <span aria-hidden>→</span>
+          </a>
+        </div>
+      )}
     </article>
   );
 }
