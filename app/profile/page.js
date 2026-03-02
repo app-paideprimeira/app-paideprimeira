@@ -294,14 +294,6 @@ const removerFilho = async (id) => {
 
         <form onSubmit={handleSave} className="space-y-6">
 
-          <Section id="bebê" title="Atualize as Informações">
-            <input
-              type="date"
-              value={profileMeta.event_date}
-              onChange={(e) => setProfileMeta({ ...profileMeta, event_date: e.target.value })}
-              className="w-full p-3 border rounded-lg"
-            />
-          </Section>
 
           <Section id="foto" title="Foto de Perfil">
             {/* Upload de Foto */}

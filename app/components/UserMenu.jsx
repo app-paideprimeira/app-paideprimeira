@@ -7,7 +7,6 @@ import { signOutClean } from "../../lib/session/useSession";
 
 export default function UserMenu() {
   const router = useRouter();
-
   const [isOpen, setIsOpen]           = useState(false);
   const [user, setUser]               = useState(null);
   const [userProfile, setUserProfile] = useState(null);
@@ -18,116 +17,56 @@ export default function UserMenu() {
       const supabase = supabaseBrowser();
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
-
       if (user) {
         const { data: profile } = await supabase
-          .from("profiles")
-          .select("nome")
-          .eq("id", user.id)
-          .single();
-
+          .from("profiles").select("nome").eq("id", user.id).single();
         setUserProfile(profile);
       }
     }
-
     loadUser();
-
     function handleClickOutside(e) {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setIsOpen(false);
-      }
+      if (menuRef.current && !menuRef.current.contains(e.target)) setIsOpen(false);
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleNavigation = (path) => {
-    setIsOpen(false);
-    router.push(path);
-  };
-
-  // Usa signOutClean para remover a sessão da tabela active_sessions
-  const handleLogout = async () => {
-    await signOutClean();
-    router.push("/auth/login");
-  };
-
+  const handleNavigation = (path) => { setIsOpen(false); router.push(path); };
+  const handleLogout = async () => { await signOutClean(); router.push("/auth/login"); };
   const getInitials = () => {
-    if (userProfile?.nome) {
-      return userProfile.nome
-        .split(" ")
-        .map(n => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-    }
+    if (userProfile?.nome) return userProfile.nome.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
     return user?.email?.slice(0, 2).toUpperCase() || "PA";
   };
 
   return (
     <div className="relative" ref={menuRef}>
-      {/* Botão */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 bg-white/90 hover:bg-white rounded-full px-4 py-2 shadow-md border border-gray-200 transition"
-      >
+      <button onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-3 bg-white/90 hover:bg-white rounded-full px-4 py-2 shadow-md border border-gray-200 transition">
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
           {getInitials()}
         </div>
-
         <span className="hidden sm:block text-sm font-semibold tracking-tight text-gray-800">
           {userProfile?.nome || user?.email?.split("@")[0]}
         </span>
-
         <ChevronIcon open={isOpen} />
       </button>
 
-      {/* Dropdown */}
       {isOpen && (
         <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden">
-
-          {/* Header */}
           <div className="px-4 py-4 border-b border-gray-100">
-            <p className="text-sm font-semibold tracking-tight text-gray-900">
-              {userProfile?.nome || "Pai de Primeira"}
-            </p>
+            <p className="text-sm font-semibold tracking-tight text-gray-900">{userProfile?.nome || "Pai de Primeira"}</p>
             <p className="text-xs text-gray-500 truncate">{user?.email}</p>
           </div>
-
-          {/* Links */}
           <div className="py-2">
-            <MenuItem
-              icon={<LocationIcon />}
-              label="Onde estamos agora"
-              onClick={() => handleNavigation("/dashboard")}
-            />
-            <MenuItem
-              icon={<UserIcon />}
-              label="Minhas informações"
-              onClick={() => handleNavigation("/profile")}
-            />
-            <MenuItem
-              icon={<BookIcon />}
-              label="Meu diário de pai"
-              onClick={() => handleNavigation("/diario")}
-            />
-            <MenuItem
-              icon={<UsersIcon />}
-              label="Outros pais"
-              onClick={() => handleNavigation("/comunidade")}
-            />
+            <MenuItem icon={<LocationIcon />} label="Onde estamos agora" onClick={() => handleNavigation("/dashboard")} />
+            <MenuItem icon={<CalendarIcon />} label="Meu planner"        onClick={() => handleNavigation("/planner")} />
+            <MenuItem icon={<UserIcon />}     label="Minhas informações" onClick={() => handleNavigation("/profile")} />
+            <MenuItem icon={<BookIcon />}     label="Meu diário de pai"  onClick={() => handleNavigation("/diario")} />
+            <MenuItem icon={<UsersIcon />}    label="Outros pais"        onClick={() => handleNavigation("/comunidade")} />
           </div>
-
           <div className="border-t border-gray-100" />
-
           <div className="py-2">
-            <MenuItem
-              icon={<LogoutIcon />}
-              label="Sair do app"
-              onClick={handleLogout}
-              danger
-            />
+            <MenuItem icon={<LogoutIcon />} label="Sair do app" onClick={handleLogout} danger />
           </div>
         </div>
       )}
@@ -135,26 +74,16 @@ export default function UserMenu() {
   );
 }
 
-/* ── Item do menu ── */
 function MenuItem({ icon, label, onClick, danger = false }) {
   return (
-    <button
-      onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3 text-left transition
-        ${danger
-          ? "text-red-600 hover:bg-red-50"
-          : "text-gray-700 hover:bg-gray-50"
-        }`}
-    >
-      <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center">
-        {icon}
-      </div>
+    <button onClick={onClick}
+      className={`w-full flex items-center gap-3 px-4 py-3 text-left transition ${danger ? "text-red-600 hover:bg-red-50" : "text-gray-700 hover:bg-gray-50"}`}>
+      <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center">{icon}</div>
       <span className="text-sm font-semibold tracking-tight">{label}</span>
     </button>
   );
 }
 
-/* ── Ícones ── */
 function ChevronIcon({ open }) {
   return (
     <svg className={`w-4 h-4 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,6 +95,12 @@ function ChevronIcon({ open }) {
 const LocationIcon = () => (
   <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M12 21s6-5.686 6-10a6 6 0 10-12 0c0 4.314 6 10 6 10z" />
+  </svg>
+);
+
+const CalendarIcon = () => (
+  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
   </svg>
 );
 
