@@ -12,31 +12,79 @@ import { useGoToToday } from "../../../../lib/navigation/useGoToToday";
 import { supabaseBrowser } from "../../../../lib/supabase/client";
 import { usePushPrompt } from "../../../../lib/push/usePushPrompt";
 
-// ─── lógica de acesso premium ────────────────────────────────
 function isPremiumWeekUnlocked(semana, currentWeek, premiumSinceWeek) {
   const sinceWeek = premiumSinceWeek ?? currentWeek;
   return semana >= sinceWeek && semana <= currentWeek + 2;
 }
 
+function BabyBornModal({ textColor, onConfirm, onClose, saving }) {
+  const today = new Date().toISOString().split("T")[0];
+  const [dataNascimento, setDataNascimento] = useState(today);
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-3xl p-8 w-full max-w-sm shadow-2xl text-center space-y-5">
+        <div style={{ fontSize: 56 }}>🎉</div>
+        <div>
+          <h2 className="text-xl font-black text-gray-900 mb-2">Que momento incrível!</h2>
+          <p className="text-sm text-gray-500 leading-relaxed">
+            Informe a data de nascimento e vamos adaptar toda a jornada para essa nova fase.
+          </p>
+        </div>
+        <div className="text-left space-y-2">
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Data de nascimento
+          </label>
+          <input
+            type="date"
+            value={dataNascimento}
+            max={today}
+            onChange={e => setDataNascimento(e.target.value)}
+            className="w-full p-3 border-2 rounded-xl text-gray-900 text-base focus:outline-none"
+            style={{ borderColor: textColor + "60" }}
+          />
+        </div>
+        <div className="space-y-3">
+          <button
+            onClick={() => onConfirm(dataNascimento)}
+            disabled={saving || !dataNascimento}
+            className="w-full py-3 rounded-xl font-bold text-white text-base transition"
+            style={{ background: "linear-gradient(135deg, #f59e0b, #ef4444)", opacity: saving ? 0.7 : 1 }}
+          >
+            {saving ? "Salvando..." : "👶 Confirmar nascimento"}
+          </button>
+          <button
+            onClick={onClose}
+            disabled={saving}
+            className="w-full py-2 text-sm text-gray-400 hover:text-gray-600 transition"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SemanaGestante({ params }) {
-  const router = useRouter();
+  const router      = useRouter();
   const { goToToday } = useGoToToday();
 
-  const [userId, setUserId]             = useState(null);
-  const [isPremium, setIsPremium]       = useState(false);
-  const [isUnlocked, setIsUnlocked]     = useState(false);
+  const [userId, setUserId]                 = useState(null);
+  const [isPremium, setIsPremium]           = useState(false);
+  const [isUnlocked, setIsUnlocked]         = useState(false);
   const [premiumContent, setPremiumContent] = useState(null);
   const [loadingPremium, setLoadingPremium] = useState(false);
+  const [currentWeek, setCurrentWeek]       = useState(null);
+
+  const [showBabyModal, setShowBabyModal] = useState(false);
+  const [savingBaby, setSavingBaby]       = useState(false);
 
   const semana     = Number(params.semana);
   const infoSemana = semanaData.gestante?.[semana];
 
-  // ── Hook de push — passa userId quando disponível ──
   const { showPrompt, loading: loadingPush, enablePush, dismissPush } = usePushPrompt(userId);
 
-  /* ────────────────────────────────
-     INIT — usuário + premium
-  ──────────────────────────────── */
   useEffect(() => {
     if (typeof window === "undefined") return;
     let alive = true;
@@ -55,13 +103,11 @@ export default function SemanaGestante({ params }) {
 
       if (!profile || !alive) return;
 
+      setCurrentWeek(profile.current_week);
+
       if (profile.is_premium) {
         setIsPremium(true);
-        const unlocked = isPremiumWeekUnlocked(
-          semana,
-          profile.current_week,
-          profile.premium_since_week
-        );
+        const unlocked = isPremiumWeekUnlocked(semana, profile.current_week, profile.premium_since_week);
         setIsUnlocked(unlocked);
         if (unlocked) loadPremiumContent(alive, supabase);
       }
@@ -110,6 +156,36 @@ export default function SemanaGestante({ params }) {
     return () => { alive = false; };
   }, [semana]);
 
+  async function handleBabyBorn(dataNascimento) {
+    setSavingBaby(true);
+    try {
+      const supabase = supabaseBrowser();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const hoje        = new Date();
+      const nascimento  = new Date(dataNascimento);
+      const diffSemanas = Math.floor((hoje - nascimento) / (7 * 24 * 60 * 60 * 1000)) + 1;
+      const semanaAtualBebe = Math.min(52, Math.max(1, diffSemanas));
+
+      await supabase.from("profiles").update({
+        stage:          "bebe",
+        event_date:     dataNascimento,
+        base_week:      semanaAtualBebe,
+        base_week_date: hoje.toISOString().split("T")[0],
+        current_week:   semanaAtualBebe,
+        updated_at:     new Date().toISOString(),
+      }).eq("id", user.id);
+
+      setShowBabyModal(false);
+      router.push(`/semanas/bebe/${semanaAtualBebe}?nascimento=true`);
+    } catch {
+      alert("Erro ao salvar. Tente novamente.");
+    } finally {
+      setSavingBaby(false);
+    }
+  }
+
   if (!infoSemana) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -119,11 +195,11 @@ export default function SemanaGestante({ params }) {
   }
 
   const { bgColor, textColor } = infoSemana;
+  const showBabyBornButton = currentWeek !== null && currentWeek >= 34;
 
   return (
     <div className="min-h-screen px-4 py-6" style={{ backgroundColor: bgColor }}>
 
-      {/* HEADER */}
       <header className="max-w-4xl mx-auto flex justify-between items-center mb-8">
         <Image src="/logo/logo-app.svg" alt="Pai de Primeira" width={140} height={40} className="opacity-90" priority />
         <UserMenu />
@@ -132,6 +208,20 @@ export default function SemanaGestante({ params }) {
       <main className="max-w-3xl mx-auto space-y-8">
 
         <WeekCard data={infoSemana} />
+
+        {/* ── BOTÃO MEU BEBÊ NASCEU ── */}
+        {showBabyBornButton && (
+          <div className="flex justify-center">
+            <button
+              onClick={() => setShowBabyModal(true)}
+              className="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white shadow-lg transition hover:scale-105 active:scale-95"
+              style={{ background: "linear-gradient(135deg, #f59e0b, #ef4444)", boxShadow: "0 4px 20px rgba(245,158,11,.35)" }}
+            >
+              <span style={{ fontSize: 20 }}>🎉</span>
+              Meu bebê nasceu!
+            </button>
+          </div>
+        )}
 
         {/* ── SEÇÃO PREMIUM ── */}
         {isPremium ? (
@@ -149,10 +239,10 @@ export default function SemanaGestante({ params }) {
                 <div className="text-3xl">🔒</div>
                 <p className="font-bold text-lg" style={{ color: textColor }}>Conteúdo ainda não disponível</p>
                 <p className="text-sm text-gray-600">
-                  Este conteúdo será liberado quando você chegar na <strong>semana {semana - 2}</strong> da gestação.
+                  Este conteúdo será liberado quando você chegar na semana atual.
                 </p>
                 <div className="inline-block px-4 py-2 rounded-full text-xs font-semibold" style={{ backgroundColor: `${textColor}15`, color: textColor }}>
-                  📅 Disponível na semana {semana - 2}
+                  📅 Disponível em breve
                 </div>
               </div>
             )}
@@ -200,20 +290,38 @@ export default function SemanaGestante({ params }) {
 
         {/* NAVEGAÇÃO */}
         <div className="flex items-center justify-center gap-3">
-          <button disabled={semana <= 1} onClick={() => router.push(`/semanas/gestante/${semana - 1}`)} className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition disabled:opacity-40" style={{ color: textColor }}>
-            ← Semana {semana - 1}
-          </button>
+          {semana > 1 ? (
+            <button onClick={() => router.push(`/semanas/gestante/${semana - 1}`)} className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition" style={{ color: textColor }}>
+              ← Semana {semana - 1}
+            </button>
+          ) : (
+            <div className="w-28" />
+          )}
+
           <button onClick={goToToday} className="px-5 py-2 rounded-xl font-semibold shadow-md" style={{ backgroundColor: textColor, color: "#fff" }}>
             Semana Atual
           </button>
-          <button disabled={semana >= 42} onClick={() => router.push(`/semanas/gestante/${semana + 1}`)} className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition disabled:opacity-40" style={{ color: textColor }}>
-            → Semana {semana + 1}
-          </button>
+
+          {semana < 42 ? (
+            <button onClick={() => router.push(`/semanas/gestante/${semana + 1}`)} className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition" style={{ color: textColor }}>
+              → Semana {semana + 1}
+            </button>
+          ) : (
+            <div className="w-28" />
+          )}
         </div>
 
       </main>
 
-      {/* ── PUSH PROMPT ── */}
+      {showBabyModal && (
+        <BabyBornModal
+          textColor={textColor}
+          onConfirm={handleBabyBorn}
+          onClose={() => setShowBabyModal(false)}
+          saving={savingBaby}
+        />
+      )}
+
       {showPrompt && (
         <div className="fixed inset-0 bg-black/40 flex items-end justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-t-2xl p-6 shadow-xl">

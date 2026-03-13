@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import Image from "next/image";
 
 import semanaData from "../../../../data/semanas.json";
@@ -12,14 +13,38 @@ import { useGoToToday } from "../../../../lib/navigation/useGoToToday";
 import { supabaseBrowser } from "../../../../lib/supabase/client";
 import { usePushPrompt } from "../../../../lib/push/usePushPrompt";
 
-// ─── lógica de acesso premium ────────────────────────────────
 function isPremiumWeekUnlocked(semana, currentWeek, premiumSinceWeek) {
   const sinceWeek = premiumSinceWeek ?? currentWeek;
   return semana >= sinceWeek && semana <= currentWeek + 2;
 }
 
-export default function SemanaBebe({ params }) {
-  const router = useRouter();
+function NascimentoBanner({ textColor, onClose }) {
+  return (
+    <div
+      className="rounded-3xl p-6 text-center space-y-3 relative overflow-hidden"
+      style={{ background: "linear-gradient(135deg, #fef3c7, #fff7ed)", border: "2px solid #fbbf24" }}
+    >
+      <div style={{ position: "absolute", top: 8, left: 16, fontSize: 20, opacity: 0.4 }}>🎊</div>
+      <div style={{ position: "absolute", top: 8, right: 16, fontSize: 20, opacity: 0.4 }}>🎊</div>
+      <div style={{ fontSize: 52 }}>👶</div>
+      <h2 className="text-xl font-black text-gray-900">Bem-vindo à fase do bebê!</h2>
+      <p className="text-sm text-gray-600 leading-relaxed">
+        A gestação acabou e uma nova jornada começa. A partir de agora você acompanha o desenvolvimento semana a semana do seu bebê.
+      </p>
+      <button
+        onClick={onClose}
+        className="inline-block px-6 py-2.5 rounded-xl font-bold text-white text-sm transition hover:opacity-90"
+        style={{ backgroundColor: textColor }}
+      >
+        Começar essa nova fase 🚀
+      </button>
+    </div>
+  );
+}
+
+function SemanaBebePage({ params }) {
+  const router        = useRouter();
+  const searchParams  = useSearchParams();
   const { goToToday } = useGoToToday();
 
   const [userId, setUserId]                 = useState(null);
@@ -27,16 +52,20 @@ export default function SemanaBebe({ params }) {
   const [isUnlocked, setIsUnlocked]         = useState(false);
   const [premiumContent, setPremiumContent] = useState(null);
   const [loadingPremium, setLoadingPremium] = useState(false);
+  const [showBanner, setShowBanner]         = useState(false);
 
   const semana     = Number(params.semana);
   const infoSemana = semanaData.bebe?.[semana];
 
-  // ── Hook de push ──
   const { showPrompt, loading: loadingPush, enablePush, dismissPush } = usePushPrompt(userId);
 
-  /* ────────────────────────────────
-     INIT — usuário + premium
-  ──────────────────────────────── */
+  useEffect(() => {
+    if (searchParams.get("nascimento") === "true") {
+      setShowBanner(true);
+      window.history.replaceState({}, "", `/semanas/bebe/${semana}`);
+    }
+  }, [searchParams, semana]);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     let alive = true;
@@ -57,11 +86,7 @@ export default function SemanaBebe({ params }) {
 
       if (profile.is_premium) {
         setIsPremium(true);
-        const unlocked = isPremiumWeekUnlocked(
-          semana,
-          profile.current_week,
-          profile.premium_since_week
-        );
+        const unlocked = isPremiumWeekUnlocked(semana, profile.current_week, profile.premium_since_week);
         setIsUnlocked(unlocked);
         if (unlocked) loadPremiumContent(alive, supabase);
       }
@@ -123,7 +148,6 @@ export default function SemanaBebe({ params }) {
   return (
     <div className="min-h-screen px-4 py-6" style={{ backgroundColor: bgColor }}>
 
-      {/* HEADER */}
       <header className="max-w-4xl mx-auto flex justify-between items-center mb-8">
         <Image src="/logo/logo-app.svg" alt="Pai de Primeira" width={120} height={40} className="opacity-90" priority />
         <UserMenu />
@@ -131,9 +155,12 @@ export default function SemanaBebe({ params }) {
 
       <main className="max-w-3xl mx-auto space-y-8">
 
+        {showBanner && (
+          <NascimentoBanner textColor={textColor} onClose={() => setShowBanner(false)} />
+        )}
+
         <WeekCard data={infoSemana} />
 
-        {/* ── SEÇÃO PREMIUM ── */}
         {isPremium ? (
           <>
             <div className="flex items-center gap-3">
@@ -149,10 +176,10 @@ export default function SemanaBebe({ params }) {
                 <div className="text-3xl">🔒</div>
                 <p className="font-bold text-lg" style={{ color: textColor }}>Conteúdo ainda não disponível</p>
                 <p className="text-sm text-gray-600">
-                  Este conteúdo será liberado quando você chegar na <strong>semana {semana - 2}</strong>.
+                  Este conteúdo será liberado quando você chegar na semana atual.
                 </p>
                 <div className="inline-block px-4 py-2 rounded-full text-xs font-semibold" style={{ backgroundColor: `${textColor}15`, color: textColor }}>
-                  📅 Disponível na semana {semana - 2}
+                  📅 Disponível em breve
                 </div>
               </div>
             )}
@@ -200,20 +227,29 @@ export default function SemanaBebe({ params }) {
 
         {/* NAVEGAÇÃO */}
         <div className="flex items-center justify-center gap-3">
-          <button disabled={semana <= 1} onClick={() => router.push(`/semanas/bebe/${semana - 1}`)} className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition disabled:opacity-40" style={{ color: textColor }}>
-            ← Semana {semana - 1}
-          </button>
+          {semana > 1 ? (
+            <button onClick={() => router.push(`/semanas/bebe/${semana - 1}`)} className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition" style={{ color: textColor }}>
+              ← Semana {semana - 1}
+            </button>
+          ) : (
+            <div className="w-28" />
+          )}
+
           <button onClick={goToToday} className="px-5 py-2 rounded-xl font-semibold shadow-md" style={{ backgroundColor: textColor, color: "#fff" }}>
             Semana Atual
           </button>
-          <button disabled={semana >= 52} onClick={() => router.push(`/semanas/bebe/${semana + 1}`)} className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition disabled:opacity-40" style={{ color: textColor }}>
-            → Semana {semana + 1}
-          </button>
+
+          {semana < 52 ? (
+            <button onClick={() => router.push(`/semanas/bebe/${semana + 1}`)} className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition" style={{ color: textColor }}>
+              → Semana {semana + 1}
+            </button>
+          ) : (
+            <div className="w-28" />
+          )}
         </div>
 
       </main>
 
-      {/* ── PUSH PROMPT ── */}
       {showPrompt && (
         <div className="fixed inset-0 bg-black/40 flex items-end justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-t-2xl p-6 shadow-xl">
@@ -234,5 +270,13 @@ export default function SemanaBebe({ params }) {
       )}
 
     </div>
+  );
+}
+
+export default function SemanaBebe({ params }) {
+  return (
+    <Suspense>
+      <SemanaBebePage params={params} />
+    </Suspense>
   );
 }
