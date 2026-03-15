@@ -1,6 +1,4 @@
 // app/api/admin/query/route.js
-// API route que usa service_role_key — só funciona em localhost via middleware
-
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
@@ -20,10 +18,8 @@ export async function POST(request) {
   try {
     switch (action) {
 
-      // ── Carrega semana ──────────────────────────────────────
       case "loadWeek": {
         const { stage, week } = payload;
-
         const { data: header } = await supabase
           .from("premium_week_materials")
           .select("id, title, intro")
@@ -51,7 +47,6 @@ export async function POST(request) {
         return NextResponse.json({ header, blocks, notif });
       }
 
-      // ── Salva cabeçalho ─────────────────────────────────────
       case "saveHeader": {
         const { headerId, stage, week, title, intro } = payload;
         if (headerId) {
@@ -70,7 +65,6 @@ export async function POST(request) {
         }
       }
 
-      // ── Salva bloco ─────────────────────────────────────────
       case "saveBlock": {
         const { block, weekId, blocksCount } = payload;
         if (block.id) {
@@ -93,13 +87,11 @@ export async function POST(request) {
         return NextResponse.json({ ok: true });
       }
 
-      // ── Remove bloco ────────────────────────────────────────
       case "deleteBlock": {
         await supabase.from("premium_week_blocks").delete().eq("id", payload.blockId);
         return NextResponse.json({ ok: true });
       }
 
-      // ── Reordena blocos ─────────────────────────────────────
       case "reorderBlocks": {
         const { blocks } = payload;
         await Promise.all(blocks.map((b, i) =>
@@ -108,7 +100,6 @@ export async function POST(request) {
         return NextResponse.json({ ok: true });
       }
 
-      // ── Salva notificação ───────────────────────────────────
       case "saveNotif": {
         const { notifId, stage, week, title, body, url } = payload;
         if (notifId) {

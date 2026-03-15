@@ -1,7 +1,7 @@
 "use client";
 
+// app/admin/page.js
 import { useEffect, useState, useCallback } from "react";
-import { supabaseBrowser } from "../../lib/supabase/client";
 
 const STAGES = [
   { key: "gestante", label: "Gestante", max: 42, emoji: "🤰" },
@@ -9,20 +9,30 @@ const STAGES = [
 ];
 
 const BLOCK_TYPES = [
-  { value: "checklist",    label: "✅ Checklist"    },
-  { value: "texto",        label: "📝 Texto"        },
-  { value: "lembrete_fixo",label: "📌 Lembrete"     },
-  { value: "video",        label: "🎥 Vídeo"        },
-  { value: "podcast",      label: "🎧 Podcast"      },
-  { value: "audio",        label: "🔊 Áudio"        },
-  { value: "leitura",      label: "📖 Leitura"      },
-  { value: "produto",      label: "🛒 Produto"      },
-  { value: "imagem",       label: "🖼️ Imagem"       },
+  { value: "checklist",      label: "✅ Checklist"       },
+  { value: "texto",          label: "📝 Texto"           },
+  { value: "lembrete_fixo",  label: "📌 Lembrete"        },
+  { value: "video",          label: "🎥 Vídeo"           },
+  { value: "podcast",        label: "🎧 Podcast"         },
+  { value: "audio",          label: "🔊 Áudio"           },
+  { value: "leitura",        label: "📖 Leitura"         },
+  { value: "produto",        label: "🛒 Produto"         },
+  { value: "lista_produtos", label: "🛍️ Lista de Produtos" },
+  { value: "imagem",         label: "🖼️ Imagem"          },
 ];
 
 const EMPTY_BLOCK = {
   type: "texto", title: "", description: "", url: "", cta: "", payload: {}, sort_order: 0,
 };
+
+async function adminQuery(action, payload) {
+  const res = await fetch("/api/admin/query", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action, payload }),
+  });
+  return res.json();
+}
 
 function toast(msg, type = "ok") {
   const el = document.createElement("div");
@@ -38,15 +48,13 @@ function toast(msg, type = "ok") {
 }
 
 export default function AdminPage() {
-  const [stage, setStage]     = useState("gestante");
-  const [semana, setSemana]   = useState(1);
-  const [header, setHeader]   = useState(null);
-  const [blocks, setBlocks]   = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving]   = useState(false);
+  const [stage, setStage]   = useState("gestante");
+  const [semana, setSemana] = useState(1);
+  const [header, setHeader] = useState(null);
+  const [blocks, setBlocks] = useState([]);
+  const [loading, setLoading]   = useState(false);
+  const [saving, setSaving]     = useState(false);
   const [editingBlock, setEditingBlock] = useState(null);
-  const [headerDraft, setHeaderDraft]   = useState({ title: "", intro: "" });
-
   const [notifDraft, setNotifDraft]     = useState({ title: "", body: "", url: "" });
   const [notifId, setNotifId]           = useState(null);
   const [sendingTest, setSendingTest]   = useState(false);
@@ -61,38 +69,16 @@ export default function AdminPage() {
     setNotifId(null);
     setNotifDraft({ title: "", body: "", url: "" });
 
-    const supabase = supabaseBrowser();
+    const data = await adminQuery("loadWeek", { stage, week: semana });
 
-    const { data: h } = await supabase
-      .from("premium_week_materials")
-      .select("id, title, intro")
-      .eq("stage", stage)
-      .eq("week", semana)
-      .maybeSingle();
-
-    if (h) {
-      setHeader(h);
-      setHeaderDraft({ title: h.title, intro: h.intro || "" });
-      const { data: bs } = await supabase
-        .from("premium_week_blocks")
-        .select("*")
-        .eq("week_id", h.id)
-        .order("sort_order", { ascending: true });
-      setBlocks(bs ?? []);
-    } else {
-      setHeaderDraft({ title: "", intro: "" });
+    if (data.header) {
+      setHeader(data.header);
+      setBlocks(data.blocks ?? []);
     }
 
-    const { data: notif } = await supabase
-      .from("week_notifications")
-      .select("*")
-      .eq("stage", stage)
-      .eq("week", semana)
-      .maybeSingle();
-
-    if (notif) {
-      setNotifId(notif.id);
-      setNotifDraft({ title: notif.title, body: notif.body, url: notif.url || "/" });
+    if (data.notif) {
+      setNotifId(data.notif.id);
+      setNotifDraft({ title: data.notif.title, body: data.notif.body, url: data.notif.url || "/" });
     }
 
     setLoading(false);
@@ -100,53 +86,35 @@ export default function AdminPage() {
 
   useEffect(() => { loadWeek(); }, [loadWeek]);
 
-  async function saveHeader() {
-    if (!headerDraft.title.trim()) return toast("Título obrigatório", "err");
-    setSaving(true);
-    const supabase = supabaseBrowser();
-    if (header) {
-      await supabase.from("premium_week_materials")
-        .update({ title: headerDraft.title, intro: headerDraft.intro, updated_at: new Date().toISOString() })
-        .eq("id", header.id);
-      toast("Cabeçalho salvo ✓");
-    } else {
-      const { data } = await supabase.from("premium_week_materials")
-        .insert({ stage, week: semana, title: headerDraft.title, intro: headerDraft.intro })
-        .select().single();
-      setHeader(data);
-      toast("Semana criada ✓");
-    }
-    setSaving(false);
-    loadWeek();
+  async function ensureHeader() {
+    if (header) return header;
+    const data = await adminQuery("saveHeader", {
+      headerId: null,
+      stage, week: semana,
+      title: `Semana ${semana} — ${stage === "gestante" ? "Gestante" : "Bebê"}`,
+      intro: "",
+    });
+    if (data.header) { setHeader(data.header); return data.header; }
+    return null;
   }
 
   async function saveNotif() {
-    if (!notifDraft.title.trim() || !notifDraft.body.trim()) {
+    if (!notifDraft.title.trim() || !notifDraft.body.trim())
       return toast("Título e mensagem obrigatórios", "err");
-    }
     setSaving(true);
-    const supabase = supabaseBrowser();
-    const url = notifDraft.url || `/${stage === "gestante" ? "semanas/gestante" : "semanas/bebe"}/${semana}`;
-
-    if (notifId) {
-      await supabase.from("week_notifications")
-        .update({ title: notifDraft.title, body: notifDraft.body, url, updated_at: new Date().toISOString() })
-        .eq("id", notifId);
-      toast("Notificação salva ✓");
-    } else {
-      const { data } = await supabase.from("week_notifications")
-        .insert({ stage, week: semana, title: notifDraft.title, body: notifDraft.body, url })
-        .select().single();
-      setNotifId(data?.id);
-      toast("Notificação criada ✓");
-    }
+    const url = notifDraft.url || `/semanas/${stage}/${semana}`;
+    const data = await adminQuery("saveNotif", {
+      notifId, stage, week: semana,
+      title: notifDraft.title, body: notifDraft.body, url,
+    });
+    if (data.notifId) { setNotifId(data.notifId); toast("Notificação salva ✓"); }
+    else toast(data.error || "Erro ao salvar", "err");
     setSaving(false);
   }
 
   async function sendTestNotif() {
-    if (!notifDraft.title.trim() || !notifDraft.body.trim()) {
-      return toast("Salve a notificação antes de testar", "err");
-    }
+    if (!notifDraft.title.trim() || !notifDraft.body.trim())
+      return toast("Preencha título e mensagem antes de testar", "err");
     setSendingTest(true);
     try {
       const res = await fetch("/api/push/send", {
@@ -162,22 +130,18 @@ export default function AdminPage() {
   }
 
   async function saveBlock(block) {
-    if (!header) return toast("Salve o cabeçalho primeiro", "err");
     if (!block.title.trim()) return toast("Título do bloco obrigatório", "err");
     setSaving(true);
-    const supabase = supabaseBrowser();
+    const h = await ensureHeader();
+    if (!h) { toast("Erro ao criar semana", "err"); setSaving(false); return; }
     const payload = buildPayload(block);
-
-    if (block.id) {
-      await supabase.from("premium_week_blocks")
-        .update({ type: block.type, title: block.title, description: block.description, url: block.url || null, cta: block.cta || null, payload, sort_order: block.sort_order })
-        .eq("id", block.id);
-      toast("Bloco salvo ✓");
-    } else {
-      await supabase.from("premium_week_blocks")
-        .insert({ week_id: header.id, type: block.type, title: block.title, description: block.description, url: block.url || null, cta: block.cta || null, payload, sort_order: blocks.length + 1 });
-      toast("Bloco adicionado ✓");
-    }
+    const data = await adminQuery("saveBlock", {
+      block: { ...block, payload },
+      weekId: h.id,
+      blocksCount: blocks.length,
+    });
+    if (data.ok) toast(block.id ? "Bloco salvo ✓" : "Bloco adicionado ✓");
+    else toast(data.error || "Erro ao salvar bloco", "err");
     setSaving(false);
     setEditingBlock(null);
     loadWeek();
@@ -185,8 +149,7 @@ export default function AdminPage() {
 
   async function deleteBlock(blockId) {
     if (!confirm("Remover este bloco?")) return;
-    const supabase = supabaseBrowser();
-    await supabase.from("premium_week_blocks").delete().eq("id", blockId);
+    await adminQuery("deleteBlock", { blockId });
     toast("Bloco removido");
     loadWeek();
   }
@@ -196,10 +159,7 @@ export default function AdminPage() {
     const target = index + dir;
     if (target < 0 || target >= newBlocks.length) return;
     [newBlocks[index], newBlocks[target]] = [newBlocks[target], newBlocks[index]];
-    const supabase = supabaseBrowser();
-    await Promise.all(newBlocks.map((b, i) =>
-      supabase.from("premium_week_blocks").update({ sort_order: i + 1 }).eq("id", b.id)
-    ));
+    await adminQuery("reorderBlocks", { blocks: newBlocks });
     setBlocks(newBlocks);
   }
 
@@ -208,7 +168,16 @@ export default function AdminPage() {
       const items = (block._checklistRaw || "").split("\n").map(s => s.trim()).filter(Boolean);
       return { items };
     }
-    if (["texto", "leitura", "produto", "podcast", "audio", "imagem"].includes(block.type)) return { body: block._body || "" };
+    if (block.type === "lista_produtos") {
+      // Cada linha: "Nome do produto | descrição | https://link.com"
+      const produtos = (block._produtosRaw || "").split("\n").map(line => {
+        const parts = line.split("|").map(s => s.trim());
+        return { nome: parts[0] || "", descricao: parts[1] || "", link: parts[2] || "" };
+      }).filter(p => p.nome);
+      return { produtos };
+    }
+    if (["texto", "leitura", "produto", "podcast", "audio", "imagem"].includes(block.type))
+      return { body: block._body || "" };
     if (block.type === "lembrete_fixo") return { note: block._body || "" };
     return {};
   }
@@ -218,6 +187,9 @@ export default function AdminPage() {
       ...block,
       _body: block.payload?.body || block.payload?.note || "",
       _checklistRaw: (block.payload?.items || []).join("\n"),
+      _produtosRaw: (block.payload?.produtos || [])
+        .map(p => [p.nome, p.descricao, p.link].join(" | "))
+        .join("\n"),
     };
   }
 
@@ -260,31 +232,9 @@ export default function AdminPage() {
 
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
             {loading && <span style={{ fontSize: 13, color: "#64748b" }}>Carregando...</span>}
-            {!loading && header && <span style={{ fontSize: 12, background: "#166534", color: "#bbf7d0", padding: "4px 10px", borderRadius: 20, fontWeight: 600 }}>✓ {blocks.length} bloco{blocks.length !== 1 ? "s" : ""}</span>}
-            {!loading && !header && <span style={{ fontSize: 12, background: "#1e3a5f", color: "#93c5fd", padding: "4px 10px", borderRadius: 20, fontWeight: 600 }}>Semana vazia</span>}
-          </div>
-        </div>
-
-        {/* CABEÇALHO */}
-        <div style={{ background: "#1e293b", borderRadius: 14, padding: 20, border: "1px solid #334155" }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>
-            📋 Cabeçalho da Semana {semana} — {stageInfo?.label}
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <div>
-              <label style={labelStyle}>Título</label>
-              <input value={headerDraft.title} onChange={e => setHeaderDraft(d => ({ ...d, title: e.target.value }))}
-                placeholder={`Ex: Semana ${semana} — Extras para o pai presente`} style={inputStyle} />
-            </div>
-            <div>
-              <label style={labelStyle}>Intro (opcional)</label>
-              <textarea value={headerDraft.intro} onChange={e => setHeaderDraft(d => ({ ...d, intro: e.target.value }))}
-                placeholder="Texto introdutório exibido no topo da página premium..." rows={2}
-                style={{ ...inputStyle, resize: "vertical" }} />
-            </div>
-            <button onClick={saveHeader} disabled={saving} style={{ ...btnPrimary, alignSelf: "flex-start" }}>
-              {saving ? "Salvando..." : header ? "💾 Salvar cabeçalho" : "✨ Criar semana"}
-            </button>
+            {!loading && <span style={{ fontSize: 12, background: blocks.length > 0 ? "#166534" : "#1e3a5f", color: blocks.length > 0 ? "#bbf7d0" : "#93c5fd", padding: "4px 10px", borderRadius: 20, fontWeight: 600 }}>
+              {blocks.length > 0 ? `✓ ${blocks.length} bloco${blocks.length !== 1 ? "s" : ""}` : "Semana vazia"}
+            </span>}
           </div>
         </div>
 
@@ -331,45 +281,45 @@ export default function AdminPage() {
         </div>
 
         {/* BLOCOS */}
-        {header && (
-          <div style={{ background: "#1e293b", borderRadius: 14, padding: 20, border: "1px solid #334155" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>🧩 Blocos de Conteúdo</span>
-              <button onClick={() => setEditingBlock({ ...EMPTY_BLOCK, _body: "", _checklistRaw: "" })} style={btnPrimary}>+ Novo bloco</button>
-            </div>
-
-            {blocks.length === 0 && (
-              <p style={{ color: "#475569", fontSize: 14, textAlign: "center", padding: "24px 0" }}>
-                Nenhum bloco ainda. Clique em "Novo bloco" para começar.
-              </p>
-            )}
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {blocks.map((block, i) => (
-                <div key={block.id} style={{ background: "#0f172a", borderRadius: 10, padding: "14px 16px", border: "1px solid #334155", display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <button onClick={() => moveBlock(i, -1)} disabled={i === 0} style={arrowBtn}>▲</button>
-                    <button onClick={() => moveBlock(i, 1)} disabled={i === blocks.length - 1} style={arrowBtn}>▼</button>
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
-                      <span style={{ fontSize: 11, background: "#1e3a5f", color: "#93c5fd", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>
-                        {BLOCK_TYPES.find(t => t.value === block.type)?.label || block.type}
-                      </span>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{block.title}</span>
-                    </div>
-                    {block.description && <p style={{ fontSize: 12, color: "#64748b", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{block.description}</p>}
-                    {block.url && <p style={{ fontSize: 11, color: "#3b82f6", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>🔗 {block.url}</p>}
-                  </div>
-                  <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-                    <button onClick={() => setEditingBlock(prepareForEdit(block))} style={{ padding: "6px 14px", borderRadius: 7, border: "none", background: "#334155", color: "#e2e8f0", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>✏️ Editar</button>
-                    <button onClick={() => deleteBlock(block.id)} style={{ padding: "6px 14px", borderRadius: 7, border: "none", background: "#450a0a", color: "#fca5a5", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>🗑</button>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div style={{ background: "#1e293b", borderRadius: 14, padding: 20, border: "1px solid #334155" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>🧩 Blocos de Conteúdo — Semana {semana} {stageInfo?.emoji}</span>
+            <button onClick={() => setEditingBlock({ ...EMPTY_BLOCK, _body: "", _checklistRaw: "", _produtosRaw: "" })} style={btnPrimary}>+ Novo bloco</button>
           </div>
-        )}
+          {blocks.length === 0 && (
+            <p style={{ color: "#475569", fontSize: 14, textAlign: "center", padding: "24px 0" }}>
+              Nenhum bloco ainda. Clique em "Novo bloco" para começar.
+            </p>
+          )}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {blocks.map((block, i) => (
+              <div key={block.id} style={{ background: "#0f172a", borderRadius: 10, padding: "14px 16px", border: "1px solid #334155", display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <button onClick={() => moveBlock(i, -1)} disabled={i === 0} style={arrowBtn}>▲</button>
+                  <button onClick={() => moveBlock(i, 1)} disabled={i === blocks.length - 1} style={arrowBtn}>▼</button>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                    <span style={{ fontSize: 11, background: "#1e3a5f", color: "#93c5fd", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>
+                      {BLOCK_TYPES.find(t => t.value === block.type)?.label || block.type}
+                    </span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{block.title}</span>
+                  </div>
+                  {block.description && <p style={{ fontSize: 12, color: "#64748b", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{block.description}</p>}
+                  {block.type === "lista_produtos" && block.payload?.produtos?.length > 0 && (
+                    <p style={{ fontSize: 11, color: "#64748b", margin: "2px 0 0" }}>{block.payload.produtos.length} produto(s)</p>
+                  )}
+                  {block.url && <p style={{ fontSize: 11, color: "#3b82f6", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>🔗 {block.url}</p>}
+                </div>
+                <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                  <button onClick={() => setEditingBlock(prepareForEdit(block))} style={{ padding: "6px 14px", borderRadius: 7, border: "none", background: "#334155", color: "#e2e8f0", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>✏️ Editar</button>
+                  <button onClick={() => deleteBlock(block.id)} style={{ padding: "6px 14px", borderRadius: 7, border: "none", background: "#450a0a", color: "#fca5a5", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>🗑</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
 
       {editingBlock !== null && (
@@ -383,19 +333,18 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
   const [block, setBlock] = useState(initial);
   const set = (k, v) => setBlock(b => ({ ...b, [k]: v }));
 
-  const needsLink      = ["video", "podcast", "audio", "leitura", "produto", "imagem"].includes(block.type);
-  const needsBody      = ["texto", "leitura", "produto", "lembrete_fixo", "podcast", "audio", "imagem"].includes(block.type);
-  const needsChecklist = block.type === "checklist";
+  const needsLink        = ["video", "podcast", "audio", "leitura", "produto", "imagem"].includes(block.type);
+  const needsBody        = ["texto", "leitura", "produto", "lembrete_fixo", "podcast", "audio", "imagem"].includes(block.type);
+  const needsChecklist   = block.type === "checklist";
+  const needsListaProd   = block.type === "lista_produtos";
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.7)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div style={{ background: "#1e293b", borderRadius: 16, width: "100%", maxWidth: 600, maxHeight: "90vh", overflowY: "auto", border: "1px solid #334155", boxShadow: "0 20px 60px rgba(0,0,0,.5)" }}>
-
         <div style={{ padding: "18px 24px", borderBottom: "1px solid #334155", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ fontWeight: 800, fontSize: 16, color: "#f8fafc" }}>{block.id ? "✏️ Editar bloco" : "✨ Novo bloco"}</span>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#64748b", fontSize: 20, cursor: "pointer" }}>✕</button>
         </div>
-
         <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
           <div>
             <label style={labelStyle}>Tipo de bloco</label>
@@ -418,7 +367,6 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
                 placeholder={block.type === "imagem" ? "https://exemplo.com/imagem.jpg" : "https://..."} style={inputStyle} />
             </div>
           )}
-          {/* Preview da imagem */}
           {block.type === "imagem" && block.url && (
             <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid #334155" }}>
               <img src={block.url} alt="Preview" style={{ width: "100%", maxHeight: 200, objectFit: "cover" }} />
@@ -451,6 +399,20 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
               </p>
             </div>
           )}
+          {needsListaProd && (
+            <div>
+              <label style={labelStyle}>Produtos (um por linha)</label>
+              <p style={{ fontSize: 11, color: "#475569", marginBottom: 8, marginTop: -8 }}>
+                Formato: <span style={{ color: "#93c5fd", fontFamily: "monospace" }}>Nome do produto | Descrição curta | https://link.com</span>
+              </p>
+              <textarea value={block._produtosRaw || ""} onChange={e => set("_produtosRaw", e.target.value)}
+                placeholder={"Mochila para bebê | Excelente para passeios | https://amazon.com.br/...\nMonitor de bebê | Essencial para noites tranquilas | https://amazon.com.br/..."}
+                rows={8} style={{ ...inputStyle, resize: "vertical", fontFamily: "monospace", fontSize: 12 }} />
+              <p style={{ fontSize: 11, color: "#64748b", marginTop: 4 }}>
+                {(block._produtosRaw || "").split("\n").filter(s => s.trim()).length} produto(s)
+              </p>
+            </div>
+          )}
           {block.id && (
             <div>
               <label style={labelStyle}>Posição (ordem)</label>
@@ -458,7 +420,6 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
             </div>
           )}
         </div>
-
         <div style={{ padding: "16px 24px", borderTop: "1px solid #334155", display: "flex", gap: 10, justifyContent: "flex-end" }}>
           <button onClick={onClose} style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #334155", background: "transparent", color: "#94a3b8", fontWeight: 600, fontSize: 14, cursor: "pointer" }}>Cancelar</button>
           <button onClick={() => onSave(block)} disabled={saving} style={{ ...btnPrimary, opacity: saving ? 0.7 : 1 }}>
@@ -470,20 +431,7 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
   );
 }
 
-const labelStyle = {
-  display: "block", fontSize: 11, fontWeight: 700,
-  color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 6,
-};
-const inputStyle = {
-  width: "100%", padding: "10px 12px", borderRadius: 8,
-  border: "1px solid #475569", background: "#0f172a",
-  color: "#f1f5f9", fontSize: 14, boxSizing: "border-box", outline: "none",
-};
-const btnPrimary = {
-  padding: "9px 20px", borderRadius: 8, border: "none",
-  background: "#3b82f6", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer",
-};
-const arrowBtn = {
-  width: 24, height: 22, borderRadius: 4, border: "none",
-  background: "#334155", color: "#94a3b8", fontSize: 11, cursor: "pointer", padding: 0, lineHeight: 1,
-};
+const labelStyle = { display: "block", fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 6 };
+const inputStyle = { width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid #475569", background: "#0f172a", color: "#f1f5f9", fontSize: 14, boxSizing: "border-box", outline: "none" };
+const btnPrimary = { padding: "9px 20px", borderRadius: 8, border: "none", background: "#3b82f6", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer" };
+const arrowBtn   = { width: 24, height: 22, borderRadius: 4, border: "none", background: "#334155", color: "#94a3b8", fontSize: 11, cursor: "pointer", padding: 0, lineHeight: 1 };

@@ -32,6 +32,31 @@ function getYouTubeId(url) {
   return null;
 }
 
+const CHAR_LIMIT = 300;
+
+function ExpandableText({ text, subtleBg, leftBorder, accentColor }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = text.length > CHAR_LIMIT;
+  const displayed = isLong && !expanded ? text.slice(0, CHAR_LIMIT).trimEnd() + "…" : text;
+
+  return (
+    <div className="rounded-xl p-4" style={{ backgroundColor: subtleBg, borderLeft: `5px solid ${leftBorder}` }}>
+      <p className="text-sm md:text-base text-gray-900 leading-relaxed whitespace-pre-line">
+        {displayed}
+      </p>
+      {isLong && (
+        <button
+          onClick={() => setExpanded(e => !e)}
+          className="mt-3 text-sm font-semibold transition hover:opacity-80 flex items-center gap-1"
+          style={{ color: accentColor }}
+        >
+          {expanded ? "← Recolher" : "Ler mais →"}
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softBg = "#EFF6FF" }) {
   const badgeBg    = withAlpha(accentColor, "20") || softBg;
   const subtleBg   = withAlpha(accentColor, "12") || "#F3F4F6";
@@ -113,10 +138,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
           </a>
         ) : null}
         {block.payload?.body && (
-          <div className="rounded-xl p-4 text-sm text-gray-900 leading-relaxed whitespace-pre-line"
-            style={{ backgroundColor: subtleBg, borderLeft: `5px solid ${leftBorder}` }}>
-            {block.payload.body}
-          </div>
+          <ExpandableText text={block.payload.body} subtleBg={subtleBg} leftBorder={leftBorder} accentColor={accentColor} />
         )}
       </article>
     );
@@ -130,9 +152,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {block.payload?.body && (
-          <div className="rounded-xl p-4" style={{ backgroundColor: subtleBg, borderLeft: `5px solid ${leftBorder}` }}>
-            <p className="text-sm md:text-base text-gray-900 leading-relaxed whitespace-pre-line">{block.payload.body}</p>
-          </div>
+          <ExpandableText text={block.payload.body} subtleBg={subtleBg} leftBorder={leftBorder} accentColor={accentColor} />
         )}
         {hasLink && (
           <a href={block.link} target="_blank" rel="noopener noreferrer"
@@ -152,9 +172,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {block.payload?.body && (
-          <div className="rounded-xl p-4" style={{ backgroundColor: subtleBg, borderLeft: `5px solid ${leftBorder}` }}>
-            <p className="text-sm md:text-base text-gray-900 leading-relaxed whitespace-pre-line">{block.payload.body}</p>
-          </div>
+          <ExpandableText text={block.payload.body} subtleBg={subtleBg} leftBorder={leftBorder} accentColor={accentColor} />
         )}
         {hasLink && (
           <a href={block.link} target="_blank" rel="noopener noreferrer"
@@ -162,6 +180,42 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
             {block.cta || "Ver produto"} <span aria-hidden>→</span>
           </a>
         )}
+      </article>
+    );
+  }
+
+  // ── LISTA DE PRODUTOS ────────────────────────────────────
+  if (block.tipo === "lista_produtos") {
+    const produtos = block.payload?.produtos ?? [];
+    return (
+      <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
+        <Badge label="🛍️ Lista de Produtos" accentColor={accentColor} badgeBg={badgeBg} />
+        <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
+        {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
+        <div className="space-y-3">
+          {produtos.map((produto, i) => (
+            <div key={i} className="rounded-xl p-4 flex items-start gap-4"
+              style={{ backgroundColor: subtleBg, borderLeft: `4px solid ${leftBorder}` }}>
+              <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                style={{ backgroundColor: accentColor }}>
+                {i + 1}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm md:text-base font-semibold text-gray-900">{produto.nome}</p>
+                {produto.descricao && (
+                  <p className="text-sm text-gray-600 mt-0.5 leading-relaxed">{produto.descricao}</p>
+                )}
+                {produto.link && (
+                  <a href={produto.link} target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-semibold mt-2 transition hover:opacity-80"
+                    style={{ color: accentColor }}>
+                    Ver produto →
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </article>
     );
   }
@@ -174,10 +228,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
         <h2 className="text-lg md:text-xl font-semibold text-gray-900">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700">{block.descricao}</p>}
         {block.payload?.body && (
-          <div className="text-sm md:text-base text-gray-900 leading-relaxed whitespace-pre-line rounded-xl p-4"
-            style={{ backgroundColor: subtleBg, borderLeft: `5px solid ${leftBorder}` }}>
-            {block.payload.body}
-          </div>
+          <ExpandableText text={block.payload.body} subtleBg={subtleBg} leftBorder={leftBorder} accentColor={accentColor} />
         )}
       </article>
     );
@@ -240,10 +291,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
         <h2 className="text-lg md:text-xl font-semibold text-gray-900">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700">{block.descricao}</p>}
         {block.payload?.note && (
-          <div className="text-sm md:text-base text-gray-900 leading-relaxed whitespace-pre-line rounded-xl p-4"
-            style={{ backgroundColor: subtleBg, borderLeft: `5px solid ${leftBorder}` }}>
-            {block.payload.note}
-          </div>
+          <ExpandableText text={block.payload.note} subtleBg={subtleBg} leftBorder={leftBorder} accentColor={accentColor} />
         )}
       </article>
     );

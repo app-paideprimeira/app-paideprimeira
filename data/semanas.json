@@ -564,13 +564,13 @@
     },
     "5": {
       "titulo": "Semana 5 da gestação",
-      "empatia": "Seu bebê tem o tamanho aproximado de 3 a 4mm, equivalente a um grão de gergilim. Se o cansaço bateu antes mesmo do bebê chegar, você não está sozinho.",
+      "empatia": "Seu bebê tem o tamanho aproximado de 3 a 4mm, equivalente a um grão de arroz. Se o cansaço bateu antes mesmo do bebê chegar, você não está sozinho.",
       "descricao": "Agora as mudanças começam a impactar mais o dia a dia. Para muitos pais, surge a sensação de precisar ser forte o tempo todo. Mas força também é saber reconhecer quando algo está difícil.",
       "dica": "Assuma pequenas responsabilidades práticas. Isso traz segurança para os dois, se não sabe cozinhar, aprenda.",
       "acompanhe": "Náuseas, indisposição e sensibilidade emocional podem aumentar — e afetar a dinâmica da casa.",
       "bgColor": "#E8F5E9",
       "textColor": "#1B5E20",
-      "cta_premium": "Ver checklist e materiais da semana 5 ✨"
+      "cta_premium": "Torne-se um pai mais presente desde agora ✨"
     },
 
     "6": {
@@ -581,7 +581,7 @@
       "acompanhe": "Náuseas, sono excessivo e irritação podem se intensificar.",
       "bgColor": "#E1F5FE",
       "textColor": "#01579B",
-      "cta_premium": "Ver checklist e materiais da semana 6 ✨"
+      "cta_premium": "Aprenda como apoiar sua parceira nesta fase ✨"
     },
     "7": {
       "titulo": "Semana 7 da gestação",
@@ -591,7 +591,7 @@
       "acompanhe": "Enjoo e sensibilidade emocional podem dominar os dias.",
       "bgColor": "#FCE4EC",
       "textColor": "#880E4F",
-      "cta_premium": "Ver checklist e materiais da semana 7 ✨"
+      "cta_premium": "Descubra como um pai pode fazer diferença, Seja Premium ✨"
     },
     "8": {
       "titulo": "Semana 8 da gestação",

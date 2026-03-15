@@ -78,15 +78,15 @@ function SemanaBebePage({ params }) {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("is_premium, current_week, premium_since_week")
+        .select("is_premium, current_week, premium_since_week, is_admin")
         .eq("id", user.id)
         .single();
 
       if (!profile || !alive) return;
 
-      if (profile.is_premium) {
+      if (profile.is_premium || profile.is_admin) {
         setIsPremium(true);
-        const unlocked = isPremiumWeekUnlocked(semana, profile.current_week, profile.premium_since_week);
+        const unlocked = profile.is_admin || isPremiumWeekUnlocked(semana, profile.current_week, profile.premium_since_week);
         setIsUnlocked(unlocked);
         if (unlocked) loadPremiumContent(alive, supabase);
       }
@@ -232,7 +232,9 @@ function SemanaBebePage({ params }) {
               ← Semana {semana - 1}
             </button>
           ) : (
-            <div className="w-28" />
+            <button onClick={() => router.push(`/semanas/gestante/42`)} className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition" style={{ color: textColor }}>
+              ← Gestação
+            </button>
           )}
 
           <button onClick={goToToday} className="px-5 py-2 rounded-xl font-semibold shadow-md" style={{ backgroundColor: textColor, color: "#fff" }}>

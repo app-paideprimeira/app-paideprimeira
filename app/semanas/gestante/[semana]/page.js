@@ -67,7 +67,7 @@ function BabyBornModal({ textColor, onConfirm, onClose, saving }) {
 }
 
 export default function SemanaGestante({ params }) {
-  const router      = useRouter();
+  const router        = useRouter();
   const { goToToday } = useGoToToday();
 
   const [userId, setUserId]                 = useState(null);
@@ -97,7 +97,7 @@ export default function SemanaGestante({ params }) {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("is_premium, current_week, premium_since_week")
+        .select("is_premium, current_week, premium_since_week, is_admin")
         .eq("id", user.id)
         .single();
 
@@ -105,9 +105,9 @@ export default function SemanaGestante({ params }) {
 
       setCurrentWeek(profile.current_week);
 
-      if (profile.is_premium) {
+      if (profile.is_premium || profile.is_admin) {
         setIsPremium(true);
-        const unlocked = isPremiumWeekUnlocked(semana, profile.current_week, profile.premium_since_week);
+        const unlocked = profile.is_admin || isPremiumWeekUnlocked(semana, profile.current_week, profile.premium_since_week);
         setIsUnlocked(unlocked);
         if (unlocked) loadPremiumContent(alive, supabase);
       }
