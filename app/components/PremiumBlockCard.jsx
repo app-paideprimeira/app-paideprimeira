@@ -24,6 +24,7 @@ function getYouTubeId(url) {
     /(?:youtube\.com\/watch\?v=)([A-Za-z0-9_-]{11})/,
     /(?:youtu\.be\/)([A-Za-z0-9_-]{11})/,
     /(?:youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/,
+    /(?:youtube\.com\/shorts\/)([A-Za-z0-9_-]{11})/,
   ];
   for (const p of patterns) {
     const m = url.match(p);
@@ -38,18 +39,13 @@ function ExpandableText({ text, subtleBg, leftBorder, accentColor }) {
   const [expanded, setExpanded] = useState(false);
   const isLong = text.length > CHAR_LIMIT;
   const displayed = isLong && !expanded ? text.slice(0, CHAR_LIMIT).trimEnd() + "…" : text;
-
   return (
     <div className="rounded-xl p-4" style={{ backgroundColor: subtleBg, borderLeft: `5px solid ${leftBorder}` }}>
-      <p className="text-sm md:text-base text-gray-900 leading-relaxed whitespace-pre-line">
-        {displayed}
-      </p>
+      <p className="text-sm md:text-base text-gray-900 leading-relaxed whitespace-pre-line">{displayed}</p>
       {isLong && (
-        <button
-          onClick={() => setExpanded(e => !e)}
+        <button onClick={() => setExpanded(e => !e)}
           className="mt-3 text-sm font-semibold transition hover:opacity-80 flex items-center gap-1"
-          style={{ color: accentColor }}
-        >
+          style={{ color: accentColor }}>
           {expanded ? "← Recolher" : "Ler mais →"}
         </button>
       )}
@@ -77,8 +73,8 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {block.link && (
-          <div className="w-full rounded-xl overflow-hidden">
-            <img src={block.link} alt={block.titulo} className="w-full h-auto object-cover rounded-xl" style={{ maxHeight: 400 }} />
+          <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingBottom: "56.25%" }}>
+            <img src={block.link} alt={block.titulo} className="absolute inset-0 w-full h-full" style={{ objectFit: "cover" }} />
           </div>
         )}
         {block.payload?.body && (
@@ -100,15 +96,16 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
   // ── VÍDEO ────────────────────────────────────────────────
   if (block.tipo === "video") {
     const ytId = getYouTubeId(block.link);
+    const isShorts = block.link?.includes("/shorts/");
     return (
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
         <Badge label="🎥 Vídeo" accentColor={accentColor} badgeBg={badgeBg} />
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {ytId ? (
-          <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingBottom: "56.25%" }}>
-            <iframe className="absolute inset-0 w-full h-full" src={`https://www.youtube.com/embed/${ytId}`}
-              title={block.titulo} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+          <div className="w-full rounded-xl overflow-hidden">
+            <iframe className="w-full" style={{ height: isShorts ? 500 : 300, display: "block" }} src={`https://www.youtube.com/embed/${ytId}`}
+                title={block.titulo} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
           </div>
         ) : hasLink ? (
           <a href={block.link} target="_blank" rel="noopener noreferrer"
@@ -116,6 +113,50 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
             {block.cta || "Assistir vídeo"} <span aria-hidden>→</span>
           </a>
         ) : null}
+      </article>
+    );
+  }
+
+  // ── FILME ────────────────────────────────────────────────
+  if (block.tipo === "filme") {
+    const ytId = getYouTubeId(block.payload?.trailer);
+    return (
+      <article className="bg-white/90 rounded-2xl overflow-hidden shadow-xl border border-white/40">
+        {/* Header escuro estilo cinema */}
+        <div className="px-6 pt-6 pb-4" style={{ background: "linear-gradient(135deg, #0f172a, #1e293b)" }}>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
+              style={{ backgroundColor: "#f59e0b20", color: "#f59e0b" }}>
+              🎬 Dica de Filme
+            </span>
+            {block.payload?.onde && (
+              <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/70">
+                📺 {block.payload.onde}
+              </span>
+            )}
+          </div>
+          <h2 className="text-lg md:text-xl font-bold text-white leading-snug">{block.titulo}</h2>
+          {block.descricao && <p className="text-sm text-white/60 mt-1 leading-relaxed">{block.descricao}</p>}
+        </div>
+
+        {/* Trailer embed */}
+        {ytId && (
+          <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+            <iframe className="absolute inset-0 w-full h-full"
+              src={`https://www.youtube.com/embed/${ytId}`}
+              title={`Trailer — ${block.titulo}`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen />
+          </div>
+        )}
+
+        {/* Por que assistir */}
+        {block.payload?.body && (
+          <div className="px-6 py-4">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Por que assistir</p>
+            <ExpandableText text={block.payload.body} subtleBg={subtleBg} leftBorder={leftBorder} accentColor={accentColor} />
+          </div>
+        )}
       </article>
     );
   }
@@ -202,9 +243,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm md:text-base font-semibold text-gray-900">{produto.nome}</p>
-                {produto.descricao && (
-                  <p className="text-sm text-gray-600 mt-0.5 leading-relaxed">{produto.descricao}</p>
-                )}
+                {produto.descricao && <p className="text-sm text-gray-600 mt-0.5 leading-relaxed">{produto.descricao}</p>}
                 {produto.link && (
                   <a href={produto.link} target="_blank" rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-xs font-semibold mt-2 transition hover:opacity-80"

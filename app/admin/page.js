@@ -9,16 +9,17 @@ const STAGES = [
 ];
 
 const BLOCK_TYPES = [
-  { value: "checklist",      label: "✅ Checklist"       },
-  { value: "texto",          label: "📝 Texto"           },
-  { value: "lembrete_fixo",  label: "📌 Lembrete"        },
-  { value: "video",          label: "🎥 Vídeo"           },
-  { value: "podcast",        label: "🎧 Podcast"         },
-  { value: "audio",          label: "🔊 Áudio"           },
-  { value: "leitura",        label: "📖 Leitura"         },
-  { value: "produto",        label: "🛒 Produto"         },
+  { value: "checklist",      label: "✅ Checklist"        },
+  { value: "texto",          label: "📝 Texto"            },
+  { value: "lembrete_fixo",  label: "📌 Lembrete"         },
+  { value: "video",          label: "🎥 Vídeo"            },
+  { value: "filme",          label: "🎬 Dica de Filme/Série" },
+  { value: "podcast",        label: "🎧 Podcast"          },
+  { value: "audio",          label: "🔊 Áudio"            },
+  { value: "leitura",        label: "📖 Leitura"          },
+  { value: "produto",        label: "🛒 Produto"          },
   { value: "lista_produtos", label: "🛍️ Lista de Produtos" },
-  { value: "imagem",         label: "🖼️ Imagem"          },
+  { value: "imagem",         label: "🖼️ Imagem"           },
 ];
 
 const EMPTY_BLOCK = {
@@ -70,6 +71,7 @@ export default function AdminPage() {
     setNotifDraft({ title: "", body: "", url: "" });
 
     const data = await adminQuery("loadWeek", { stage, week: semana });
+    console.log("loadWeek data:", data);
 
     if (data.header) {
       setHeader(data.header);
@@ -89,8 +91,7 @@ export default function AdminPage() {
   async function ensureHeader() {
     if (header) return header;
     const data = await adminQuery("saveHeader", {
-      headerId: null,
-      stage, week: semana,
+      headerId: null, stage, week: semana,
       title: `Semana ${semana} — ${stage === "gestante" ? "Gestante" : "Bebê"}`,
       intro: "",
     });
@@ -130,6 +131,7 @@ export default function AdminPage() {
   }
 
   async function saveBlock(block) {
+    console.log("saveBlock chamado:", block.type, block);
     if (!block.title.trim()) return toast("Título do bloco obrigatório", "err");
     setSaving(true);
     const h = await ensureHeader();
@@ -169,12 +171,18 @@ export default function AdminPage() {
       return { items };
     }
     if (block.type === "lista_produtos") {
-      // Cada linha: "Nome do produto | descrição | https://link.com"
       const produtos = (block._produtosRaw || "").split("\n").map(line => {
         const parts = line.split("|").map(s => s.trim());
         return { nome: parts[0] || "", descricao: parts[1] || "", link: parts[2] || "" };
       }).filter(p => p.nome);
       return { produtos };
+    }
+    if (block.type === "filme") {
+      return {
+        onde:    block._filmeOnde   || "",
+        trailer: block._filmeTrailer || "",
+        body:    block._body         || "",
+      };
     }
     if (["texto", "leitura", "produto", "podcast", "audio", "imagem"].includes(block.type))
       return { body: block._body || "" };
@@ -185,11 +193,11 @@ export default function AdminPage() {
   function prepareForEdit(block) {
     return {
       ...block,
-      _body: block.payload?.body || block.payload?.note || "",
-      _checklistRaw: (block.payload?.items || []).join("\n"),
-      _produtosRaw: (block.payload?.produtos || [])
-        .map(p => [p.nome, p.descricao, p.link].join(" | "))
-        .join("\n"),
+      _body:          block.payload?.body || block.payload?.note || "",
+      _checklistRaw:  (block.payload?.items || []).join("\n"),
+      _produtosRaw:   (block.payload?.produtos || []).map(p => [p.nome, p.descricao, p.link].join(" | ")).join("\n"),
+      _filmeOnde:     block.payload?.onde    || "",
+      _filmeTrailer:  block.payload?.trailer || "",
     };
   }
 
@@ -284,7 +292,7 @@ export default function AdminPage() {
         <div style={{ background: "#1e293b", borderRadius: 14, padding: 20, border: "1px solid #334155" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>🧩 Blocos de Conteúdo — Semana {semana} {stageInfo?.emoji}</span>
-            <button onClick={() => setEditingBlock({ ...EMPTY_BLOCK, _body: "", _checklistRaw: "", _produtosRaw: "" })} style={btnPrimary}>+ Novo bloco</button>
+            <button onClick={() => setEditingBlock({ ...EMPTY_BLOCK, _body: "", _checklistRaw: "", _produtosRaw: "", _filmeOnde: "", _filmeTrailer: "" })} style={btnPrimary}>+ Novo bloco</button>
           </div>
           {blocks.length === 0 && (
             <p style={{ color: "#475569", fontSize: 14, textAlign: "center", padding: "24px 0" }}>
@@ -308,6 +316,9 @@ export default function AdminPage() {
                   {block.description && <p style={{ fontSize: 12, color: "#64748b", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{block.description}</p>}
                   {block.type === "lista_produtos" && block.payload?.produtos?.length > 0 && (
                     <p style={{ fontSize: 11, color: "#64748b", margin: "2px 0 0" }}>{block.payload.produtos.length} produto(s)</p>
+                  )}
+                  {block.type === "filme" && block.payload?.onde && (
+                    <p style={{ fontSize: 11, color: "#64748b", margin: "2px 0 0" }}>📺 {block.payload.onde}</p>
                   )}
                   {block.url && <p style={{ fontSize: 11, color: "#3b82f6", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>🔗 {block.url}</p>}
                 </div>
@@ -333,10 +344,11 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
   const [block, setBlock] = useState(initial);
   const set = (k, v) => setBlock(b => ({ ...b, [k]: v }));
 
-  const needsLink        = ["video", "podcast", "audio", "leitura", "produto", "imagem"].includes(block.type);
-  const needsBody        = ["texto", "leitura", "produto", "lembrete_fixo", "podcast", "audio", "imagem"].includes(block.type);
-  const needsChecklist   = block.type === "checklist";
-  const needsListaProd   = block.type === "lista_produtos";
+  const needsLink      = ["video", "podcast", "audio", "leitura", "produto", "imagem"].includes(block.type);
+  const needsBody      = ["texto", "leitura", "produto", "lembrete_fixo", "podcast", "audio", "imagem"].includes(block.type);
+  const needsChecklist = block.type === "checklist";
+  const needsListaProd = block.type === "lista_produtos";
+  const needsFilme     = block.type === "filme";
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.7)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
@@ -360,6 +372,41 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
             <label style={labelStyle}>Descrição (subtítulo curto)</label>
             <input value={block.description || ""} onChange={e => set("description", e.target.value)} placeholder="Uma linha descritiva opcional" style={inputStyle} />
           </div>
+
+          {/* Campos específicos de FILME */}
+          {needsFilme && (
+            <>
+              <div>
+                <label style={labelStyle}>Onde assistir</label>
+                <input value={block._filmeOnde || ""} onChange={e => set("_filmeOnde", e.target.value)}
+                  placeholder="Ex: Netflix, Prime Video, Disney+" style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>Link do trailer (YouTube)</label>
+                <input value={block._filmeTrailer || ""} onChange={e => set("_filmeTrailer", e.target.value)}
+                  placeholder="https://youtu.be/..." style={inputStyle} />
+              </div>
+              {/* Preview do trailer */}
+              {block._filmeTrailer && (() => {
+                const ytMatch = block._filmeTrailer.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
+                const ytId = ytMatch?.[1];
+                return ytId ? (
+                  <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid #334155", aspectRatio: "16/9" }}>
+                    <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${ytId}`}
+                      title="Trailer preview" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                  </div>
+                ) : null;
+              })()}
+              <div>
+                <label style={labelStyle}>Por que assistir (opcional)</label>
+                <textarea value={block._body || ""} onChange={e => set("_body", e.target.value)}
+                  placeholder="Explique por que esse filme é relevante para pais..."
+                  rows={3} style={{ ...inputStyle, resize: "vertical" }} />
+              </div>
+            </>
+          )}
+
+          {/* Campos padrão para outros tipos */}
           {needsLink && (
             <div>
               <label style={labelStyle}>{block.type === "imagem" ? "URL da imagem" : "URL"}</label>
@@ -403,7 +450,7 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
             <div>
               <label style={labelStyle}>Produtos (um por linha)</label>
               <p style={{ fontSize: 11, color: "#475569", marginBottom: 8, marginTop: -8 }}>
-                Formato: <span style={{ color: "#93c5fd", fontFamily: "monospace" }}>Nome do produto | Descrição curta | https://link.com</span>
+                Formato: <span style={{ color: "#93c5fd", fontFamily: "monospace" }}>Nome | Descrição | https://link.com</span>
               </p>
               <textarea value={block._produtosRaw || ""} onChange={e => set("_produtosRaw", e.target.value)}
                 placeholder={"Mochila para bebê | Excelente para passeios | https://amazon.com.br/...\nMonitor de bebê | Essencial para noites tranquilas | https://amazon.com.br/..."}

@@ -67,22 +67,25 @@ export async function POST(request) {
 
       case "saveBlock": {
         const { block, weekId, blocksCount } = payload;
+        console.log("saveBlock payload:", JSON.stringify({ block, weekId, blocksCount }));
         if (block.id) {
-          await supabase.from("premium_week_blocks")
+          const { error } = await supabase.from("premium_week_blocks")
             .update({
               type: block.type, title: block.title, description: block.description,
               url: block.url || null, cta: block.cta || null,
               payload: block.payload, sort_order: block.sort_order,
             })
             .eq("id", block.id);
+          if (error) return NextResponse.json({ error: error.message }, { status: 500 });
         } else {
-          await supabase.from("premium_week_blocks")
+          const { error } = await supabase.from("premium_week_blocks")
             .insert({
               week_id: weekId, type: block.type, title: block.title,
               description: block.description, url: block.url || null,
               cta: block.cta || null, payload: block.payload,
               sort_order: blocksCount + 1,
             });
+          if (error) return NextResponse.json({ error: error.message }, { status: 500 });
         }
         return NextResponse.json({ ok: true });
       }
@@ -119,6 +122,7 @@ export async function POST(request) {
         return NextResponse.json({ error: "Action não reconhecida" }, { status: 400 });
     }
   } catch (err) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  console.error("Admin query error:", err.message, err);
+  return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

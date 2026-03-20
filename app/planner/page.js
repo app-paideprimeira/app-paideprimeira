@@ -7,7 +7,6 @@ import Image from "next/image";
 import { supabaseBrowser } from "../../lib/supabase/client";
 import UserMenu from "../components/UserMenu";
 
-// ── Marcos fixos ─────────────────────────────────────────────
 const MARCOS_GESTANTE = [
   { semana: 6,  key: "consulta_6",    titulo: "🩺 Primeira consulta pré-natal" },
   { semana: 8,  key: "ultrassom_8",   titulo: "🔊 Ultrassom 1º trimestre" },
@@ -45,7 +44,6 @@ function calcularDataMarco(eventDate, baseWeek, semanaMarco, stage) {
   } else {
     base.setDate(base.getDate() + (semanaMarco - (baseWeek || 1)) * 7);
   }
-  // Se cair no domingo (0), avança para segunda (1)
   if (base.getDay() === 0) base.setDate(base.getDate() + 1);
   return base.toISOString().split("T")[0];
 }
@@ -141,10 +139,7 @@ export default function PlannerPage() {
   }
 
   function selectDate(dateStr) {
-    if (selectedDate === dateStr && !editingEvent) {
-      closePanel();
-      return;
-    }
+    if (selectedDate === dateStr && !editingEvent) { closePanel(); return; }
     setSelectedDate(dateStr);
     setEditingEvent(null);
     setDraftTitle("");
@@ -253,7 +248,15 @@ export default function PlannerPage() {
     <div style={{ minHeight: "100vh", background: "#f1f5f9", fontFamily: "'DM Sans', 'Segoe UI', sans-serif" }}>
 
       <header style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Image src="/logo/logo-app.svg" alt="Pai de Primeira" width={120} height={36} />
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button onClick={() => router.back()}
+            style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "#64748b", fontSize: 13, fontWeight: 600, padding: "6px 10px", borderRadius: 8, transition: "background .15s" }}
+            onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
+            onMouseLeave={e => e.currentTarget.style.background = "none"}>
+            ← Voltar
+          </button>
+          <Image src="/logo/logo-app.svg" alt="Pai de Primeira" width={120} height={36} />
+        </div>
         <UserMenu />
       </header>
 
@@ -285,7 +288,6 @@ export default function PlannerPage() {
           {/* CALENDÁRIO */}
           <div style={{ flex: 1, background: "#fff", borderRadius: 16, border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
 
-            {/* Dias da semana */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", borderBottom: "1px solid #f1f5f9" }}>
               {WEEKDAYS.map(d => (
                 <div key={d} style={{ padding: "10px 0", textAlign: "center", fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
@@ -294,7 +296,6 @@ export default function PlannerPage() {
               ))}
             </div>
 
-            {/* Grid de dias */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)" }}>
               {Array.from({ length: firstDay }).map((_, i) => (
                 <div key={`e${i}`} style={{ height: 88, borderRight: "1px solid #f8fafc", borderBottom: "1px solid #f8fafc", background: "#fafafa" }} />
@@ -312,30 +313,22 @@ export default function PlannerPage() {
                 return (
                   <div key={day} onClick={() => selectDate(dateStr)}
                     style={{
-                      height: 88,
-                      overflow: "hidden",
-                      borderRight: "1px solid #f1f5f9",
-                      borderBottom: "1px solid #f1f5f9",
-                      padding: "6px 5px",
-                      cursor: "pointer",
+                      height: 88, overflow: "hidden",
+                      borderRight: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9",
+                      padding: "6px 5px", cursor: "pointer", boxSizing: "border-box",
                       background: isSel ? "#eff6ff" : isToday ? "#f0fdf4" : isWeekend ? "#fafafa" : "#fff",
                       transition: "background .1s",
-                      boxSizing: "border-box",
                     }}
                   >
-                    {/* Número do dia */}
                     <div style={{
                       width: 24, height: 24, borderRadius: "50%",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 12, fontWeight: isToday ? 800 : 500, marginBottom: 3,
-                      flexShrink: 0,
+                      fontSize: 12, fontWeight: isToday ? 800 : 500, marginBottom: 3, flexShrink: 0,
                       background: isToday ? "#3b82f6" : "transparent",
                       color: isToday ? "#fff" : isSel ? "#2563eb" : isWeekend ? "#94a3b8" : "#334155",
                     }}>
                       {day}
                     </div>
-
-                    {/* Eventos — quebra linha, não expande a célula */}
                     <div style={{ display: "flex", flexDirection: "column", gap: 2, overflow: "hidden" }}>
                       {dayEvts.slice(0, 2).map(ev => {
                         const c = TYPE_COLORS[ev.type] || TYPE_COLORS.nota;
@@ -344,10 +337,8 @@ export default function PlannerPage() {
                             style={{
                               fontSize: 9, fontWeight: 600, padding: "1px 4px", borderRadius: 3,
                               background: c.light, color: c.text,
-                              whiteSpace: "normal",
-                              lineHeight: 1.2,
-                              overflow: "hidden",
-                              maxHeight: 28,
+                              whiteSpace: "normal", lineHeight: 1.2,
+                              overflow: "hidden", maxHeight: 28,
                             }}>
                             {ev.time ? ev.time.slice(0,5) + " " : ""}{ev.title}
                           </div>
@@ -373,7 +364,6 @@ export default function PlannerPage() {
                 <button onClick={closePanel} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: 16, cursor: "pointer" }}>✕</button>
               </div>
 
-              {/* Eventos existentes */}
               {selectedEvents.length > 0 && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
                   {selectedEvents.map(ev => {
@@ -436,7 +426,6 @@ export default function PlannerPage() {
                 </div>
               )}
 
-              {/* Nova nota */}
               {!editingEvent && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   <p style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>
