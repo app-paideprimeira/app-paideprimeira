@@ -53,6 +53,15 @@ function ExpandableText({ text, subtleBg, leftBorder, accentColor }) {
   );
 }
 
+// Força download adicionando ?download= para arquivos do Supabase Storage
+function getDownloadUrl(url) {
+  if (!url) return url;
+  if (url.includes("supabase.co/storage")) {
+    return url.includes("?") ? url + "&download=" : url + "?download=";
+  }
+  return url;
+}
+
 export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softBg = "#EFF6FF" }) {
   const badgeBg    = withAlpha(accentColor, "20") || softBg;
   const subtleBg   = withAlpha(accentColor, "12") || "#F3F4F6";
@@ -65,6 +74,61 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
   const completedCount = checked.filter(Boolean).length;
   const allDone = rawItems.length > 0 && completedCount === rawItems.length;
 
+  // ── DOWNLOAD ─────────────────────────────────────────────
+  if (block.tipo === "download") {
+    const downloadUrl = getDownloadUrl(block.link);
+    const fileName = block.link?.split("/").pop()?.split("?")[0] || "arquivo";
+    const ext = fileName.split(".").pop()?.toUpperCase() || "";
+    const extColors = {
+      PDF:  { bg: "#fef2f2", border: "#fecaca", badge: "#dc2626", icon: "📄" },
+      DOCX: { bg: "#eff6ff", border: "#bfdbfe", badge: "#2563eb", icon: "📝" },
+      DOC:  { bg: "#eff6ff", border: "#bfdbfe", badge: "#2563eb", icon: "📝" },
+      XLSX: { bg: "#f0fdf4", border: "#bbf7d0", badge: "#16a34a", icon: "📊" },
+      ZIP:  { bg: "#fefce8", border: "#fde68a", badge: "#ca8a04", icon: "🗜️" },
+    };
+    const colors = extColors[ext] || { bg: "#f8fafc", border: "#e2e8f0", badge: accentColor, icon: "📥" };
+
+    return (
+      <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
+        <Badge label="📥 Download" accentColor={accentColor} badgeBg={badgeBg} />
+        <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
+        {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
+        {block.payload?.body && (
+          <ExpandableText text={block.payload.body} subtleBg={subtleBg} leftBorder={leftBorder} accentColor={accentColor} />
+        )}
+        {downloadUrl && (
+          <a
+            href={downloadUrl}
+            download={fileName}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-4 rounded-xl p-4 transition hover:opacity-90"
+            style={{ background: colors.bg, border: `1px solid ${colors.border}`, textDecoration: "none" }}
+          >
+            <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+              style={{ background: colors.badge + "20" }}>
+              {colors.icon}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-gray-900 truncate">{block.titulo}</p>
+              {ext && (
+                <span className="inline-block text-xs font-bold px-2 py-0.5 rounded mt-1"
+                  style={{ background: colors.badge, color: "#fff" }}>
+                  {ext}
+                </span>
+              )}
+            </div>
+            <div className="flex-shrink-0 flex items-center gap-2 font-bold text-sm px-4 py-2 rounded-lg"
+              style={{ background: accentColor, color: "#fff" }}>
+              <span>↓</span>
+              <span>{block.cta || "Baixar"}</span>
+            </div>
+          </a>
+        )}
+      </article>
+    );
+  }
+
   // ── IMAGEM ───────────────────────────────────────────────
   if (block.tipo === "imagem") {
     return (
@@ -73,8 +137,9 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {block.link && (
-          <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingBottom: "56.25%" }}>
-            <img src={block.link} alt={block.titulo} className="absolute inset-0 w-full h-full" style={{ objectFit: "cover" }} />
+          <div className="w-full rounded-xl overflow-hidden">
+            <img src={block.link} alt={block.titulo} className="w-full rounded-xl"
+              style={{ objectFit: "contain", maxHeight: 400, background: "#f8fafc" }} />
           </div>
         )}
         {block.payload?.body && (
@@ -104,8 +169,9 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {ytId ? (
           <div className="w-full rounded-xl overflow-hidden">
-            <iframe className="w-full" style={{ height: isShorts ? 500 : 300, display: "block" }} src={`https://www.youtube.com/embed/${ytId}`}
-                title={block.titulo} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+            <iframe className="w-full" style={{ height: isShorts ? 500 : 300, display: "block" }}
+              src={`https://www.youtube.com/embed/${ytId}`}
+              title={block.titulo} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
           </div>
         ) : hasLink ? (
           <a href={block.link} target="_blank" rel="noopener noreferrer"
@@ -122,7 +188,6 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
     const ytId = getYouTubeId(block.payload?.trailer);
     return (
       <article className="bg-white/90 rounded-2xl overflow-hidden shadow-xl border border-white/40">
-        {/* Header escuro estilo cinema */}
         <div className="px-6 pt-6 pb-4" style={{ background: "linear-gradient(135deg, #0f172a, #1e293b)" }}>
           <div className="flex items-center gap-2 mb-3">
             <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
@@ -138,19 +203,15 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
           <h2 className="text-lg md:text-xl font-bold text-white leading-snug">{block.titulo}</h2>
           {block.descricao && <p className="text-sm text-white/60 mt-1 leading-relaxed">{block.descricao}</p>}
         </div>
-
-        {/* Trailer embed */}
         {ytId && (
-          <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-            <iframe className="absolute inset-0 w-full h-full"
+          <div className="w-full">
+            <iframe className="w-full" style={{ height: 300, display: "block" }}
               src={`https://www.youtube.com/embed/${ytId}`}
               title={`Trailer — ${block.titulo}`}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen />
           </div>
         )}
-
-        {/* Por que assistir */}
         {block.payload?.body && (
           <div className="px-6 py-4">
             <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Por que assistir</p>

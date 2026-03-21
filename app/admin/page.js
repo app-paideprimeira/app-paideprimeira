@@ -13,13 +13,14 @@ const BLOCK_TYPES = [
   { value: "texto",          label: "📝 Texto"            },
   { value: "lembrete_fixo",  label: "📌 Lembrete"         },
   { value: "video",          label: "🎥 Vídeo"            },
-  { value: "filme",          label: "🎬 Dica de Filme/Série" },
+  { value: "filme",          label: "🎬 Dica de Filme"    },
   { value: "podcast",        label: "🎧 Podcast"          },
   { value: "audio",          label: "🔊 Áudio"            },
   { value: "leitura",        label: "📖 Leitura"          },
   { value: "produto",        label: "🛒 Produto"          },
   { value: "lista_produtos", label: "🛍️ Lista de Produtos" },
   { value: "imagem",         label: "🖼️ Imagem"           },
+  { value: "download",       label: "📥 Download"         },
 ];
 
 const EMPTY_BLOCK = {
@@ -71,7 +72,6 @@ export default function AdminPage() {
     setNotifDraft({ title: "", body: "", url: "" });
 
     const data = await adminQuery("loadWeek", { stage, week: semana });
-    console.log("loadWeek data:", data);
 
     if (data.header) {
       setHeader(data.header);
@@ -131,7 +131,6 @@ export default function AdminPage() {
   }
 
   async function saveBlock(block) {
-    console.log("saveBlock chamado:", block.type, block);
     if (!block.title.trim()) return toast("Título do bloco obrigatório", "err");
     setSaving(true);
     const h = await ensureHeader();
@@ -166,28 +165,29 @@ export default function AdminPage() {
   }
 
   function buildPayload(block) {
+    const isPreview = block._isPreview === true;
+
     if (block.type === "checklist") {
       const items = (block._checklistRaw || "").split("\n").map(s => s.trim()).filter(Boolean);
-      return { items };
+      return { items, is_preview: isPreview };
     }
     if (block.type === "lista_produtos") {
       const produtos = (block._produtosRaw || "").split("\n").map(line => {
         const parts = line.split("|").map(s => s.trim());
         return { nome: parts[0] || "", descricao: parts[1] || "", link: parts[2] || "" };
       }).filter(p => p.nome);
-      return { produtos };
+      return { produtos, is_preview: isPreview };
     }
     if (block.type === "filme") {
-      return {
-        onde:    block._filmeOnde   || "",
-        trailer: block._filmeTrailer || "",
-        body:    block._body         || "",
-      };
+      return { onde: block._filmeOnde || "", trailer: block._filmeTrailer || "", body: block._body || "", is_preview: isPreview };
+    }
+    if (block.type === "download") {
+      return { body: block._body || "", is_preview: isPreview };
     }
     if (["texto", "leitura", "produto", "podcast", "audio", "imagem"].includes(block.type))
-      return { body: block._body || "" };
-    if (block.type === "lembrete_fixo") return { note: block._body || "" };
-    return {};
+      return { body: block._body || "", is_preview: isPreview };
+    if (block.type === "lembrete_fixo") return { note: block._body || "", is_preview: isPreview };
+    return { is_preview: isPreview };
   }
 
   function prepareForEdit(block) {
@@ -198,6 +198,7 @@ export default function AdminPage() {
       _produtosRaw:   (block.payload?.produtos || []).map(p => [p.nome, p.descricao, p.link].join(" | ")).join("\n"),
       _filmeOnde:     block.payload?.onde    || "",
       _filmeTrailer:  block.payload?.trailer || "",
+      _isPreview:     block.payload?.is_preview === true,
     };
   }
 
@@ -292,7 +293,7 @@ export default function AdminPage() {
         <div style={{ background: "#1e293b", borderRadius: 14, padding: 20, border: "1px solid #334155" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>🧩 Blocos de Conteúdo — Semana {semana} {stageInfo?.emoji}</span>
-            <button onClick={() => setEditingBlock({ ...EMPTY_BLOCK, _body: "", _checklistRaw: "", _produtosRaw: "", _filmeOnde: "", _filmeTrailer: "" })} style={btnPrimary}>+ Novo bloco</button>
+            <button onClick={() => setEditingBlock({ ...EMPTY_BLOCK, _body: "", _checklistRaw: "", _produtosRaw: "", _filmeOnde: "", _filmeTrailer: "", _isPreview: false })} style={btnPrimary}>+ Novo bloco</button>
           </div>
           {blocks.length === 0 && (
             <p style={{ color: "#475569", fontSize: 14, textAlign: "center", padding: "24px 0" }}>
@@ -301,7 +302,7 @@ export default function AdminPage() {
           )}
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {blocks.map((block, i) => (
-              <div key={block.id} style={{ background: "#0f172a", borderRadius: 10, padding: "14px 16px", border: "1px solid #334155", display: "flex", alignItems: "center", gap: 12 }}>
+              <div key={block.id} style={{ background: "#0f172a", borderRadius: 10, padding: "14px 16px", border: `1px solid ${block.payload?.is_preview ? "#854d0e" : "#334155"}`, display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   <button onClick={() => moveBlock(i, -1)} disabled={i === 0} style={arrowBtn}>▲</button>
                   <button onClick={() => moveBlock(i, 1)} disabled={i === blocks.length - 1} style={arrowBtn}>▼</button>
@@ -311,16 +312,14 @@ export default function AdminPage() {
                     <span style={{ fontSize: 11, background: "#1e3a5f", color: "#93c5fd", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>
                       {BLOCK_TYPES.find(t => t.value === block.type)?.label || block.type}
                     </span>
+                    {block.payload?.is_preview && (
+                      <span style={{ fontSize: 10, background: "#78350f", color: "#fcd34d", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>
+                        👁 Preview gratuito
+                      </span>
+                    )}
                     <span style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{block.title}</span>
                   </div>
                   {block.description && <p style={{ fontSize: 12, color: "#64748b", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{block.description}</p>}
-                  {block.type === "lista_produtos" && block.payload?.produtos?.length > 0 && (
-                    <p style={{ fontSize: 11, color: "#64748b", margin: "2px 0 0" }}>{block.payload.produtos.length} produto(s)</p>
-                  )}
-                  {block.type === "filme" && block.payload?.onde && (
-                    <p style={{ fontSize: 11, color: "#64748b", margin: "2px 0 0" }}>📺 {block.payload.onde}</p>
-                  )}
-                  {block.url && <p style={{ fontSize: 11, color: "#3b82f6", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>🔗 {block.url}</p>}
                 </div>
                 <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                   <button onClick={() => setEditingBlock(prepareForEdit(block))} style={{ padding: "6px 14px", borderRadius: 7, border: "none", background: "#334155", color: "#e2e8f0", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>✏️ Editar</button>
@@ -344,11 +343,12 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
   const [block, setBlock] = useState(initial);
   const set = (k, v) => setBlock(b => ({ ...b, [k]: v }));
 
-  const needsLink      = ["video", "podcast", "audio", "leitura", "produto", "imagem"].includes(block.type);
-  const needsBody      = ["texto", "leitura", "produto", "lembrete_fixo", "podcast", "audio", "imagem"].includes(block.type);
+  const needsLink      = ["video", "podcast", "audio", "leitura", "produto", "imagem", "download"].includes(block.type);
+  const needsBody      = ["texto", "leitura", "produto", "lembrete_fixo", "podcast", "audio", "imagem", "download"].includes(block.type);
   const needsChecklist = block.type === "checklist";
   const needsListaProd = block.type === "lista_produtos";
   const needsFilme     = block.type === "filme";
+  const needsDownload  = block.type === "download";
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.7)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
@@ -373,6 +373,47 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
             <input value={block.description || ""} onChange={e => set("description", e.target.value)} placeholder="Uma linha descritiva opcional" style={inputStyle} />
           </div>
 
+          {/* PREVIEW GRATUITO */}
+          <div style={{ background: "#0f172a", borderRadius: 10, padding: "14px 16px", border: "1px solid #334155", display: "flex", alignItems: "center", gap: 12 }}>
+            <input
+              type="checkbox"
+              id="isPreview"
+              checked={block._isPreview === true}
+              onChange={e => set("_isPreview", e.target.checked)}
+              style={{ width: 18, height: 18, cursor: "pointer", accentColor: "#f59e0b" }}
+            />
+            <div>
+              <label htmlFor="isPreview" style={{ fontSize: 13, fontWeight: 700, color: "#fcd34d", cursor: "pointer" }}>
+                👁 Mostrar como preview gratuito
+              </label>
+              <p style={{ fontSize: 11, color: "#64748b", margin: "2px 0 0" }}>
+                Usuários free verão este bloco completo como degustação
+              </p>
+            </div>
+          </div>
+
+          {/* Campos específicos de DOWNLOAD */}
+          {needsDownload && (
+            <>
+              <div>
+                <label style={labelStyle}>URL do arquivo (Supabase Storage)</label>
+                <input value={block.url || ""} onChange={e => set("url", e.target.value)}
+                  placeholder="https://...supabase.co/storage/v1/object/public/..." style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>Label do botão (opcional)</label>
+                <input value={block.cta || ""} onChange={e => set("cta", e.target.value)}
+                  placeholder="Ex: Baixar plano de parto..." style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>Descrição completa (opcional)</label>
+                <textarea value={block._body || ""} onChange={e => set("_body", e.target.value)}
+                  placeholder="Descreva o conteúdo do arquivo..."
+                  rows={3} style={{ ...inputStyle, resize: "vertical" }} />
+              </div>
+            </>
+          )}
+
           {/* Campos específicos de FILME */}
           {needsFilme && (
             <>
@@ -386,7 +427,6 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
                 <input value={block._filmeTrailer || ""} onChange={e => set("_filmeTrailer", e.target.value)}
                   placeholder="https://youtu.be/..." style={inputStyle} />
               </div>
-              {/* Preview do trailer */}
               {block._filmeTrailer && (() => {
                 const ytMatch = block._filmeTrailer.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
                 const ytId = ytMatch?.[1];
@@ -407,7 +447,7 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
           )}
 
           {/* Campos padrão para outros tipos */}
-          {needsLink && (
+          {needsLink && !needsDownload && (
             <div>
               <label style={labelStyle}>{block.type === "imagem" ? "URL da imagem" : "URL"}</label>
               <input value={block.url || ""} onChange={e => set("url", e.target.value)}
@@ -419,7 +459,7 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
               <img src={block.url} alt="Preview" style={{ width: "100%", maxHeight: 200, objectFit: "cover" }} />
             </div>
           )}
-          {needsLink && block.type !== "imagem" && (
+          {needsLink && !needsDownload && block.type !== "imagem" && (
             <div>
               <label style={labelStyle}>Label do botão (CTA)</label>
               <input value={block.cta || ""} onChange={e => set("cta", e.target.value)}
@@ -427,7 +467,7 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
                 style={inputStyle} />
             </div>
           )}
-          {needsBody && (
+          {needsBody && !needsDownload && !needsFilme && (
             <div>
               <label style={labelStyle}>{block.type === "lembrete_fixo" ? "Nota do lembrete" : block.type === "imagem" ? "Legenda (opcional)" : "Texto completo"}</label>
               <textarea value={block._body || ""} onChange={e => set("_body", e.target.value)}
@@ -453,7 +493,7 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
                 Formato: <span style={{ color: "#93c5fd", fontFamily: "monospace" }}>Nome | Descrição | https://link.com</span>
               </p>
               <textarea value={block._produtosRaw || ""} onChange={e => set("_produtosRaw", e.target.value)}
-                placeholder={"Mochila para bebê | Excelente para passeios | https://amazon.com.br/...\nMonitor de bebê | Essencial para noites tranquilas | https://amazon.com.br/..."}
+                placeholder={"Mochila para bebê | Excelente para passeios | https://amazon.com.br/..."}
                 rows={8} style={{ ...inputStyle, resize: "vertical", fontFamily: "monospace", fontSize: 12 }} />
               <p style={{ fontSize: 11, color: "#64748b", marginTop: 4 }}>
                 {(block._produtosRaw || "").split("\n").filter(s => s.trim()).length} produto(s)

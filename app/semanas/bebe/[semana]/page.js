@@ -13,6 +13,21 @@ import { useGoToToday } from "../../../../lib/navigation/useGoToToday";
 import { supabaseBrowser } from "../../../../lib/supabase/client";
 import { usePushPrompt } from "../../../../lib/push/usePushPrompt";
 
+const TIPO_LABELS = {
+  checklist:      "✅ Checklist",
+  texto:          "📝 Texto",
+  lembrete_fixo:  "📌 Lembrete",
+  video:          "🎥 Vídeo",
+  filme:          "🎬 Dica de Filme",
+  podcast:        "🎧 Podcast",
+  audio:          "🔊 Áudio",
+  leitura:        "📖 Leitura",
+  produto:        "🛒 Produto",
+  lista_produtos: "🛍️ Lista de Produtos",
+  imagem:         "🖼️ Imagem",
+  download:       "📥 Download",
+};
+
 function isPremiumWeekUnlocked(semana, currentWeek, premiumSinceWeek) {
   const sinceWeek = premiumSinceWeek ?? currentWeek;
   return semana >= sinceWeek && semana <= currentWeek + 2;
@@ -20,10 +35,8 @@ function isPremiumWeekUnlocked(semana, currentWeek, premiumSinceWeek) {
 
 function NascimentoBanner({ textColor, onClose }) {
   return (
-    <div
-      className="rounded-3xl p-6 text-center space-y-3 relative overflow-hidden"
-      style={{ background: "linear-gradient(135deg, #fef3c7, #fff7ed)", border: "2px solid #fbbf24" }}
-    >
+    <div className="rounded-3xl p-6 text-center space-y-3 relative overflow-hidden"
+      style={{ background: "linear-gradient(135deg, #fef3c7, #fff7ed)", border: "2px solid #fbbf24" }}>
       <div style={{ position: "absolute", top: 8, left: 16, fontSize: 20, opacity: 0.4 }}>🎊</div>
       <div style={{ position: "absolute", top: 8, right: 16, fontSize: 20, opacity: 0.4 }}>🎊</div>
       <div style={{ fontSize: 52 }}>👶</div>
@@ -31,12 +44,61 @@ function NascimentoBanner({ textColor, onClose }) {
       <p className="text-sm text-gray-600 leading-relaxed">
         A gestação acabou e uma nova jornada começa. A partir de agora você acompanha o desenvolvimento semana a semana do seu bebê.
       </p>
-      <button
-        onClick={onClose}
+      <button onClick={onClose}
         className="inline-block px-6 py-2.5 rounded-xl font-bold text-white text-sm transition hover:opacity-90"
-        style={{ backgroundColor: textColor }}
-      >
+        style={{ backgroundColor: textColor }}>
         Começar essa nova fase 🚀
+      </button>
+    </div>
+  );
+}
+
+function LockedBlockCard({ block, textColor, onUpgrade }) {
+  const label = TIPO_LABELS[block.tipo] || block.tipo;
+  return (
+    <div
+      className="bg-white/60 rounded-2xl p-5 shadow-md border border-white/40 flex items-center gap-4 cursor-pointer"
+      style={{ borderLeft: `4px solid ${textColor}40` }}
+      onClick={onUpgrade}
+    >
+      <div className="text-2xl flex-shrink-0">🔒</div>
+      <div className="flex-1 min-w-0">
+        <span className="inline-block px-2 py-0.5 rounded-full text-xs font-semibold mb-1"
+          style={{ backgroundColor: textColor + "20", color: textColor }}>
+          {label}
+        </span>
+        <p className="text-sm font-bold text-gray-700 truncate">{block.titulo}</p>
+        {block.descricao && <p className="text-xs text-gray-400 truncate">{block.descricao}</p>}
+      </div>
+      <div className="flex-shrink-0">
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full"
+          style={{ background: textColor, color: "#fff" }}>
+          Premium
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function UpgradeCTA({ textColor, onUpgrade, blocksCount }) {
+  return (
+    <div className="bg-white/90 rounded-2xl p-6 text-center space-y-4 shadow-xl"
+      style={{ border: `2px solid ${textColor}30` }}>
+      <div className="text-3xl">✨</div>
+      <div>
+        <p className="font-black text-lg text-gray-900">
+          {blocksCount > 0
+            ? `+ ${blocksCount} conteúdo${blocksCount > 1 ? "s" : ""} exclusivo${blocksCount > 1 ? "s" : ""} nessa semana`
+            : "Conteúdo exclusivo nessa semana"}
+        </p>
+        <p className="text-sm text-gray-500 mt-1 leading-relaxed">
+          Assine o Premium e acesse todos os extras da sua jornada como pai.
+        </p>
+      </div>
+      <button onClick={onUpgrade}
+        className="w-full py-3 rounded-xl font-bold text-white text-base transition hover:opacity-90"
+        style={{ background: `linear-gradient(135deg, ${textColor}, #3b82f6)` }}>
+        🚀 Ver planos e assinar
       </button>
     </div>
   );
@@ -89,20 +151,23 @@ function SemanaBebePage({ params }) {
         const unlocked = profile.is_admin || isPremiumWeekUnlocked(semana, profile.current_week, profile.premium_since_week);
         setIsUnlocked(unlocked);
         if (unlocked) loadPremiumContent(alive, supabase);
+      } else {
+        // Usuário free — carrega blocos para mostrar previews
+        loadPremiumContent(alive, supabase);
       }
     }
 
     async function loadPremiumContent(alive, supabase) {
       setLoadingPremium(true);
       try {
-        const { data: header, error: headerError } = await supabase
+        const { data: header } = await supabase
           .from("premium_week_materials")
           .select("id, title, intro")
           .eq("stage", "bebe")
           .eq("week", semana)
           .maybeSingle();
 
-        if (headerError || !header?.id || !alive) return;
+        if (!header?.id || !alive) return;
 
         const { data: blocks } = await supabase
           .from("premium_week_blocks")
@@ -113,8 +178,8 @@ function SemanaBebePage({ params }) {
         if (!alive) return;
 
         setPremiumContent({
-          titulo: header.title,
-          intro:  header.intro || "",
+          titulo:    header.title,
+          intro:     header.intro || "",
           conteudos: (blocks ?? []).map((b) => ({
             tipo:      b.type,
             titulo:    b.title,
@@ -122,6 +187,7 @@ function SemanaBebePage({ params }) {
             link:      b.url,
             cta:       b.cta,
             payload:   b.payload,
+            isPreview: b.payload?.is_preview === true,
           })),
         });
       } catch (_) {
@@ -145,6 +211,10 @@ function SemanaBebePage({ params }) {
 
   const { bgColor, textColor } = infoSemana;
 
+  const previewBlocks = premiumContent?.conteudos.filter(b => b.isPreview) ?? [];
+  const lockedBlocks  = premiumContent?.conteudos.filter(b => !b.isPreview) ?? [];
+  const hasAnyPreview = previewBlocks.length > 0;
+
   return (
     <div className="min-h-screen px-4 py-6" style={{ backgroundColor: bgColor }}>
 
@@ -161,6 +231,7 @@ function SemanaBebePage({ params }) {
 
         <WeekCard data={infoSemana} />
 
+        {/* ── SEÇÃO PREMIUM ── */}
         {isPremium ? (
           <>
             <div className="flex items-center gap-3">
@@ -175,9 +246,7 @@ function SemanaBebePage({ params }) {
               <div className="bg-white/80 rounded-2xl p-6 text-center space-y-3" style={{ border: `2px dashed ${textColor}40` }}>
                 <div className="text-3xl">🔒</div>
                 <p className="font-bold text-lg" style={{ color: textColor }}>Conteúdo ainda não disponível</p>
-                <p className="text-sm text-gray-600">
-                  Este conteúdo será liberado quando você chegar na semana atual.
-                </p>
+                <p className="text-sm text-gray-600">Este conteúdo será liberado quando você chegar na semana atual.</p>
                 <div className="inline-block px-4 py-2 rounded-full text-xs font-semibold" style={{ backgroundColor: `${textColor}15`, color: textColor }}>
                   📅 Disponível em breve
                 </div>
@@ -214,15 +283,63 @@ function SemanaBebePage({ params }) {
             )}
           </>
         ) : (
-          <div className="flex justify-center">
-            <button
-              onClick={() => router.push(`/materiais/bebe/${semana}`)}
-              className="px-5 py-3 rounded-xl font-semibold shadow-md bg-white/90 hover:bg-white transition"
-              style={{ color: textColor }}
-            >
-              {infoSemana.cta_premium || "Ver conteúdos extras da semana ✨"}
-            </button>
-          </div>
+          <>
+            {/* Usuário FREE — mostra preview se existir */}
+            {loadingPremium && (
+              <div className="flex justify-center py-4">
+                <div className="animate-spin rounded-full h-7 w-7 border-b-2" style={{ borderColor: textColor }} />
+              </div>
+            )}
+
+            {!loadingPremium && hasAnyPreview && (
+              <>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-px" style={{ backgroundColor: `${textColor}30` }} />
+                  <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wide" style={{ backgroundColor: textColor, color: "#fff" }}>
+                    ✨ Prévia do Conteúdo Premium
+                  </span>
+                  <div className="flex-1 h-px" style={{ backgroundColor: `${textColor}30` }} />
+                </div>
+
+                <div className="space-y-6">
+                  {previewBlocks.map((item, index) => (
+                    <PremiumBlockCard key={index} block={item} accentColor={textColor} softBg={bgColor} />
+                  ))}
+                </div>
+
+                {lockedBlocks.length > 0 && (
+                  <div className="space-y-3">
+                    {lockedBlocks.map((item, index) => (
+                      <LockedBlockCard
+                        key={index}
+                        block={item}
+                        textColor={textColor}
+                        onUpgrade={() => router.push("/planos")}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                <UpgradeCTA
+                  textColor={textColor}
+                  onUpgrade={() => router.push("/planos")}
+                  blocksCount={lockedBlocks.length}
+                />
+              </>
+            )}
+
+            {!loadingPremium && !hasAnyPreview && (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => router.push(`/materiais/bebe/${semana}`)}
+                  className="px-5 py-3 rounded-xl font-semibold shadow-md bg-white/90 hover:bg-white transition"
+                  style={{ color: textColor }}
+                >
+                  {infoSemana.cta_premium || "Ver conteúdos extras da semana ✨"}
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {/* NAVEGAÇÃO */}
