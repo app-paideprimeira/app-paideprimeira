@@ -1,239 +1,182 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabaseBrowser } from '../../lib/supabase/client';
-import Image from 'next/image';
-
-const supabase = supabaseBrowser();
+// app/diario/page.js
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { supabaseBrowser } from "../../lib/supabase/client";
+import Image from "next/image";
+import UserMenu from "../components/UserMenu";
 
 export default function Diario() {
   const router = useRouter();
 
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [entradas, setEntradas] = useState([]);
+  const [user, setUser]                       = useState(null);
+  const [loading, setLoading]                 = useState(true);
+  const [saving, setSaving]                   = useState(false);
+  const [entradas, setEntradas]               = useState([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [editandoId, setEditandoId] = useState(null);
+  const [editandoId, setEditandoId]           = useState(null);
   const [entradaSelecionada, setEntradaSelecionada] = useState(null);
+  const [novaEntrada, setNovaEntrada]         = useState({ titulo: "", conteudo: "" });
 
-  const [novaEntrada, setNovaEntrada] = useState({
-    titulo: '',
-    conteudo: '',
-  });
+  useEffect(() => { carregarDados(); }, []);
 
-  useEffect(() => {
-    carregarDados();
-  }, []);
-
-  const carregarDados = async () => {
+  async function carregarDados() {
     try {
       setLoading(true);
-
+      const supabase = supabaseBrowser();
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { router.replace("/auth/login"); return; }
       setUser(user);
 
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from('diario')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('data', { ascending: false })
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      const { data } = await supabase
+        .from("diario").select("*").eq("user_id", user.id)
+        .order("data", { ascending: false })
+        .order("created_at", { ascending: false });
 
       setEntradas(data || []);
-    } catch (error) {
-      console.error('Erro ao carregar diário:', error);
+    } catch (err) {
+      console.error("Erro ao carregar diário:", err);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const salvarEntrada = async (e) => {
+  async function salvarEntrada(e) {
     e.preventDefault();
-
-    if (!novaEntrada.titulo.trim() || !novaEntrada.conteudo.trim()) {
-      alert('Preencha título e conteúdo');
-      return;
-    }
-
+    if (!novaEntrada.titulo.trim() || !novaEntrada.conteudo.trim()) return;
+    setSaving(true);
     try {
-      setLoading(true);
-
-      const hoje = new Date().toISOString().split('T')[0];
+      const supabase = supabaseBrowser();
+      const hoje = new Date().toISOString().split("T")[0];
 
       if (editandoId) {
-        const { error } = await supabase
-          .from('diario')
-          .update({
-            titulo: novaEntrada.titulo,
-            conteudo: novaEntrada.conteudo,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', editandoId)
-          .eq('user_id', user.id);
-
-        if (error) throw error;
+        await supabase.from("diario").update({
+          titulo:     novaEntrada.titulo,
+          conteudo:   novaEntrada.conteudo,
+          updated_at: new Date().toISOString(),
+        }).eq("id", editandoId).eq("user_id", user.id);
       } else {
-        const { error } = await supabase.from('diario').insert({
-          user_id: user.id,
-          titulo: novaEntrada.titulo,
+        await supabase.from("diario").insert({
+          user_id:  user.id,
+          titulo:   novaEntrada.titulo,
           conteudo: novaEntrada.conteudo,
-          data: hoje, // ✅ data automática
+          data:     hoje,
         });
-
-        if (error) throw error;
       }
 
       await carregarDados();
       cancelar();
-    } catch (error) {
-      console.error(error);
-      alert('Erro ao salvar entrada');
+    } catch (err) {
+      console.error(err);
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
-  };
+  }
 
-  const editarEntrada = (entrada) => {
-    setNovaEntrada({
-      titulo: entrada.titulo,
-      conteudo: entrada.conteudo,
-    });
+  function editarEntrada(entrada) {
+    setNovaEntrada({ titulo: entrada.titulo, conteudo: entrada.conteudo });
     setEditandoId(entrada.id);
     setMostrarFormulario(true);
-  };
+    setEntradaSelecionada(null);
+  }
 
-  const excluirEntrada = async (id) => {
-    if (!confirm('Tem certeza que deseja excluir?')) return;
+  async function excluirEntrada(id) {
+    if (!confirm("Remover esta entrada?")) return;
+    const supabase = supabaseBrowser();
+    await supabase.from("diario").delete().eq("id", id).eq("user_id", user.id);
+    setEntradaSelecionada(null);
+    await carregarDados();
+  }
 
-    try {
-      const { error } = await supabase
-        .from('diario')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
-
-      if (error) throw error;
-
-      await carregarDados();
-    } catch (error) {
-      alert('Erro ao excluir');
-    }
-  };
-
-  const cancelar = () => {
+  function cancelar() {
     setMostrarFormulario(false);
     setEditandoId(null);
-    setNovaEntrada({
-      titulo: '',
-      conteudo: '',
-    });
-  };
+    setNovaEntrada({ titulo: "", conteudo: "" });
+  }
 
-  const formatarData = (dataString) => {
-    const data = new Date(dataString);
-    return data.toLocaleDateString('pt-BR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
+  function formatarData(dataString) {
+    return new Date(dataString + "T12:00:00").toLocaleDateString("pt-BR", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric",
     });
-  };
+  }
+
+  function formatarDataCurta(dataString) {
+    return new Date(dataString + "T12:00:00").toLocaleDateString("pt-BR", {
+      day: "numeric", month: "short",
+    });
+  }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin h-10 w-10 border-b-2 border-blue-600 rounded-full" />
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc" }}>
+        <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid #1E3A8A", borderTopColor: "transparent", animation: "spin 1s linear infinite" }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#1E3A8A] flex flex-col items-center justify-start px-4 pt-10">
-        
-              {/* LOGO NO FUNDO AZUL */}
-              <div className="mb-8">
-                <Image
-                  src="/logo/logo-app.svg"
-                  alt="Pai de Primeira"
-                  width={400}
-                  height={200}
-                  className="w-72 mx-auto drop-shadow-md"
-                  priority
-                />
-              </div>
-      <div className="max-w-4xl mx-auto">
+    <div style={{ minHeight: "100vh", background: "#f1f5f9", fontFamily: "'DM Sans', 'Segoe UI', sans-serif" }}>
 
-            {/* HEADER */}
-      <div className="mb-4">
-        {/* TÍTULO */}
-        <h1 className="text-center text-3xl font-bold text-[#F9FAFB] mb-8">
-          Meu Diário
-        </h1>
+      {/* Header */}
+      <header style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button onClick={() => router.back()}
+            style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "#64748b", fontSize: 13, fontWeight: 600, padding: "6px 10px", borderRadius: 8 }}>
+            ← Voltar
+          </button>
+          <Image src="/logo/logo-app.svg" alt="Pai de Primeira" width={120} height={36} />
+        </div>
+        <UserMenu />
+      </header>
 
-  {/* BOTÕES */}
-  <div className="flex flex-col sm:flex-row gap-4 sm:justify-between">
-    <button
-      onClick={() => router.back()}
-      className="bg-green-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-400"
-    >
-      Voltar
-    </button>
+      <div style={{ maxWidth: 600, margin: "0 auto", padding: "24px 16px 48px" }}>
 
-    {!mostrarFormulario && (
-      <button
-        onClick={() => setMostrarFormulario(true)}
-        className="bg-green-500 text-white px-6 py-1 rounded-xl font-semibold hover:bg-blue-400"
-      >
-        + Nova Reflexão
-      </button>
-    )}
-  </div>
-</div>
+        {/* Cabeçalho */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+          <div>
+            <h1 style={{ fontSize: 22, fontWeight: 900, color: "#0f172a", margin: 0 }}>📖 Meu Diário</h1>
+            <p style={{ fontSize: 13, color: "#64748b", margin: "2px 0 0" }}>
+              {entradas.length > 0 ? `${entradas.length} entrada${entradas.length > 1 ? "s" : ""}` : "Nenhuma entrada ainda"}
+            </p>
+          </div>
+          {!mostrarFormulario && (
+            <button onClick={() => setMostrarFormulario(true)}
+              style={{ padding: "10px 18px", borderRadius: 12, border: "none", background: "linear-gradient(135deg, #1E3A8A, #3b82f6)", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer", boxShadow: "0 4px 12px rgba(30,58,138,.25)" }}>
+              + Nova reflexão
+            </button>
+          )}
+        </div>
 
+        {/* Formulário */}
         {mostrarFormulario && (
-          <div className="bg-[#1E3A8A] rounded-2xl p-6 mb-8 shadow-sm">
-            <h2 className="text-[#F9FAFB] font-semibold mb-4 ">
-              {editandoId ? 'Editar Entrada' : 'Nova Entrada'}
+          <div style={{ background: "#fff", borderRadius: 16, padding: 20, marginBottom: 20, boxShadow: "0 1px 4px rgba(0,0,0,.06)", border: "1px solid #e2e8f0" }}>
+            <h2 style={{ fontSize: 15, fontWeight: 800, color: "#0f172a", margin: "0 0 16px" }}>
+              {editandoId ? "✏️ Editar entrada" : "✨ Nova reflexão"}
             </h2>
-
-            <form onSubmit={salvarEntrada} className="space-y-4">
+            <form onSubmit={salvarEntrada} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <input
-                type="text"
-                placeholder="Título"
                 value={novaEntrada.titulo}
-                onChange={(e) =>
-                  setNovaEntrada({ ...novaEntrada, titulo: e.target.value })
-                }
-                className="w-full p-3 border rounded-lg"
+                onChange={e => setNovaEntrada({ ...novaEntrada, titulo: e.target.value })}
+                placeholder="Título da sua reflexão..."
+                required
+                style={{ ...inputStyle, fontWeight: 700, fontSize: 15 }}
               />
-
               <textarea
-                rows={7}
-                placeholder="Escreva livremente..."
                 value={novaEntrada.conteudo}
-                onChange={(e) =>
-                  setNovaEntrada({ ...novaEntrada, conteudo: e.target.value })
-                }
-                className="w-full p-3 border rounded-lg resize-none"
+                onChange={e => setNovaEntrada({ ...novaEntrada, conteudo: e.target.value })}
+                placeholder="Escreva livremente... Como você está se sentindo? O que aconteceu hoje?"
+                required rows={6}
+                style={{ ...inputStyle, resize: "vertical", lineHeight: 1.6 }}
               />
-
-              <div className="flex gap-4">
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg"
-                >
-                  Salvar
+              <div style={{ display: "flex", gap: 10 }}>
+                <button type="submit" disabled={saving || !novaEntrada.titulo.trim() || !novaEntrada.conteudo.trim()}
+                  style={{ flex: 1, padding: "12px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #1E3A8A, #3b82f6)", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer", opacity: saving ? 0.7 : 1 }}>
+                  {saving ? "Salvando..." : editandoId ? "💾 Salvar" : "✨ Publicar"}
                 </button>
-                <button
-                  type="button"
-                  onClick={cancelar}
-                  className="bg-gray-200 px-6 py-2 rounded-lg"
-                >
+                <button type="button" onClick={cancelar}
+                  style={{ padding: "12px 18px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
                   Cancelar
                 </button>
               </div>
@@ -241,48 +184,50 @@ export default function Diario() {
           </div>
         )}
 
-        <div className="space-y-6">
-          {entradas.map((entrada) => (
-            <div
-              key={entrada.id}
-              onClick={() => setEntradaSelecionada(entrada)}
-              className="bg-white p-6 rounded-2xl shadow-sm cursor-pointer hover:shadow-md transition"
-            >
-              <h3 className="text-xl font-semibold text-gray-800">
-                {entrada.titulo}
-              </h3>
-              <p className="text-sm text-gray-500 mb-2">
-                {formatarData(entrada.data)}
-              </p>
+        {/* Estado vazio */}
+        {!mostrarFormulario && entradas.length === 0 && (
+          <div style={{ background: "#fff", borderRadius: 20, padding: "48px 24px", textAlign: "center", boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
+            <div style={{ fontSize: 56, marginBottom: 16 }}>📝</div>
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: "#0f172a", margin: "0 0 8px" }}>Seu diário está vazio</h2>
+            <p style={{ fontSize: 14, color: "#64748b", margin: "0 0 24px", lineHeight: 1.6 }}>
+              Registrar seus sentimentos e momentos nessa jornada vai fazer toda a diferença. Comece agora.
+            </p>
+            <button onClick={() => setMostrarFormulario(true)}
+              style={{ padding: "12px 24px", borderRadius: 12, border: "none", background: "linear-gradient(135deg, #1E3A8A, #3b82f6)", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
+              Escrever primeira reflexão
+            </button>
+          </div>
+        )}
 
-              <p className="text-gray-600 text-sm line-clamp-3">
+        {/* Lista de entradas */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {entradas.map((entrada) => (
+            <div key={entrada.id}
+              onClick={() => setEntradaSelecionada(entrada)}
+              style={{ background: "#fff", borderRadius: 16, padding: "18px 20px", cursor: "pointer", boxShadow: "0 1px 4px rgba(0,0,0,.05)", border: "1px solid #f1f5f9", transition: "box-shadow .15s", borderLeft: "4px solid #1E3A8A" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: "#0f172a", margin: 0, flex: 1, marginRight: 12 }}>
+                  {entrada.titulo}
+                </h3>
+                <span style={{ fontSize: 11, color: "#94a3b8", flexShrink: 0, background: "#f8fafc", padding: "3px 8px", borderRadius: 20, fontWeight: 600 }}>
+                  {formatarDataCurta(entrada.data)}
+                </span>
+              </div>
+              <p style={{ fontSize: 13, color: "#64748b", margin: "0 0 12px", lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                 {entrada.conteudo}
               </p>
-
-              <p className="text-blue-600 text-sm mt-2 font-medium">
-                Ler mais →
-              </p>
-
-              <div className="flex gap-2 mt-4">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    editarEntrada(entrada);
-                  }}
-                  className="text-blue-600"
-                >
-                  ✏️
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    excluirEntrada(entrada.id);
-                  }}
-                  className="text-red-600"
-                >
-                  🗑️
-                </button>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{ fontSize: 12, color: "#3b82f6", fontWeight: 600 }}>Ler mais →</span>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button onClick={e => { e.stopPropagation(); editarEntrada(entrada); }}
+                    style={{ padding: "5px 10px", borderRadius: 8, border: "none", background: "#f1f5f9", color: "#64748b", cursor: "pointer", fontSize: 13 }}>
+                    ✏️
+                  </button>
+                  <button onClick={e => { e.stopPropagation(); excluirEntrada(entrada.id); }}
+                    style={{ padding: "5px 10px", borderRadius: 8, border: "none", background: "#fee2e2", color: "#ef4444", cursor: "pointer", fontSize: 13 }}>
+                    🗑️
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -291,45 +236,30 @@ export default function Diario() {
 
       {/* Modal de leitura */}
       {entradaSelecionada && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-          <div className="bg-white max-w-2xl w-full rounded-2xl p-6 shadow-lg max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h2 className="text-2xl font-bold">
-                  {entradaSelecionada.titulo}
-                </h2>
-                <p className="text-sm text-gray-500">
-                  {formatarData(entradaSelecionada.data)}
-                </p>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+          <div style={{ background: "#fff", borderRadius: 20, width: "100%", maxWidth: 560, maxHeight: "85vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,.2)" }}>
+            <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div style={{ flex: 1, marginRight: 16 }}>
+                <h2 style={{ fontSize: 18, fontWeight: 900, color: "#0f172a", margin: "0 0 4px" }}>{entradaSelecionada.titulo}</h2>
+                <p style={{ fontSize: 12, color: "#94a3b8", margin: 0 }}>{formatarData(entradaSelecionada.data)}</p>
               </div>
-
-              <button
-                onClick={() => setEntradaSelecionada(null)}
-                className="text-xl"
-              >
+              <button onClick={() => setEntradaSelecionada(null)}
+                style={{ background: "#f1f5f9", border: "none", color: "#64748b", fontSize: 18, cursor: "pointer", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 ✕
               </button>
             </div>
-
-            <p className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-              {entradaSelecionada.conteudo}
-            </p>
-
-            <div className="flex justify-end gap-4 mt-6">
-              <button
-                onClick={() => {
-                  setEntradaSelecionada(null);
-                  editarEntrada(entradaSelecionada);
-                }}
-                className="bg-blue-600 text-white px-5 py-2 rounded-lg"
-              >
+            <div style={{ padding: "20px 24px" }}>
+              <p style={{ fontSize: 15, color: "#334155", lineHeight: 1.8, whiteSpace: "pre-wrap", margin: 0 }}>
+                {entradaSelecionada.conteudo}
+              </p>
+            </div>
+            <div style={{ padding: "16px 24px", borderTop: "1px solid #f1f5f9", display: "flex", gap: 10 }}>
+              <button onClick={() => editarEntrada(entradaSelecionada)}
+                style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #1E3A8A, #3b82f6)", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
                 Editar
               </button>
-
-              <button
-                onClick={() => setEntradaSelecionada(null)}
-                className="bg-gray-200 px-5 py-2 rounded-lg"
-              >
+              <button onClick={() => setEntradaSelecionada(null)}
+                style={{ padding: "11px 20px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
                 Fechar
               </button>
             </div>
@@ -339,3 +269,10 @@ export default function Diario() {
     </div>
   );
 }
+
+const inputStyle = {
+  width: "100%", padding: "11px 14px", borderRadius: 10,
+  border: "1.5px solid #e2e8f0", fontSize: 14, color: "#0f172a",
+  boxSizing: "border-box", outline: "none", fontFamily: "inherit",
+  background: "#f8fafc",
+};

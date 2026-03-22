@@ -2,10 +2,10 @@
   "bebe": {
     "1": {
       "titulo": "Semana 1 do bebê",
-      "empatia": "Respira. Você não precisa dar conta de tudo hoje.",
-      "descricao": "O bebê acabou de chegar ao mundo e está se adaptando fora do útero. Tudo é novo: luz, sons, temperatura e colo.",
+      "empatia": "Respira. Vocês estão aprendendo, demonstre confiança, estaremos juntos nessa missão.",
+      "descricao": "O bebê acabou de chegar ao mundo e está se adaptando fora do útero. Tudo é novo: luz, sons, temperatura e ele precisa de muito colo.",
       "dica": "Contato pele a pele acalma o bebê e ajuda você a criar vínculo. Confie no básico.",
-      "acompanhe": "É normal perder um pouco de peso nos primeiros dias e dormir a maior parte do tempo.",
+      "acompanhe": "É normal que o bebê durma a maior parte do tempo e perca um pouco de peso nos primeiros dias, mas lembre que ele precisa mamar  de 3 em 3 horas .",
       "bgColor": "#FFFDE7",
       "textColor": "#F57F17",
       "cta_premium": "Ver checklist e materiais da semana 1 ✨"
@@ -14,7 +14,7 @@
       "titulo": "Semana 2 do bebê",
       "empatia": "Se parece confuso agora, é porque realmente é.",
       "descricao": "O bebê começa a se adaptar melhor ao ritmo da casa, mas ainda vive em ciclos curtos de sono e alimentação.",
-      "dica": "Observe sinais de fome e sono em vez de seguir horários rígidos.",
+      "dica": "Observe sinais de fome e sono em vez de seguir horários rígidos, lembre que o bebê deve ter de 6 a 8 trocas de fraldas a cada 24 horas.",
       "acompanhe": "O ganho de peso começa a se estabilizar e o choro ainda é a principal forma de comunicação.",
       "bgColor": "#E8F5E9",
       "textColor": "#1B5E20",
@@ -22,10 +22,10 @@
     },
     "3": {
       "titulo": "Semana 3 do bebê",
-      "empatia": "Você não está atrasado. Está aprendendo.",
-      "descricao": "O bebê começa a reconhecer vozes familiares e reage melhor ao toque e ao colo.",
-      "dica": "Fale com o bebê durante os cuidados diários. Ele reconhece sua voz.",
-      "acompanhe": "Períodos curtos de alerta começam a aparecer.",
+      "empatia": "Mantenha-se atento, você segue aprendendo.",
+      "descricao": "O bebê são muito dinâmicos, começam a reconhecer vozes familiares e reage melhor ao toque e ao colo.",
+      "dica": "Fale com o bebê durante os cuidados diários. Ele reconhece sua voz e precisa de previsibilidade nos acontecimentos para se sentir seguro.",
+      "acompanhe": "As janelas de sono se modificam e o bebê pode começar a ficar mais tempo acordado.",
       "bgColor": "#FFF3E0",
       "textColor": "#E65100",
       "cta_premium": "Ver checklist e materiais da semana 1 ✨"
@@ -35,17 +35,17 @@
       "empatia": "Um mês já passou. Parece pouco, mas não é.",
       "descricao": "Com cerca de um mês, o bebê começa a ficar mais atento a sons, rostos e movimentos.",
       "dica": "Olhar nos olhos do bebê enquanto fala fortalece o vínculo emocional.",
-      "acompanhe": "O sono noturno ainda é irregular — e isso é esperado.",
+      "acompanhe": "O sono noturno ainda é irregular — e isso é esperado, bebês passam por saltos de desenvolvimento.",
       "bgColor": "#EDE7F6",
       "textColor": "#5E35B1",
       "cta_premium": "Ver checklist e materiais da semana 1 ✨"
     },
     "5": {
       "titulo": "Semana 5 do bebê",
-      "empatia": "Você já está fazendo mais do que imagina.",
+      "empatia": "A demanda é grande mesmo, continue firme e não pare!",
       "descricao": "O bebê demonstra mais interesse pelo ambiente e começa a reagir melhor a estímulos.",
       "dica": "Converse, cante ou leia algo simples. Não é sobre performance, é presença.",
-      "acompanhe": "Ganhos de peso e altura seguem constantes.",
+      "acompanhe": "Ganhos de peso e altura seguem constantes. A meta de ganho de peso até o 3º mês é de 20 a 30 gramas por dia",
       "bgColor": "#E0F7FA",
       "textColor": "#006064",
       "cta_premium": "Ver checklist e materiais da semana 1 ✨"
