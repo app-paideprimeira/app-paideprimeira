@@ -26,15 +26,49 @@ const MARCOS_GESTANTE = [
 ];
 
 const MARCOS_BEBE = [
-  { semana: 1,  key: "alta_hospital",   titulo: "🏥 Alta hospitalar" },
-  { semana: 2,  key: "teste_pezinho",   titulo: "🦶 Teste do pezinho" },
-  { semana: 2,  key: "consulta_bebe_2", titulo: "🩺 Consulta pediatra" },
-  { semana: 4,  key: "consulta_bebe_4", titulo: "🩺 Consulta pediatra 1 mês" },
-  { semana: 8,  key: "vacina_2m",       titulo: "💉 Vacinas 2 meses" },
-  { semana: 12, key: "vacina_3m",       titulo: "💉 Vacinas 3 meses" },
-  { semana: 16, key: "vacina_4m",       titulo: "💉 Vacinas 4 meses" },
-  { semana: 26, key: "introducao",      titulo: "🥣 Introdução alimentar" },
-  { semana: 52, key: "aniversario_1",   titulo: "🎂 1º Aniversário!" },
+  // ── Primeiros dias (maternidade) ──────────────────────────
+  { semana: 1,  key: "alta_hospital",      titulo: "🏥 Alta hospitalar" },
+  { semana: 1,  key: "teste_coracaozinho", titulo: "❤️ Teste do coraçãozinho" },
+  { semana: 1,  key: "teste_olhinho",      titulo: "👁️ Teste do olhinho" },
+  { semana: 1,  key: "teste_liguinha",    titulo: "👅 Teste da linguinha" },
+  { semana: 1,  key: "teste_ouvidinho",    titulo: "👂 Teste da ouvidinho" },
+  { semana: 1,  key: "vacina_bcg",         titulo: "💉 Vacina BCG" },
+  { semana: 1,  key: "vacina_hepb_1",      titulo: "💉 Vacina Hepatite B (1ª dose)" },
+
+  // ── 1ª semana ─────────────────────────────────────────────
+  { semana: 2,  key: "teste_pezinho",      titulo: "🦶 Teste do pezinho" },
+  { semana: 2,  key: "consulta_bebe_1",   titulo: "🩺 Consulta pediatra (1ª semana)" },
+
+  // ── 1 mês ─────────────────────────────────────────────────
+  { semana: 4,  key: "consulta_1m",        titulo: "🩺 Consulta pediatra 1 mês" },
+
+  // ── 2 meses ───────────────────────────────────────────────
+  { semana: 8,  key: "vacina_2m",          titulo: "💉 Vacinas 2 meses (Penta, VIP, Pneumo 10, Rotavírus)" },
+  { semana: 8,  key: "consulta_2m",        titulo: "🩺 Consulta pediatra 2 meses" },
+
+  // ── 3 meses ───────────────────────────────────────────────
+  { semana: 12, key: "vacina_3m",          titulo: "💉 Vacinas 3 meses (Penta, VIP, Rotavírus)" },
+
+  // ── 4 meses ───────────────────────────────────────────────
+  { semana: 16, key: "vacina_4m",          titulo: "💉 Vacinas 4 meses (Penta, VIP, Pneumo 10)" },
+  { semana: 16, key: "consulta_4m",        titulo: "🩺 Consulta pediatra 4 meses" },
+
+  // ── 5 meses ───────────────────────────────────────────────
+  { semana: 22, key: "consulta_5m",        titulo: "🩺 Consulta pediatra 5 meses" },
+
+  // ── 6 meses ───────────────────────────────────────────────
+  { semana: 26, key: "vacina_6m",          titulo: "💉 Vacinas 6 meses (Penta, VIP, Influenza, Hep B 3ª dose)" },
+  { semana: 26, key: "consulta_6m",        titulo: "🩺 Consulta pediatra 6 meses" },
+  { semana: 26, key: "introducao",         titulo: "🥣 Introdução alimentar" },
+
+  // ── 9 meses ───────────────────────────────────────────────
+  { semana: 39, key: "vacina_9m",          titulo: "💉 Vacinas 9 meses (Febre Amarela, Meningocócica C)" },
+  { semana: 39, key: "consulta_9m",        titulo: "🩺 Consulta pediatra 9 meses" },
+
+  // ── 12 meses ──────────────────────────────────────────────
+  { semana: 52, key: "vacina_12m",         titulo: "💉 Vacinas 12 meses (Tríplice viral, DTP, Hepatite A, Pneumo 10 reforço)" },
+  { semana: 52, key: "consulta_12m",       titulo: "🩺 Consulta pediatra 12 meses" },
+  { semana: 52, key: "aniversario_1",      titulo: "🎂 1º Aniversário!" },
 ];
 
 function calcularDataMarco(eventDate, baseWeek, semanaMarco, stage) {
