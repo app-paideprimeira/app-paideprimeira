@@ -19,7 +19,7 @@ export default function UserMenu() {
       setUser(user);
       if (user) {
         const { data: profile } = await supabase
-          .from("profiles").select("nome, is_premium").eq("id", user.id).single();
+          .from("profiles").select("nome, is_premium, stage").eq("id", user.id).single();
         setUserProfile(profile);
       }
     }
@@ -128,41 +128,27 @@ export default function UserMenu() {
           {/* Menu items */}
           <div style={{ padding: "8px 0" }}>
             <MenuSection>
-              <MenuItem
-                icon="📅" label="Meu calendário"
-                onClick={() => handleNavigation("/planner")}
-              />
-              <MenuItem
-                icon="💓" label="Contador de contrações"
-                onClick={() => handleNavigation("/contracoes")}
-              />
+              <MenuItem icon="📅" label="Meu calendário" onClick={() => handleNavigation("/planner")} />
+              {userProfile?.stage === "gestante" && (
+                <MenuItem icon="💓" label="Contador de contrações" onClick={() => handleNavigation("/contracoes")} />
+              )}
+              {userProfile?.stage === "bebe" && (
+                <MenuItem icon="👶" label="Acompanhamento bebê" onClick={() => handleNavigation("/bebe")} />
+              )}
             </MenuSection>
 
             <Divider />
 
             <MenuSection>
-              <MenuItem
-                icon="👤" label="Minhas informações"
-                onClick={() => handleNavigation("/profile")}
-              />
-              <MenuItem
-                icon="📖" label="Meu diário de pai"
-                onClick={() => handleNavigation("/diario")}
-              />
-              <MenuItem
-                icon="👥" label="Outros pais"
-                onClick={() => handleNavigation("/comunidade")}
-              />
+              <MenuItem icon="👤" label="Minhas informações" onClick={() => handleNavigation("/profile")} />
+              <MenuItem icon="📖" label="Meu diário de pai"  onClick={() => handleNavigation("/diario")} />
+              <MenuItem icon="👥" label="Outros pais"        onClick={() => handleNavigation("/comunidade")} />
             </MenuSection>
 
             <Divider />
 
             <MenuSection>
-              <MenuItem
-                icon="🚪" label="Sair do app"
-                onClick={handleLogout}
-                danger
-              />
+              <MenuItem icon="🚪" label="Sair do app" onClick={handleLogout} danger />
             </MenuSection>
           </div>
         </div>
