@@ -23,15 +23,14 @@ function PreviewBadge({ show }) {
   return (
     <span style={{
       display: "inline-block",
-      marginLeft: "auto",           // ← adiciona essa linha
-      background: "linear-gradient(90deg, #3f80e2, #081edd)",
-      color: "#fff", fontSize: 12, fontWeight: 600,
-      padding: "3px 15px", borderRadius: 20,
+      marginLeft: "auto",
+      background: "linear-gradient(90deg, #f59e0b, #f97316)",
+      color: "#fff", fontSize: 10, fontWeight: 800,
+      padding: "3px 10px", borderRadius: 20,
       letterSpacing: "0.3px", whiteSpace: "nowrap",
-      boxShadow: "0 5px 8px rgba(197, 86, 7, 0.5)",
+      boxShadow: "0 2px 8px rgba(249,115,22,.3)",
     }}>
-      <span style={{ fontSize: 18 }}>👑 </span>
-        Conteúdo Premium!
+      <span style={{ fontSize: 16 }}>👑</span> Conteúdo Premium Grátis
     </span>
   );
 }
@@ -75,6 +74,27 @@ function ExpandableText({ text, subtleBg, leftBorder, accentColor }) {
           style={{ color: accentColor }}>
           {expanded ? "← Recolher" : "Ler mais →"}
         </button>
+      )}
+    </div>
+  );
+}
+
+// Detecta URLs no texto e transforma em links clicáveis
+function LinkableText({ text, subtleBg, leftBorder, accentColor }) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  return (
+    <div className="rounded-xl p-4 text-sm text-gray-900 leading-relaxed whitespace-pre-line"
+      style={{ backgroundColor: subtleBg, borderLeft: `5px solid ${leftBorder}` }}>
+      {parts.map((part, i) =>
+        urlRegex.test(part) ? (
+          <a key={i} href={part} target="_blank" rel="noopener noreferrer"
+            style={{ color: accentColor, fontWeight: 600, textDecoration: "underline", wordBreak: "break-all" }}>
+            {part}
+          </a>
+        ) : (
+          <span key={i}>{part}</span>
+        )
       )}
     </div>
   );
@@ -165,16 +185,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
           </div>
         )}
         {block.payload?.body && (
-          <div className="rounded-xl p-4 text-sm text-gray-900 leading-relaxed whitespace-pre-line"
-            style={{ backgroundColor: subtleBg, borderLeft: `5px solid ${leftBorder}` }}>
-            {block.payload.body}
-          </div>
-        )}
-        {hasLink && block.cta && (
-          <a href={block.link} target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm font-semibold transition hover:opacity-90" style={{ color: accentColor }}>
-            {block.cta} <span aria-hidden>→</span>
-          </a>
+          <LinkableText text={block.payload.body} subtleBg={subtleBg} leftBorder={leftBorder} accentColor={accentColor} />
         )}
       </article>
     );
