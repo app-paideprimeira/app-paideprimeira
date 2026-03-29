@@ -28,9 +28,8 @@ const TIPO_LABELS = {
   download:       "📥 Download",
 };
 
-function isPremiumWeekUnlocked(semana, currentWeek, premiumSinceWeek) {
-  const sinceWeek = premiumSinceWeek ?? currentWeek;
-  return semana >= sinceWeek && semana <= currentWeek + 2;
+function isPremiumWeekUnlocked(semana, currentWeek) {
+  return semana <= currentWeek + 2;
 }
 
 function NascimentoBanner({ textColor, onClose }) {
@@ -148,7 +147,7 @@ function SemanaBebePage({ params }) {
 
       if (profile.is_premium || profile.is_admin) {
         setIsPremium(true);
-        const unlocked = profile.is_admin || isPremiumWeekUnlocked(semana, profile.current_week, profile.premium_since_week);
+        const unlocked = profile.is_admin || isPremiumWeekUnlocked(semana, profile.current_week);
         setIsUnlocked(unlocked);
         if (unlocked) loadPremiumContent(alive, supabase);
       } else {
