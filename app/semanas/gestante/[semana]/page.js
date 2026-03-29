@@ -27,7 +27,17 @@ const TIPO_LABELS = {
   download:       "📥 Download",
 };
 
-function isPremiumWeekUnlocked(semana, currentWeek) {
+function isPremiumWeekUnlocked(semana, currentWeek, premiumActivatedAt) {
+  const diasAssinado = premiumActivatedAt
+    ? Math.floor((Date.now() - new Date(premiumActivatedAt).getTime()) / (1000 * 60 * 60 * 24))
+    : 999;
+
+  if (diasAssinado < 7) {
+    // Primeiros 7 dias — janela restrita: 2 antes + atual + 2 depois
+    return semana >= currentWeek - 2 && semana <= currentWeek + 2;
+  }
+
+  // Após 7 dias — todo passado + 2 semanas à frente
   return semana <= currentWeek + 2;
 }
 
@@ -76,7 +86,6 @@ function BabyBornModal({ textColor, onConfirm, onClose, saving }) {
   );
 }
 
-// Card de bloco bloqueado — mostra título e tipo mas não o conteúdo
 function LockedBlockCard({ block, textColor, bgColor, onUpgrade }) {
   const label = TIPO_LABELS[block.tipo] || block.tipo;
   return (
@@ -104,7 +113,6 @@ function LockedBlockCard({ block, textColor, bgColor, onUpgrade }) {
   );
 }
 
-// CTA para assinar após ver o preview
 function UpgradeCTA({ textColor, onUpgrade, blocksCount }) {
   return (
     <div className="bg-white/90 rounded-2xl p-6 text-center space-y-4 shadow-xl"
@@ -162,7 +170,7 @@ export default function SemanaGestante({ params }) {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("is_premium, current_week, premium_since_week, is_admin")
+        .select("is_premium, current_week, premium_since_week, is_admin, premium_activated_at")
         .eq("id", user.id)
         .single();
 
@@ -171,11 +179,14 @@ export default function SemanaGestante({ params }) {
 
       if (profile.is_premium || profile.is_admin) {
         setIsPremium(true);
-        const unlocked = profile.is_admin || isPremiumWeekUnlocked(semana, profile.current_week);
+        const unlocked = profile.is_admin || isPremiumWeekUnlocked(
+          semana,
+          profile.current_week,
+          profile.premium_activated_at
+        );
         setIsUnlocked(unlocked);
         if (unlocked) loadPremiumContent(alive, supabase);
       } else {
-        // Usuário free — carrega blocos para mostrar previews
         loadPremiumContent(alive, supabase);
       }
     }
@@ -213,8 +224,6 @@ export default function SemanaGestante({ params }) {
             isPreview: b.payload?.is_preview === true,
           })),
         });
-        console.log("blocos:", blocks?.map(b => ({ title: b.title, is_preview: b.payload?.is_preview })));
-
       } catch (_) {
         // silencioso
       } finally {
@@ -267,7 +276,6 @@ export default function SemanaGestante({ params }) {
   const { bgColor, textColor } = infoSemana;
   const showBabyBornButton = currentWeek !== null && currentWeek >= 34;
 
-  // Separa blocos preview dos bloqueados (para usuário free)
   const previewBlocks = premiumContent?.conteudos.filter(b => b.isPreview) ?? [];
   const lockedBlocks  = premiumContent?.conteudos.filter(b => !b.isPreview) ?? [];
   const hasAnyPreview = previewBlocks.length > 0;
@@ -313,7 +321,7 @@ export default function SemanaGestante({ params }) {
               <div className="bg-white/80 rounded-2xl p-6 text-center space-y-3" style={{ border: `2px dashed ${textColor}40` }}>
                 <div className="text-3xl">🔒</div>
                 <p className="font-bold text-lg" style={{ color: textColor }}>Conteúdo ainda não disponível</p>
-                <p className="text-sm text-gray-600">Este conteúdo será liberado quando você chegar na semana atual.</p>
+                <p className="text-sm text-gray-600">Este conteúdo será liberado conforme você avança na jornada.</p>
                 <div className="inline-block px-4 py-2 rounded-full text-xs font-semibold" style={{ backgroundColor: `${textColor}15`, color: textColor }}>
                   📅 Disponível em breve
                 </div>
@@ -351,7 +359,6 @@ export default function SemanaGestante({ params }) {
           </>
         ) : (
           <>
-            {/* Usuário FREE — mostra preview se existir */}
             {loadingPremium && (
               <div className="flex justify-center py-4">
                 <div className="animate-spin rounded-full h-7 w-7 border-b-2" style={{ borderColor: textColor }} />
@@ -366,7 +373,6 @@ export default function SemanaGestante({ params }) {
                   ))}
                 </div>
 
-                {/* Blocos bloqueados — só título e tipo */}
                 {lockedBlocks.length > 0 && (
                   <div className="space-y-3">
                     {lockedBlocks.map((item, index) => (
@@ -381,7 +387,6 @@ export default function SemanaGestante({ params }) {
                   </div>
                 )}
 
-                {/* CTA para assinar */}
                 <UpgradeCTA
                   textColor={textColor}
                   onUpgrade={() => router.push("/planos")}
@@ -390,7 +395,6 @@ export default function SemanaGestante({ params }) {
               </>
             )}
 
-            {/* Sem preview — botão padrão */}
             {!loadingPremium && !hasAnyPreview && (
               <div className="flex justify-center">
                 <button

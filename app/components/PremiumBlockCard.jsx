@@ -23,13 +23,15 @@ function PreviewBadge({ show }) {
   return (
     <span style={{
       display: "inline-block",
-      background: "linear-gradient(90deg, #f59e0b, #f97316)",
-      color: "#fff", fontSize: 10, fontWeight: 800,
-      padding: "3px 10px", borderRadius: 20,
+      marginLeft: "auto",           // ← adiciona essa linha
+      background: "linear-gradient(90deg, #3f80e2, #081edd)",
+      color: "#fff", fontSize: 12, fontWeight: 600,
+      padding: "3px 15px", borderRadius: 20,
       letterSpacing: "0.3px", whiteSpace: "nowrap",
-      boxShadow: "0 2px 8px rgba(249,115,22,.3)",
+      boxShadow: "0 5px 8px rgba(197, 86, 7, 0.5)",
     }}>
-      👑 Conteúdo Premium Grátis
+      <span style={{ fontSize: 18 }}>👑 </span>
+        Conteúdo Premium!
     </span>
   );
 }

@@ -28,7 +28,17 @@ const TIPO_LABELS = {
   download:       "📥 Download",
 };
 
-function isPremiumWeekUnlocked(semana, currentWeek) {
+function isPremiumWeekUnlocked(semana, currentWeek, premiumActivatedAt) {
+  const diasAssinado = premiumActivatedAt
+    ? Math.floor((Date.now() - new Date(premiumActivatedAt).getTime()) / (1000 * 60 * 60 * 24))
+    : 999;
+
+  if (diasAssinado < 7) {
+    // Primeiros 7 dias — janela restrita: 2 antes + atual + 2 depois
+    return semana >= currentWeek - 2 && semana <= currentWeek + 2;
+  }
+
+  // Após 7 dias — todo passado + 2 semanas à frente
   return semana <= currentWeek + 2;
 }
 
@@ -139,7 +149,7 @@ function SemanaBebePage({ params }) {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("is_premium, current_week, premium_since_week, is_admin")
+        .select("is_premium, current_week, is_admin, premium_activated_at")
         .eq("id", user.id)
         .single();
 
@@ -147,11 +157,14 @@ function SemanaBebePage({ params }) {
 
       if (profile.is_premium || profile.is_admin) {
         setIsPremium(true);
-        const unlocked = profile.is_admin || isPremiumWeekUnlocked(semana, profile.current_week);
+        const unlocked = profile.is_admin || isPremiumWeekUnlocked(
+          semana,
+          profile.current_week,
+          profile.premium_activated_at
+        );
         setIsUnlocked(unlocked);
         if (unlocked) loadPremiumContent(alive, supabase);
       } else {
-        // Usuário free — carrega blocos para mostrar previews
         loadPremiumContent(alive, supabase);
       }
     }
@@ -245,7 +258,7 @@ function SemanaBebePage({ params }) {
               <div className="bg-white/80 rounded-2xl p-6 text-center space-y-3" style={{ border: `2px dashed ${textColor}40` }}>
                 <div className="text-3xl">🔒</div>
                 <p className="font-bold text-lg" style={{ color: textColor }}>Conteúdo ainda não disponível</p>
-                <p className="text-sm text-gray-600">Este conteúdo será liberado quando você chegar na semana atual.</p>
+                <p className="text-sm text-gray-600">Este conteúdo será liberado conforme você avança na jornada.</p>
                 <div className="inline-block px-4 py-2 rounded-full text-xs font-semibold" style={{ backgroundColor: `${textColor}15`, color: textColor }}>
                   📅 Disponível em breve
                 </div>
@@ -283,7 +296,6 @@ function SemanaBebePage({ params }) {
           </>
         ) : (
           <>
-            {/* Usuário FREE — mostra preview se existir */}
             {loadingPremium && (
               <div className="flex justify-center py-4">
                 <div className="animate-spin rounded-full h-7 w-7 border-b-2" style={{ borderColor: textColor }} />

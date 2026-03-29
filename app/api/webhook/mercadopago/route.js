@@ -19,11 +19,10 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
-    // MP envia diferentes tipos de notificação
     const topic = body.type || body.topic;
 
     if (topic !== "payment") {
-      return NextResponse.json({ ok: true }); // ignora outros eventos
+      return NextResponse.json({ ok: true });
     }
 
     const paymentId = body.data?.id || body.id;
@@ -31,7 +30,6 @@ export async function POST(req) {
       return NextResponse.json({ ok: true });
     }
 
-    // Busca detalhes do pagamento na API do MP
     const paymentRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
       headers: { "Authorization": `Bearer ${process.env.MP_ACCESS_TOKEN}` },
     });
@@ -43,40 +41,41 @@ export async function POST(req) {
 
     const payment = await paymentRes.json();
 
-    // Só processa pagamentos aprovados
     if (payment.status !== "approved") {
       console.log("Pagamento não aprovado:", payment.status);
       return NextResponse.json({ ok: true });
     }
 
-    // external_reference = "userId|planId"
     const [userId, planId] = (payment.external_reference || "").split("|");
     if (!userId || !planId) {
       console.error("external_reference inválido:", payment.external_reference);
       return NextResponse.json({ error: "Referência inválida" }, { status: 400 });
     }
 
-    // Busca semana atual do usuário
     const { data: profile } = await supabase
       .from("profiles")
-      .select("current_week")
+      .select("current_week, premium_activated_at")
       .eq("id", userId)
       .single();
 
-    const currentWeek    = profile?.current_week ?? 1;
+    const currentWeek      = profile?.current_week ?? 1;
     const premiumSinceWeek = Math.max(1, currentWeek - 2);
-    const expiresAt      = new Date();
+    const expiresAt        = new Date();
     expiresAt.setDate(expiresAt.getDate() + (PLAN_DURATION_DAYS[planId] ?? 30));
 
-    // Ativa premium no perfil
+    // Só salva premium_activated_at se for a primeira ativação
+    // Renovações não resetam o contador de 7 dias
+    const activatedAt = profile?.premium_activated_at ?? new Date().toISOString();
+
     const { error } = await supabase
       .from("profiles")
       .update({
-        is_premium:          true,
-        premium_since_week:  premiumSinceWeek,
-        premium_plan:        planId,
-        premium_expires_at:  expiresAt.toISOString(),
-        updated_at:          new Date().toISOString(),
+        is_premium:           true,
+        premium_since_week:   premiumSinceWeek,
+        premium_plan:         planId,
+        premium_expires_at:   expiresAt.toISOString(),
+        premium_activated_at: activatedAt,
+        updated_at:           new Date().toISOString(),
       })
       .eq("id", userId);
 
@@ -95,7 +94,6 @@ export async function POST(req) {
   }
 }
 
-// MP também faz GET para verificar o endpoint
 export async function GET() {
   return NextResponse.json({ ok: true });
 }
