@@ -142,7 +142,6 @@ export default function UserMenu() {
             <MenuSection>
               <MenuItem icon="👤" label="Minhas informações" onClick={() => handleNavigation("/profile")} />
               <MenuItem icon="📖" label="Meu diário de pai"  onClick={() => handleNavigation("/diario")} />
-              <MenuItem icon="👥" label="Outros pais"        onClick={() => handleNavigation("/comunidade")} />
             </MenuSection>
 
             <Divider />
