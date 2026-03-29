@@ -185,13 +185,13 @@ export default function SemanaGestante({ params }) {
           profile.premium_activated_at
         );
         setIsUnlocked(unlocked);
-        if (unlocked) loadPremiumContent(alive, supabase);
+        if (unlocked) loadPremiumContent(alive, supabase, true);
       } else {
-        loadPremiumContent(alive, supabase);
+        loadPremiumContent(alive, supabase, false);
       }
     }
 
-    async function loadPremiumContent(alive, supabase) {
+    async function loadPremiumContent(alive, supabase, isPremiumUser = false) {
       setLoadingPremium(true);
       try {
         const { data: header } = await supabase
@@ -221,7 +221,7 @@ export default function SemanaGestante({ params }) {
             link:      b.url,
             cta:       b.cta,
             payload:   b.payload,
-            isPreview: b.payload?.is_preview === true,
+            isPreview: !isPremiumUser && b.payload?.is_preview === true,
           })),
         });
       } catch (_) {
