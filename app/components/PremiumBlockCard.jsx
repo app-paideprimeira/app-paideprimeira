@@ -18,6 +18,31 @@ function Badge({ label, accentColor, badgeBg }) {
   );
 }
 
+function PreviewBadge({ show }) {
+  if (!show) return null;
+  return (
+    <span style={{
+      display: "inline-block",
+      background: "linear-gradient(90deg, #f59e0b, #f97316)",
+      color: "#fff", fontSize: 10, fontWeight: 800,
+      padding: "3px 10px", borderRadius: 20,
+      letterSpacing: "0.3px", whiteSpace: "nowrap",
+      boxShadow: "0 2px 8px rgba(249,115,22,.3)",
+    }}>
+      👑 Conteúdo Premium Grátis
+    </span>
+  );
+}
+
+function BadgeRow({ label, accentColor, badgeBg, isPreview }) {
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <Badge label={label} accentColor={accentColor} badgeBg={badgeBg} />
+      <PreviewBadge show={isPreview} />
+    </div>
+  );
+}
+
 function getYouTubeId(url) {
   if (!url) return null;
   const patterns = [
@@ -53,7 +78,6 @@ function ExpandableText({ text, subtleBg, leftBorder, accentColor }) {
   );
 }
 
-// Força download adicionando ?download= para arquivos do Supabase Storage
 function getDownloadUrl(url) {
   if (!url) return url;
   if (url.includes("supabase.co/storage")) {
@@ -67,6 +91,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
   const subtleBg   = withAlpha(accentColor, "12") || "#F3F4F6";
   const leftBorder = accentColor;
   const hasLink    = !!block.link;
+  const isPreview  = block.isPreview === true;
 
   const rawItems = block.payload?.items ?? [];
   const [checked, setChecked] = useState(() => rawItems.map(() => false));
@@ -90,21 +115,16 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
 
     return (
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
-        <Badge label="📥 Download" accentColor={accentColor} badgeBg={badgeBg} />
+        <BadgeRow label="📥 Download" accentColor={accentColor} badgeBg={badgeBg} isPreview={isPreview} />
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {block.payload?.body && (
           <ExpandableText text={block.payload.body} subtleBg={subtleBg} leftBorder={leftBorder} accentColor={accentColor} />
         )}
         {downloadUrl && (
-          <a
-            href={downloadUrl}
-            download={fileName}
-            target="_blank"
-            rel="noopener noreferrer"
+          <a href={downloadUrl} download={fileName} target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-4 rounded-xl p-4 transition hover:opacity-90"
-            style={{ background: colors.bg, border: `1px solid ${colors.border}`, textDecoration: "none" }}
-          >
+            style={{ background: colors.bg, border: `1px solid ${colors.border}`, textDecoration: "none" }}>
             <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
               style={{ background: colors.badge + "20" }}>
               {colors.icon}
@@ -133,7 +153,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
   if (block.tipo === "imagem") {
     return (
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
-        <Badge label="🖼️ Imagem" accentColor={accentColor} badgeBg={badgeBg} />
+        <BadgeRow label="🖼️ Imagem" accentColor={accentColor} badgeBg={badgeBg} isPreview={isPreview} />
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {block.link && (
@@ -164,7 +184,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
     const isShorts = block.link?.includes("/shorts/");
     return (
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
-        <Badge label="🎥 Vídeo" accentColor={accentColor} badgeBg={badgeBg} />
+        <BadgeRow label="🎥 Vídeo" accentColor={accentColor} badgeBg={badgeBg} isPreview={isPreview} />
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {ytId ? (
@@ -189,7 +209,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
     return (
       <article className="bg-white/90 rounded-2xl overflow-hidden shadow-xl border border-white/40">
         <div className="px-6 pt-6 pb-4" style={{ background: "linear-gradient(135deg, #0f172a, #1e293b)" }}>
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
             <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
               style={{ backgroundColor: "#f59e0b20", color: "#f59e0b" }}>
               🎬 Dica de Filme
@@ -199,6 +219,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
                 📺 {block.payload.onde}
               </span>
             )}
+            <PreviewBadge show={isPreview} />
           </div>
           <h2 className="text-lg md:text-xl font-bold text-white leading-snug">{block.titulo}</h2>
           {block.descricao && <p className="text-sm text-white/60 mt-1 leading-relaxed">{block.descricao}</p>}
@@ -228,7 +249,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
     const isDirectAudio = block.link && /\.(mp3|ogg|wav|m4a)(\?.*)?$/i.test(block.link);
     return (
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
-        <Badge label={label} accentColor={accentColor} badgeBg={badgeBg} />
+        <BadgeRow label={label} accentColor={accentColor} badgeBg={badgeBg} isPreview={isPreview} />
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {isDirectAudio ? (
@@ -250,7 +271,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
   if (block.tipo === "leitura") {
     return (
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
-        <Badge label="📖 Leitura" accentColor={accentColor} badgeBg={badgeBg} />
+        <BadgeRow label="📖 Leitura" accentColor={accentColor} badgeBg={badgeBg} isPreview={isPreview} />
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {block.payload?.body && (
@@ -270,7 +291,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
   if (block.tipo === "produto") {
     return (
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
-        <Badge label="🛒 Produto" accentColor={accentColor} badgeBg={badgeBg} />
+        <BadgeRow label="🛒 Produto" accentColor={accentColor} badgeBg={badgeBg} isPreview={isPreview} />
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {block.payload?.body && (
@@ -291,7 +312,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
     const produtos = block.payload?.produtos ?? [];
     return (
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
-        <Badge label="🛍️ Lista de Produtos" accentColor={accentColor} badgeBg={badgeBg} />
+        <BadgeRow label="🛍️ Lista de Produtos" accentColor={accentColor} badgeBg={badgeBg} isPreview={isPreview} />
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         <div className="space-y-3">
@@ -324,7 +345,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
   if (block.tipo === "texto") {
     return (
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-3">
-        <Badge label="📝 Texto" accentColor={accentColor} badgeBg={badgeBg} />
+        <BadgeRow label="📝 Texto" accentColor={accentColor} badgeBg={badgeBg} isPreview={isPreview} />
         <h2 className="text-lg md:text-xl font-semibold text-gray-900">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700">{block.descricao}</p>}
         {block.payload?.body && (
@@ -338,8 +359,11 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
   if (block.tipo === "checklist") {
     return (
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
-        <div className="flex items-center justify-between">
-          <Badge label="✅ Checklist" accentColor={accentColor} badgeBg={badgeBg} />
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Badge label="✅ Checklist" accentColor={accentColor} badgeBg={badgeBg} />
+            <PreviewBadge show={isPreview} />
+          </div>
           {rawItems.length > 0 && (
             <span className="text-xs font-semibold px-2 py-1 rounded-full"
               style={{ backgroundColor: allDone ? accentColor : badgeBg, color: allDone ? "#fff" : accentColor }}>
@@ -387,7 +411,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
   if (block.tipo === "lembrete_fixo") {
     return (
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-3">
-        <Badge label="📌 Lembrete" accentColor={accentColor} badgeBg={badgeBg} />
+        <BadgeRow label="📌 Lembrete" accentColor={accentColor} badgeBg={badgeBg} isPreview={isPreview} />
         <h2 className="text-lg md:text-xl font-semibold text-gray-900">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700">{block.descricao}</p>}
         {block.payload?.note && (
