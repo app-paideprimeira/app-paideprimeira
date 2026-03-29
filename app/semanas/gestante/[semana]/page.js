@@ -425,7 +425,7 @@ export default function SemanaGestante({ params }) {
 
           {semana < 42 ? (
             <button onClick={() => router.push(`/semanas/gestante/${semana + 1}`)} className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition" style={{ color: textColor }}>
-              → Semana {semana + 1}
+              Semana {semana + 1} →
             </button>
           ) : (
             <div className="w-28" />

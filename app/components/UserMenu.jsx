@@ -128,7 +128,14 @@ export default function UserMenu() {
           {/* Menu items */}
           <div style={{ padding: "8px 0" }}>
             <MenuSection>
-              <MenuItem icon="📅" label="Meu calendário" onClick={() => handleNavigation("/planner")} />
+              <MenuItem icon="👤" label="Minhas informações" onClick={() => handleNavigation("/profile")} />
+              <MenuItem icon="📖" label="Meu diário de pai"  onClick={() => handleNavigation("/diario")} />
+            </MenuSection>
+
+            <Divider />
+
+            <MenuSection>
+              <MenuItem icon="📅" label="Planner Diário" onClick={() => handleNavigation("/planner")} />
               {userProfile?.stage === "gestante" && (
                 <MenuItem icon="💓" label="Contador de contrações" onClick={() => handleNavigation("/contracoes")} />
               )}
@@ -136,14 +143,6 @@ export default function UserMenu() {
                 <MenuItem icon="👶" label="Acompanhamento bebê" onClick={() => handleNavigation("/bebe")} />
               )}
             </MenuSection>
-
-            <Divider />
-
-            <MenuSection>
-              <MenuItem icon="👤" label="Minhas informações" onClick={() => handleNavigation("/profile")} />
-              <MenuItem icon="📖" label="Meu diário de pai"  onClick={() => handleNavigation("/diario")} />
-            </MenuSection>
-
             <Divider />
 
             <MenuSection>

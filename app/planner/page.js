@@ -30,13 +30,12 @@ const MARCOS_BEBE = [
   { semana: 1,  key: "alta_hospital",      titulo: "🏥 Alta hospitalar" },
   { semana: 1,  key: "teste_coracaozinho", titulo: "❤️ Teste do coraçãozinho" },
   { semana: 1,  key: "teste_olhinho",      titulo: "👁️ Teste do olhinho" },
-  { semana: 1,  key: "teste_liguinha",    titulo: "👅 Teste da linguinha" },
-  { semana: 1,  key: "teste_ouvidinho",    titulo: "👂 Teste da ouvidinho" },
   { semana: 1,  key: "vacina_bcg",         titulo: "💉 Vacina BCG" },
   { semana: 1,  key: "vacina_hepb_1",      titulo: "💉 Vacina Hepatite B (1ª dose)" },
 
   // ── 1ª semana ─────────────────────────────────────────────
   { semana: 2,  key: "teste_pezinho",      titulo: "🦶 Teste do pezinho" },
+  { semana: 2,  key: "teste_orelhinha",    titulo: "👂 Teste da orelhinha" },
   { semana: 2,  key: "consulta_bebe_1",   titulo: "🩺 Consulta pediatra (1ª semana)" },
 
   // ── 1 mês ─────────────────────────────────────────────────
@@ -149,25 +148,19 @@ export default function PlannerPage() {
 
   async function initMarcos(prof) {
     const marcos = prof.stage === "gestante" ? MARCOS_GESTANTE : MARCOS_BEBE;
-    const { data: existing } = await supabase
-      .from("calendar_events")
-      .select("marco_key")
-      .eq("user_id", prof.id)
-      .eq("type", "marco");
 
-    const existingKeys = new Set((existing || []).map(e => e.marco_key));
-    const toInsert = marcos
-      .filter(m => !existingKeys.has(m.key))
-      .map(m => ({
-        user_id:   prof.id,
-        date:      calcularDataMarco(prof.event_date, prof.base_week, m.semana, prof.stage),
-        title:     m.titulo,
-        type:      "marco",
-        marco_key: m.key,
-      }));
+    const toUpsert = marcos.map(m => ({
+      user_id:   prof.id,
+      date:      calcularDataMarco(prof.event_date, prof.base_week, m.semana, prof.stage),
+      title:     m.titulo,
+      type:      "marco",
+      marco_key: m.key,
+    }));
 
-    if (toInsert.length > 0) {
-      await supabase.from("calendar_events").insert(toInsert);
+    if (toUpsert.length > 0) {
+      await supabase
+        .from("calendar_events")
+        .upsert(toUpsert, { onConflict: "user_id,marco_key", ignoreDuplicates: true });
       await loadEvents(prof.id);
     }
   }
@@ -289,7 +282,7 @@ export default function PlannerPage() {
             onMouseLeave={e => e.currentTarget.style.background = "none"}>
             ← Voltar
           </button>
-          <Image src="/logo/logo-app.svg" alt="Pai de Primeira" width={120} height={36} />
+          <Image src="/logo/logo_email.png" alt="Pai de Primeira" width={180} height={36} />
         </div>
         <UserMenu />
       </header>
@@ -299,7 +292,7 @@ export default function PlannerPage() {
         {/* CABEÇALHO */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 900, color: "#0f172a", margin: 0 }}>📅 Meu Calendário</h1>
+            <h1 style={{ fontSize: 22, fontWeight: 900, color: "#0f172a", margin: 0 }}>📅 Meu Planner</h1>
             <p style={{ fontSize: 13, color: "#64748b", margin: "2px 0 0" }}>Clique num dia para adicionar notas</p>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

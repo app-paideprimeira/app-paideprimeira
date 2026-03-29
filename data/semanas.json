@@ -14,28 +14,28 @@
       "titulo": "Semana 2 do bebê",
       "empatia": "Se parece confuso agora, é porque realmente é.",
       "descricao": "O bebê começa a se adaptar melhor ao ritmo da casa, mas ainda vive em ciclos curtos de sono e alimentação.",
-      "dica": "Observe sinais de fome e sono em vez de seguir horários rígidos, lembre que o bebê deve ter de 6 a 8 trocas de fraldas a cada 24 horas.",
-      "acompanhe": "O ganho de peso começa a se estabilizar e o choro ainda é a principal forma de comunicação.",
+      "dica": "Observe sinais de fome e sono em vez de seguir horários rígidos, lembre que o bebê deve ter de 6 a 8 trocas de fraldas a cada 24 horas, utilize a ferramenta no menu para te auxiliar nesse controle e gerar relatórios.",
+      "acompanhe": "O ganho de peso deve começar a se estabilizar, não espere o seu bebê chorar para colocar ele pra mamar.",
       "bgColor": "#E8F5E9",
       "textColor": "#1B5E20",
       "cta_premium": "Ver checklist e materiais da semana 1 ✨"
     },
     "3": {
       "titulo": "Semana 3 do bebê",
-      "empatia": "Mantenha-se atento, você segue aprendendo.",
-      "descricao": "O bebê são muito dinâmicos, começam a reconhecer vozes familiares e reage melhor ao toque e ao colo.",
+      "empatia": "Mantenha-se atento, todos vocês seguem aprendendo.",
+      "descricao": "Os bebês são muito dinâmicos, começam a reconhecer vozes familiares e se regumal melhor quando estão no colo e sentem o seu toque.",
       "dica": "Fale com o bebê durante os cuidados diários. Ele reconhece sua voz e precisa de previsibilidade nos acontecimentos para se sentir seguro.",
-      "acompanhe": "As janelas de sono se modificam e o bebê pode começar a ficar mais tempo acordado.",
+      "acompanhe": "As janelas de sono se modificam e o bebê pode começar a ficar mais tempo acordado, nessa fase eles não precisam de grandes estimulos, curta a presença dele.",
       "bgColor": "#FFF3E0",
       "textColor": "#E65100",
       "cta_premium": "Ver checklist e materiais da semana 1 ✨"
     },
     "4": {
       "titulo": "Semana 4 do bebê",
-      "empatia": "Um mês já passou. Parece pouco, mas não é.",
-      "descricao": "Com cerca de um mês, o bebê começa a ficar mais atento a sons, rostos e movimentos.",
-      "dica": "Olhar nos olhos do bebê enquanto fala fortalece o vínculo emocional.",
-      "acompanhe": "O sono noturno ainda é irregular — e isso é esperado, bebês passam por saltos de desenvolvimento.",
+      "empatia": "Um mês já passou. Parece pouco, mas não é, Parabéns.",
+      "descricao": "Com cerca de um mês, o bebê começa a ficar mais atento a sons, rostos, movimentos e contrastes de cores.",
+      "dica": "Olhar nos olhos do bebê enquanto fala fortalece o vínculo emocional, aproveite seu bebê intensamente, beije, abrace e curta muito.",
+      "acompanhe": "O sono noturno ainda é irregular — e isso é esperado, o estomago deles ainda é muito pequeno, por isso precisam mamar a cada 4 horas e ainda passam por saltos de desenvolvimento.",
       "bgColor": "#EDE7F6",
       "textColor": "#5E35B1",
       "cta_premium": "Ver checklist e materiais da semana 1 ✨"
@@ -841,7 +841,7 @@
       "acompanhe": "Movimentos do bebê ficam bem perceptíveis, incentive sua parceira a praticar atividades físicas leves, sempre sob orientação médica.",
       "bgColor": "#FFF3E0",
       "textColor": "#F57C00",
-      "cta_premium": "Ver checklist e materiais da semana 32 ✨"
+      "cta_premium": "A paternidade não começa no nascimento, Seja premium e esteja preparado, Clique aqui ✨"
     },
     "33": {
       "titulo": "Semana 33 da gestação",
