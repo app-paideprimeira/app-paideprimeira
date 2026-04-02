@@ -16,7 +16,7 @@ const BLOCK_TYPES = [
   { value: "filme",          label: "🎬 Dica de Filme"    },
   { value: "podcast",        label: "🎧 Podcast"          },
   { value: "audio",          label: "🔊 Áudio"            },
-  { value: "leitura",        label: "📖 Leitura"          },
+  { value: "leitura",        label: "📖 Dica de Livro"    },
   { value: "produto",        label: "🛒 Produto"          },
   { value: "lista_produtos", label: "🛍️ Lista de Produtos" },
   { value: "imagem",         label: "🖼️ Imagem"           },
@@ -166,6 +166,7 @@ export default function AdminPage() {
 
   function buildPayload(block) {
     const isPreview = block._isPreview === true;
+    const isLoop    = block._isLoop === true;
 
     if (block.type === "checklist") {
       const items = (block._checklistRaw || "").split("\n").map(s => s.trim()).filter(Boolean);
@@ -184,7 +185,10 @@ export default function AdminPage() {
     if (block.type === "download") {
       return { body: block._body || "", is_preview: isPreview };
     }
-    if (["texto", "leitura", "produto", "podcast", "audio", "imagem"].includes(block.type))
+    if (block.type === "audio") {
+      return { body: block._body || "", is_preview: isPreview, loop: isLoop };
+    }
+    if (["texto", "leitura", "produto", "podcast", "imagem"].includes(block.type))
       return { body: block._body || "", is_preview: isPreview };
     if (block.type === "lembrete_fixo") return { note: block._body || "", is_preview: isPreview };
     return { is_preview: isPreview };
@@ -199,6 +203,7 @@ export default function AdminPage() {
       _filmeOnde:     block.payload?.onde    || "",
       _filmeTrailer:  block.payload?.trailer || "",
       _isPreview:     block.payload?.is_preview === true,
+      _isLoop:        block.payload?.loop === true,
     };
   }
 
@@ -293,7 +298,7 @@ export default function AdminPage() {
         <div style={{ background: "#1e293b", borderRadius: 14, padding: 20, border: "1px solid #334155" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>🧩 Blocos de Conteúdo — Semana {semana} {stageInfo?.emoji}</span>
-            <button onClick={() => setEditingBlock({ ...EMPTY_BLOCK, _body: "", _checklistRaw: "", _produtosRaw: "", _filmeOnde: "", _filmeTrailer: "", _isPreview: false })} style={btnPrimary}>+ Novo bloco</button>
+            <button onClick={() => setEditingBlock({ ...EMPTY_BLOCK, _body: "", _checklistRaw: "", _produtosRaw: "", _filmeOnde: "", _filmeTrailer: "", _isPreview: false, _isLoop: false })} style={btnPrimary}>+ Novo bloco</button>
           </div>
           {blocks.length === 0 && (
             <p style={{ color: "#475569", fontSize: 14, textAlign: "center", padding: "24px 0" }}>
@@ -315,6 +320,11 @@ export default function AdminPage() {
                     {block.payload?.is_preview && (
                       <span style={{ fontSize: 10, background: "#78350f", color: "#fcd34d", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>
                         👁 Preview gratuito
+                      </span>
+                    )}
+                    {block.type === "audio" && block.payload?.loop && (
+                      <span style={{ fontSize: 10, background: "#1e3a5f", color: "#7dd3fc", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>
+                        🔁 Loop ativo
                       </span>
                     )}
                     <span style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{block.title}</span>
@@ -349,6 +359,7 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
   const needsListaProd = block.type === "lista_produtos";
   const needsFilme     = block.type === "filme";
   const needsDownload  = block.type === "download";
+  const isAudio        = block.type === "audio";
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.7)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
@@ -391,6 +402,27 @@ function BlockModal({ block: initial, onSave, onClose, saving }) {
               </p>
             </div>
           </div>
+
+          {/* LOOP — apenas para áudio */}
+          {isAudio && (
+            <div style={{ background: "#0f172a", borderRadius: 10, padding: "14px 16px", border: "1px solid #1e3a5f", display: "flex", alignItems: "center", gap: 12 }}>
+              <input
+                type="checkbox"
+                id="isLoop"
+                checked={block._isLoop === true}
+                onChange={e => set("_isLoop", e.target.checked)}
+                style={{ width: 18, height: 18, cursor: "pointer", accentColor: "#3b82f6" }}
+              />
+              <div>
+                <label htmlFor="isLoop" style={{ fontSize: 13, fontWeight: 700, color: "#7dd3fc", cursor: "pointer" }}>
+                  🔁 Reproduzir em loop
+                </label>
+                <p style={{ fontSize: 11, color: "#64748b", margin: "2px 0 0" }}>
+                  Ideal para ruído branco, sons ambiente e músicas de relaxamento
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Campos específicos de DOWNLOAD */}
           {needsDownload && (

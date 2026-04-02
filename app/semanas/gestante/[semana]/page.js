@@ -20,7 +20,7 @@ const TIPO_LABELS = {
   filme:          "🎬 Dica de Filme",
   podcast:        "🎧 Podcast",
   audio:          "🔊 Áudio",
-  leitura:        "📖 Leitura",
+  leitura:        "📖 Dica de Livro",
   produto:        "🛒 Produto",
   lista_produtos: "🛍️ Lista de Produtos",
   imagem:         "🖼️ Imagem",

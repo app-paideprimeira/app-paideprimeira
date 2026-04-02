@@ -22,16 +22,15 @@ function PreviewBadge({ show }) {
   if (!show) return null;
   return (
     <span style={{
-      display: "inline-flex", alignItems: "center", gap: 4,
+      display: "inline-block",
       marginLeft: "auto",
-      background: "linear-gradient(90deg, #0b84f5, #1013d4)",
-      color: "#fff", fontSize: 12, fontWeight: 800,
+      background: "linear-gradient(90deg, #70a9f3, #3919ec)",
+      color: "#fff", fontSize: 13, fontWeight: 800,
       padding: "3px 10px", borderRadius: 20,
       letterSpacing: "0.3px", whiteSpace: "nowrap",
-      boxShadow: "0 5px 8px rgba(249,115,22,.5)",
+      boxShadow: "0 5px 8px rgba(189, 92, 23, 0.5)",
     }}>
-      <span style={{ fontSize: 18 }}>👑</span>
-      Conteúdo Premium!
+      <span style={{ fontSize: 18 }}>👑</span> Conteúdo Premium
     </span>
   );
 }
@@ -267,7 +266,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {isDirectAudio ? (
-          <audio controls className="w-full rounded-xl" style={{ accentColor }} src={block.link}>Seu navegador não suporta áudio.</audio>
+          <audio controls {...(block.payload?.loop ? { loop: true } : {})} className="w-full rounded-xl" style={{ accentColor }} src={block.link}>Seu navegador não suporta áudio.</audio>
         ) : hasLink ? (
           <a href={block.link} target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm font-semibold transition hover:opacity-90" style={{ color: accentColor }}>
@@ -285,7 +284,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
   if (block.tipo === "leitura") {
     return (
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
-        <BadgeRow label="📖 Leitura" accentColor={accentColor} badgeBg={badgeBg} isPreview={isPreview} />
+        <BadgeRow label="📖 Dica de Livro" accentColor={accentColor} badgeBg={badgeBg} isPreview={isPreview} />
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
         {block.payload?.body && (
@@ -371,22 +370,20 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
 
   // ── CHECKLIST ────────────────────────────────────────────
   if (block.tipo === "checklist") {
-  return (
-    <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {/* Linha 1: tipo + badge preview */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, width: "100%" }}>
-          <Badge label="✅ Checklist" accentColor={accentColor} badgeBg={badgeBg} />
-          <PreviewBadge show={isPreview} />
+    return (
+      <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Badge label="✅ Checklist" accentColor={accentColor} badgeBg={badgeBg} />
+            <PreviewBadge show={isPreview} />
+          </div>
+          {rawItems.length > 0 && (
+            <span className="text-xs font-semibold px-2 py-1 rounded-full"
+              style={{ backgroundColor: allDone ? accentColor : badgeBg, color: allDone ? "#fff" : accentColor }}>
+              {completedCount}/{rawItems.length}
+            </span>
+          )}
         </div>
-        {/* Linha 2: contador */}
-        {rawItems.length > 0 && (
-          <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{ alignSelf: "flex-start",
-            backgroundColor: allDone ? accentColor : badgeBg, color: allDone ? "#fff" : accentColor }}>
-            {completedCount}/{rawItems.length}
-          </span>
-        )}
-      </div>
         <h2 className="text-lg md:text-xl font-semibold text-gray-900">{block.titulo}</h2>
         {block.descricao && <p className="text-sm md:text-base text-gray-700">{block.descricao}</p>}
         {rawItems.length > 0 && (
