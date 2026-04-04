@@ -16,7 +16,7 @@ const BLOCK_TYPES = [
   { value: "filme",          label: "🎬 Dica de Filme"    },
   { value: "podcast",        label: "🎧 Podcast"          },
   { value: "audio",          label: "🔊 Áudio"            },
-  { value: "leitura",        label: "📖 Dica de Livro"    },
+  { value: "leitura",        label: "📖 Leitura"          },
   { value: "produto",        label: "🛒 Produto"          },
   { value: "lista_produtos", label: "🛍️ Lista de Produtos" },
   { value: "imagem",         label: "🖼️ Imagem"           },
@@ -214,7 +214,11 @@ export default function AdminPage() {
 
       <div style={{ backgroundColor: "#1e293b", borderBottom: "1px solid #334155", padding: "16px 24px", display: "flex", alignItems: "center", gap: 16 }}>
         <span style={{ fontSize: 22, fontWeight: 800, color: "#f8fafc", letterSpacing: "-0.5px" }}>🛠️ Admin — Pai de Primeira</span>
-        <span style={{ marginLeft: "auto", fontSize: 12, color: "#64748b", background: "#0f172a", padding: "4px 10px", borderRadius: 6 }}>localhost only</span>
+        <a href="/api/admin/relatorio" target="_blank" rel="noopener noreferrer"
+          style={{ marginLeft: "auto", padding: "8px 16px", borderRadius: 8, background: "#166534", color: "#bbf7d0", fontWeight: 700, fontSize: 13, textDecoration: "none", border: "1px solid #166534", cursor: "pointer" }}>
+          📊 Exportar relatório Excel
+        </a>
+        <span style={{ fontSize: 12, color: "#64748b", background: "#0f172a", padding: "4px 10px", borderRadius: 6 }}>localhost only</span>
       </div>
 
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 24px", display: "flex", flexDirection: "column", gap: 24 }}>
