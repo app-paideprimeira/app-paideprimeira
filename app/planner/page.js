@@ -407,8 +407,14 @@ export default function PlannerPage() {
             ← Voltar
           </button>
           {/* Logo oculta em telas muito pequenas para não comprimir */}
-          <div style={{ display: isMobile ? "none" : "block" }}>
-            <Image src="/logo/logo_email.png" alt="Pai de Primeira" width={160} height={32} />
+          <div style={{ width: isMobile ? 100 : 160 }}>
+            <Image
+              src="/logo/logo_email.png"
+              alt="Pai de Primeira"
+              width={160}
+              height={32}
+              style={{ width: "100%", height: "auto" }}
+            />
           </div>
         </div>
         <UserMenu />
