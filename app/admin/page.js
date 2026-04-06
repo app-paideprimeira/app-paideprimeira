@@ -16,7 +16,7 @@ const BLOCK_TYPES = [
   { value: "filme",          label: "🎬 Dica de Filme"    },
   { value: "podcast",        label: "🎧 Podcast"          },
   { value: "audio",          label: "🔊 Áudio"            },
-  { value: "leitura",        label: "📖 Leitura"          },
+  { value: "leitura",        label: "📖 Dica de Livro"          },
   { value: "produto",        label: "🛒 Produto"          },
   { value: "lista_produtos", label: "🛍️ Lista de Produtos" },
   { value: "imagem",         label: "🖼️ Imagem"           },

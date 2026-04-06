@@ -1,6 +1,6 @@
 "use client";
 
-// app/planner/page.js
+// app/planner/page.js — versão responsiva
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -26,45 +26,26 @@ const MARCOS_GESTANTE = [
 ];
 
 const MARCOS_BEBE = [
-  // ── Primeiros dias (maternidade) ──────────────────────────
   { semana: 1,  key: "alta_hospital",      titulo: "🏥 Alta hospitalar" },
   { semana: 1,  key: "teste_coracaozinho", titulo: "❤️ Teste do coraçãozinho" },
   { semana: 1,  key: "teste_olhinho",      titulo: "👁️ Teste do olhinho" },
   { semana: 1,  key: "vacina_bcg",         titulo: "💉 Vacina BCG" },
   { semana: 1,  key: "vacina_hepb_1",      titulo: "💉 Vacina Hepatite B (1ª dose)" },
-
-  // ── 1ª semana ─────────────────────────────────────────────
   { semana: 2,  key: "teste_pezinho",      titulo: "🦶 Teste do pezinho" },
   { semana: 2,  key: "teste_orelhinha",    titulo: "👂 Teste da orelhinha" },
   { semana: 2,  key: "consulta_bebe_1",   titulo: "🩺 Consulta pediatra (1ª semana)" },
-
-  // ── 1 mês ─────────────────────────────────────────────────
   { semana: 4,  key: "consulta_1m",        titulo: "🩺 Consulta pediatra 1 mês" },
-
-  // ── 2 meses ───────────────────────────────────────────────
   { semana: 8,  key: "vacina_2m",          titulo: "💉 Vacinas 2 meses (Penta, VIP, Pneumo 10, Rotavírus)" },
   { semana: 8,  key: "consulta_2m",        titulo: "🩺 Consulta pediatra 2 meses" },
-
-  // ── 3 meses ───────────────────────────────────────────────
   { semana: 12, key: "vacina_3m",          titulo: "💉 Vacinas 3 meses (Penta, VIP, Rotavírus)" },
-
-  // ── 4 meses ───────────────────────────────────────────────
   { semana: 16, key: "vacina_4m",          titulo: "💉 Vacinas 4 meses (Penta, VIP, Pneumo 10)" },
   { semana: 16, key: "consulta_4m",        titulo: "🩺 Consulta pediatra 4 meses" },
-
-  // ── 5 meses ───────────────────────────────────────────────
   { semana: 22, key: "consulta_5m",        titulo: "🩺 Consulta pediatra 5 meses" },
-
-  // ── 6 meses ───────────────────────────────────────────────
   { semana: 26, key: "vacina_6m",          titulo: "💉 Vacinas 6 meses (Penta, VIP, Influenza, Hep B 3ª dose)" },
   { semana: 26, key: "consulta_6m",        titulo: "🩺 Consulta pediatra 6 meses" },
   { semana: 26, key: "introducao",         titulo: "🥣 Introdução alimentar" },
-
-  // ── 9 meses ───────────────────────────────────────────────
   { semana: 39, key: "vacina_9m",          titulo: "💉 Vacinas 9 meses (Febre Amarela, Meningocócica C)" },
   { semana: 39, key: "consulta_9m",        titulo: "🩺 Consulta pediatra 9 meses" },
-
-  // ── 12 meses ──────────────────────────────────────────────
   { semana: 52, key: "vacina_12m",         titulo: "💉 Vacinas 12 meses (Tríplice viral, DTP, Hepatite A, Pneumo 10 reforço)" },
   { semana: 52, key: "consulta_12m",       titulo: "🩺 Consulta pediatra 12 meses" },
   { semana: 52, key: "aniversario_1",      titulo: "🎂 1º Aniversário!" },
@@ -89,9 +70,22 @@ const TYPE_COLORS = {
   marco: { bg: "#f59e0b", light: "#fef3c7", text: "#b45309" },
 };
 
+// Hook simples para detectar largura de tela
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
+
 export default function PlannerPage() {
   const router   = useRouter();
   const supabase = supabaseBrowser();
+  const isMobile = useIsMobile();
 
   const [profile, setProfile]     = useState(null);
   const [loading, setLoading]     = useState(true);
@@ -173,7 +167,9 @@ export default function PlannerPage() {
     setDraftNote("");
     setDraftTime("");
     setDraftDate(dateStr);
-    setTimeout(() => inputRef.current?.focus(), 150);
+    setTimeout(() => {
+      if (!isMobile) inputRef.current?.focus();
+    }, 150);
   }
 
   function closePanel() {
@@ -271,61 +267,194 @@ export default function PlannerPage() {
 
   const selectedEvents = selectedDate ? (events[selectedDate] || []) : [];
 
+  // ── Painel lateral / bottom sheet ────────────────────────────────────────
+  const PainelConteudo = () => (
+    <>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+        <h2 style={{ fontSize: 14, fontWeight: 800, color: "#0f172a", margin: 0 }}>
+          {new Date(selectedDate + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+        </h2>
+        <button onClick={closePanel} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: 20, cursor: "pointer", lineHeight: 1, padding: "4px 8px" }}>✕</button>
+      </div>
+
+      {selectedEvents.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
+          {selectedEvents.map(ev => {
+            const c = TYPE_COLORS[ev.type] || TYPE_COLORS.nota;
+            const isEditingThis = editingEvent?.id === ev.id;
+            return (
+              <div key={ev.id} style={{ borderRadius: 10, overflow: "hidden", border: `1px solid ${c.light}` }}>
+                {isEditingThis ? (
+                  <div style={{ padding: 10, background: c.light, display: "flex", flexDirection: "column", gap: 7 }}>
+                    <input ref={inputRef} value={draftTitle} onChange={e => setDraftTitle(e.target.value)}
+                      placeholder="Título" onKeyDown={e => e.key === "Enter" && saveEvent()}
+                      style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 14, fontWeight: 600, boxSizing: "border-box", outline: "none" }} />
+                    <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                      <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Data</label>
+                      <input type="date" value={draftDate} onChange={e => setDraftDate(e.target.value)}
+                        style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 14, boxSizing: "border-box", outline: "none" }} />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                      <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Horário (opcional)</label>
+                      <input type="time" value={draftTime} onChange={e => setDraftTime(e.target.value)}
+                        style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 14, boxSizing: "border-box", outline: "none" }} />
+                    </div>
+                    <textarea value={draftNote} onChange={e => setDraftNote(e.target.value)}
+                      placeholder="Nota (opcional)" rows={2}
+                      style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 14, resize: "vertical", boxSizing: "border-box", outline: "none" }} />
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button onClick={saveEvent} disabled={saving}
+                        style={{ flex: 1, padding: "9px", borderRadius: 8, border: "none", background: "#3b82f6", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
+                        {saving ? "..." : "💾 Salvar"}
+                      </button>
+                      <button onClick={() => { setEditingEvent(null); setDraftTitle(""); setDraftNote(""); setDraftTime(""); setDraftDate(selectedDate); }}
+                        style={{ padding: "9px 12px", borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: 14, cursor: "pointer" }}>
+                        ✕
+                      </button>
+                      <button onClick={e => deleteEvent(ev.id, e)}
+                        style={{ padding: "9px 12px", borderRadius: 8, border: "none", background: "#fee2e2", color: "#ef4444", fontSize: 14, cursor: "pointer" }}>
+                        🗑
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div onClick={e => startEdit(ev, e)}
+                    style={{ padding: "10px 12px", background: c.light, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
+                        {ev.time && <span style={{ fontSize: 11, fontWeight: 700, color: c.text }}>{ev.time.slice(0,5)}</span>}
+                        <span style={{ fontSize: 13, fontWeight: 700, color: "#1e293b" }}>{ev.title}</span>
+                        <span style={{ fontSize: 10, padding: "1px 5px", borderRadius: 20, background: c.bg, color: "#fff", fontWeight: 600 }}>
+                          {ev.type === "marco" ? "Marco" : "Nota"}
+                        </span>
+                      </div>
+                      {ev.note && <p style={{ fontSize: 12, color: "#475569", margin: "3px 0 0", lineHeight: 1.4 }}>{ev.note}</p>}
+                    </div>
+                    <span style={{ fontSize: 12, color: "#94a3b8", flexShrink: 0 }}>✏️</span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {!editingEvent && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>
+            + Nova nota
+          </p>
+          <input ref={inputRef} value={draftTitle} onChange={e => setDraftTitle(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && !e.shiftKey && saveEvent()}
+            placeholder="O que acontece nesse dia?"
+            style={{ width: "100%", padding: "9px 10px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 14, boxSizing: "border-box", outline: "none", color: "#1e293b" }} />
+          <input type="time" value={draftTime} onChange={e => setDraftTime(e.target.value)}
+            style={{ width: "100%", padding: "9px 10px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 14, boxSizing: "border-box", outline: "none" }} />
+          <textarea value={draftNote} onChange={e => setDraftNote(e.target.value)}
+            placeholder="Detalhes (opcional)" rows={2}
+            style={{ width: "100%", padding: "9px 10px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 14, resize: "vertical", boxSizing: "border-box", outline: "none" }} />
+          <button onClick={saveEvent} disabled={saving || !draftTitle.trim()}
+            style={{ width: "100%", padding: "11px", borderRadius: 9, border: "none", background: draftTitle.trim() ? "#3b82f6" : "#e2e8f0", color: draftTitle.trim() ? "#fff" : "#94a3b8", fontWeight: 700, fontSize: 14, cursor: draftTitle.trim() ? "pointer" : "default", transition: "all .15s" }}>
+            {saving ? "Salvando..." : "Adicionar nota"}
+          </button>
+        </div>
+      )}
+    </>
+  );
+
   return (
     <div style={{ minHeight: "100vh", background: "#f1f5f9", fontFamily: "'DM Sans', 'Segoe UI', sans-serif" }}>
 
-      <header style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      {/* ── CSS global para responsividade ── */}
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg) } }
+        @keyframes slideUp {
+          from { transform: translateY(100%); opacity: 0; }
+          to   { transform: translateY(0);    opacity: 1; }
+        }
+        .planner-layout {
+          display: flex;
+          gap: 20px;
+          align-items: flex-start;
+        }
+        .painel-desktop {
+          width: 300px;
+          flex-shrink: 0;
+        }
+        @media (max-width: 767px) {
+          .planner-layout {
+            flex-direction: column;
+          }
+          .painel-desktop {
+            display: none;
+          }
+        }
+      `}</style>
+
+      {/* ── HEADER ── */}
+      <header style={{
+        background: "#fff",
+        borderBottom: "1px solid #e2e8f0",
+        padding: "12px 16px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        gap: 8,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
           <button onClick={() => router.back()}
-            style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "#64748b", fontSize: 13, fontWeight: 600, padding: "6px 10px", borderRadius: 8, transition: "background .15s" }}
-            onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
-            onMouseLeave={e => e.currentTarget.style.background = "none"}>
+            style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", color: "#64748b", fontSize: 13, fontWeight: 600, padding: "6px 8px", borderRadius: 8, flexShrink: 0 }}>
             ← Voltar
           </button>
-          <Image src="/logo/logo_email.png" alt="Pai de Primeira" width={180} height={36} />
+          {/* Logo oculta em telas muito pequenas para não comprimir */}
+          <div style={{ display: isMobile ? "none" : "block" }}>
+            <Image src="/logo/logo_email.png" alt="Pai de Primeira" width={160} height={32} />
+          </div>
         </div>
         <UserMenu />
       </header>
 
-      <div style={{ maxWidth: 960, margin: "0 auto", padding: "24px 16px", display: "flex", flexDirection: "column", gap: 20 }}>
+      <div style={{ maxWidth: 960, margin: "0 auto", padding: isMobile ? "16px 12px 100px" : "24px 16px", display: "flex", flexDirection: "column", gap: 20 }}>
 
-        {/* CABEÇALHO */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+        {/* ── CABEÇALHO MÊS ── */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 900, color: "#0f172a", margin: 0 }}>📅 Meu Planner</h1>
-            <p style={{ fontSize: 13, color: "#64748b", margin: "2px 0 0" }}>Clique num dia para adicionar notas</p>
+            <h1 style={{ fontSize: isMobile ? 18 : 22, fontWeight: 900, color: "#0f172a", margin: 0 }}>📅 Meu Planner</h1>
+            {!isMobile && <p style={{ fontSize: 13, color: "#64748b", margin: "2px 0 0" }}>Clique num dia para adicionar notas</p>}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button onClick={prevMonth} style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", fontSize: 16, color: "#475569" }}>‹</button>
-            <span style={{ fontSize: 15, fontWeight: 800, color: "#0f172a", minWidth: 155, textAlign: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <button onClick={prevMonth} style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", fontSize: 18, color: "#475569" }}>‹</button>
+            <span style={{ fontSize: isMobile ? 13 : 15, fontWeight: 800, color: "#0f172a", minWidth: isMobile ? 120 : 155, textAlign: "center" }}>
               {MONTHS[viewMonth]} {viewYear}
             </span>
-            <button onClick={nextMonth} style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", fontSize: 16, color: "#475569" }}>›</button>
+            <button onClick={nextMonth} style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", fontSize: 18, color: "#475569" }}>›</button>
             <button
               onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth()); selectDate(todayStr); }}
-              style={{ padding: "7px 14px", borderRadius: 8, border: "1px solid #dbeafe", background: "#eff6ff", cursor: "pointer", fontSize: 13, fontWeight: 700, color: "#3b82f6" }}>
+              style={{ padding: "7px 10px", borderRadius: 8, border: "1px solid #dbeafe", background: "#eff6ff", cursor: "pointer", fontSize: 12, fontWeight: 700, color: "#3b82f6" }}>
               Hoje
             </button>
           </div>
         </div>
 
-        {/* LAYOUT CALENDÁRIO + PAINEL */}
-        <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
+        {/* ── LAYOUT CALENDÁRIO + PAINEL ── */}
+        <div className="planner-layout">
 
-          {/* CALENDÁRIO */}
-          <div style={{ flex: 1, background: "#fff", borderRadius: 16, border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
+          {/* ── CALENDÁRIO ── */}
+          <div style={{ flex: 1, minWidth: 0, background: "#fff", borderRadius: 16, border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
 
+            {/* Cabeçalho dias da semana */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", borderBottom: "1px solid #f1f5f9" }}>
               {WEEKDAYS.map(d => (
-                <div key={d} style={{ padding: "10px 0", textAlign: "center", fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                  {d}
+                <div key={d} style={{ padding: "8px 0", textAlign: "center", fontSize: isMobile ? 10 : 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                  {isMobile ? d.charAt(0) : d}
                 </div>
               ))}
             </div>
 
+            {/* Dias */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)" }}>
               {Array.from({ length: firstDay }).map((_, i) => (
-                <div key={`e${i}`} style={{ height: 88, borderRight: "1px solid #f8fafc", borderBottom: "1px solid #f8fafc", background: "#fafafa" }} />
+                <div key={`e${i}`} style={{ height: isMobile ? 56 : 88, borderRight: "1px solid #f8fafc", borderBottom: "1px solid #f8fafc", background: "#fafafa" }} />
               ))}
 
               {Array.from({ length: daysInMonth }).map((_, i) => {
@@ -336,153 +465,93 @@ export default function PlannerPage() {
                 const dayEvts  = events[dateStr] || [];
                 const col      = (firstDay + i) % 7;
                 const isWeekend = col === 0 || col === 6;
+                const cellHeight = isMobile ? 56 : 88;
 
                 return (
                   <div key={day} onClick={() => selectDate(dateStr)}
                     style={{
-                      height: 88, overflow: "hidden",
-                      borderRight: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9",
-                      padding: "6px 5px", cursor: "pointer", boxSizing: "border-box",
+                      height: cellHeight,
+                      overflow: "hidden",
+                      borderRight: "1px solid #f1f5f9",
+                      borderBottom: "1px solid #f1f5f9",
+                      padding: isMobile ? "4px 3px" : "6px 5px",
+                      cursor: "pointer",
+                      boxSizing: "border-box",
                       background: isSel ? "#eff6ff" : isToday ? "#f0fdf4" : isWeekend ? "#fafafa" : "#fff",
                       transition: "background .1s",
+                      WebkitTapHighlightColor: "transparent",
                     }}
                   >
                     <div style={{
-                      width: 24, height: 24, borderRadius: "50%",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 12, fontWeight: isToday ? 800 : 500, marginBottom: 3, flexShrink: 0,
+                      width: isMobile ? 22 : 24,
+                      height: isMobile ? 22 : 24,
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: isMobile ? 11 : 12,
+                      fontWeight: isToday ? 800 : 500,
+                      marginBottom: isMobile ? 2 : 3,
+                      flexShrink: 0,
                       background: isToday ? "#3b82f6" : "transparent",
                       color: isToday ? "#fff" : isSel ? "#2563eb" : isWeekend ? "#94a3b8" : "#334155",
                     }}>
                       {day}
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 2, overflow: "hidden" }}>
-                      {dayEvts.slice(0, 2).map(ev => {
-                        const c = TYPE_COLORS[ev.type] || TYPE_COLORS.nota;
-                        return (
-                          <div key={ev.id} onClick={e => startEdit(ev, e)} title={ev.title}
-                            style={{
-                              fontSize: 9, fontWeight: 600, padding: "1px 4px", borderRadius: 3,
-                              background: c.light, color: c.text,
-                              whiteSpace: "normal", lineHeight: 1.2,
-                              overflow: "hidden", maxHeight: 28,
-                            }}>
-                            {ev.time ? ev.time.slice(0,5) + " " : ""}{ev.title}
-                          </div>
-                        );
-                      })}
-                      {dayEvts.length > 2 && (
-                        <div style={{ fontSize: 9, color: "#94a3b8", paddingLeft: 3 }}>+{dayEvts.length - 2}</div>
-                      )}
-                    </div>
+
+                    {/* Em mobile mostra só pontinhos de cor, em desktop mostra texto */}
+                    {isMobile ? (
+                      <div style={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                        {dayEvts.slice(0, 3).map(ev => {
+                          const c = TYPE_COLORS[ev.type] || TYPE_COLORS.nota;
+                          return (
+                            <div key={ev.id} style={{ width: 5, height: 5, borderRadius: "50%", background: c.bg, flexShrink: 0 }} />
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 2, overflow: "hidden" }}>
+                        {dayEvts.slice(0, 2).map(ev => {
+                          const c = TYPE_COLORS[ev.type] || TYPE_COLORS.nota;
+                          return (
+                            <div key={ev.id} onClick={e => startEdit(ev, e)} title={ev.title}
+                              style={{
+                                fontSize: 9, fontWeight: 600, padding: "1px 4px", borderRadius: 3,
+                                background: c.light, color: c.text,
+                                whiteSpace: "normal", lineHeight: 1.2,
+                                overflow: "hidden", maxHeight: 28,
+                              }}>
+                              {ev.time ? ev.time.slice(0,5) + " " : ""}{ev.title}
+                            </div>
+                          );
+                        })}
+                        {dayEvts.length > 2 && (
+                          <div style={{ fontSize: 9, color: "#94a3b8", paddingLeft: 3 }}>+{dayEvts.length - 2}</div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* PAINEL LATERAL */}
-          {selectedDate ? (
-            <div style={{ width: 300, flexShrink: 0, background: "#fff", borderRadius: 16, border: "1px solid #e2e8f0", padding: 18, boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                <h2 style={{ fontSize: 14, fontWeight: 800, color: "#0f172a", margin: 0 }}>
-                  {new Date(selectedDate + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
-                </h2>
-                <button onClick={closePanel} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: 16, cursor: "pointer" }}>✕</button>
+          {/* ── PAINEL LATERAL (somente desktop) ── */}
+          <div className="painel-desktop">
+            {selectedDate ? (
+              <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #e2e8f0", padding: 18, boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
+                <PainelConteudo />
               </div>
-
-              {selectedEvents.length > 0 && (
-                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
-                  {selectedEvents.map(ev => {
-                    const c = TYPE_COLORS[ev.type] || TYPE_COLORS.nota;
-                    const isEditingThis = editingEvent?.id === ev.id;
-                    return (
-                      <div key={ev.id} style={{ borderRadius: 10, overflow: "hidden", border: `1px solid ${c.light}` }}>
-                        {isEditingThis ? (
-                          <div style={{ padding: 10, background: c.light, display: "flex", flexDirection: "column", gap: 7 }}>
-                            <input ref={inputRef} value={draftTitle} onChange={e => setDraftTitle(e.target.value)}
-                              placeholder="Título" onKeyDown={e => e.key === "Enter" && saveEvent()}
-                              style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 13, fontWeight: 600, boxSizing: "border-box", outline: "none" }} />
-                            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                              <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Data</label>
-                              <input type="date" value={draftDate} onChange={e => setDraftDate(e.target.value)}
-                                style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 12, boxSizing: "border-box", outline: "none" }} />
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                              <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Horário (opcional)</label>
-                              <input type="time" value={draftTime} onChange={e => setDraftTime(e.target.value)}
-                                style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 12, boxSizing: "border-box", outline: "none" }} />
-                            </div>
-                            <textarea value={draftNote} onChange={e => setDraftNote(e.target.value)}
-                              placeholder="Nota (opcional)" rows={2}
-                              style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 12, resize: "vertical", boxSizing: "border-box", outline: "none" }} />
-                            <div style={{ display: "flex", gap: 6 }}>
-                              <button onClick={saveEvent} disabled={saving}
-                                style={{ flex: 1, padding: "7px", borderRadius: 8, border: "none", background: "#3b82f6", color: "#fff", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
-                                {saving ? "..." : "💾 Salvar"}
-                              </button>
-                              <button onClick={() => { setEditingEvent(null); setDraftTitle(""); setDraftNote(""); setDraftTime(""); setDraftDate(selectedDate); }}
-                                style={{ padding: "7px 10px", borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: 12, cursor: "pointer" }}>
-                                ✕
-                              </button>
-                              <button onClick={e => deleteEvent(ev.id, e)}
-                                style={{ padding: "7px 10px", borderRadius: 8, border: "none", background: "#fee2e2", color: "#ef4444", fontSize: 12, cursor: "pointer" }}>
-                                🗑
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div onClick={e => startEdit(ev, e)}
-                            style={{ padding: "9px 12px", background: c.light, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
-                                {ev.time && <span style={{ fontSize: 10, fontWeight: 700, color: c.text }}>{ev.time.slice(0,5)}</span>}
-                                <span style={{ fontSize: 12, fontWeight: 700, color: "#1e293b" }}>{ev.title}</span>
-                                <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 20, background: c.bg, color: "#fff", fontWeight: 600 }}>
-                                  {ev.type === "marco" ? "Marco" : "Nota"}
-                                </span>
-                              </div>
-                              {ev.note && <p style={{ fontSize: 11, color: "#475569", margin: "3px 0 0", lineHeight: 1.4 }}>{ev.note}</p>}
-                            </div>
-                            <span style={{ fontSize: 10, color: "#94a3b8", flexShrink: 0 }}>✏️</span>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {!editingEvent && (
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  <p style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>
-                    + Nova nota
-                  </p>
-                  <input ref={inputRef} value={draftTitle} onChange={e => setDraftTitle(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && !e.shiftKey && saveEvent()}
-                    placeholder="O que acontece nesse dia?"
-                    style={{ width: "100%", padding: "8px 10px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 13, boxSizing: "border-box", outline: "none", color: "#1e293b" }} />
-                  <input type="time" value={draftTime} onChange={e => setDraftTime(e.target.value)}
-                    style={{ width: "100%", padding: "8px 10px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 12, boxSizing: "border-box", outline: "none" }} />
-                  <textarea value={draftNote} onChange={e => setDraftNote(e.target.value)}
-                    placeholder="Detalhes (opcional)" rows={2}
-                    style={{ width: "100%", padding: "8px 10px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 13, resize: "vertical", boxSizing: "border-box", outline: "none" }} />
-                  <button onClick={saveEvent} disabled={saving || !draftTitle.trim()}
-                    style={{ width: "100%", padding: "9px", borderRadius: 9, border: "none", background: draftTitle.trim() ? "#3b82f6" : "#e2e8f0", color: draftTitle.trim() ? "#fff" : "#94a3b8", fontWeight: 700, fontSize: 13, cursor: draftTitle.trim() ? "pointer" : "default", transition: "all .15s" }}>
-                    {saving ? "Salvando..." : "Adicionar nota"}
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div style={{ width: 300, flexShrink: 0, background: "#fff", borderRadius: 16, border: "1px dashed #e2e8f0", padding: 18, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, minHeight: 200 }}>
-              <span style={{ fontSize: 32 }}>👆</span>
-              <p style={{ fontSize: 13, color: "#94a3b8", textAlign: "center", margin: 0 }}>Clique em um dia para ver ou adicionar notas</p>
-            </div>
-          )}
+            ) : (
+              <div style={{ background: "#fff", borderRadius: 16, border: "1px dashed #e2e8f0", padding: 18, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, minHeight: 200 }}>
+                <span style={{ fontSize: 32 }}>👆</span>
+                <p style={{ fontSize: 13, color: "#94a3b8", textAlign: "center", margin: 0 }}>Clique em um dia para ver ou adicionar notas</p>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* LEGENDA */}
+        {/* ── LEGENDA ── */}
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
           {Object.entries(TYPE_COLORS).map(([type, color]) => (
             <div key={type} style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -495,6 +564,39 @@ export default function PlannerPage() {
         </div>
 
       </div>
+
+      {/* ── BOTTOM SHEET MOBILE ── */}
+      {isMobile && selectedDate && (
+        <>
+          {/* Overlay */}
+          <div
+            onClick={closePanel}
+            style={{
+              position: "fixed", inset: 0,
+              background: "rgba(0,0,0,0.35)",
+              zIndex: 40,
+            }}
+          />
+          {/* Sheet */}
+          <div style={{
+            position: "fixed",
+            bottom: 0, left: 0, right: 0,
+            background: "#fff",
+            borderRadius: "20px 20px 0 0",
+            padding: "20px 16px 32px",
+            zIndex: 50,
+            maxHeight: "80vh",
+            overflowY: "auto",
+            animation: "slideUp 0.25s ease",
+            boxShadow: "0 -4px 24px rgba(0,0,0,.12)",
+          }}>
+            {/* Alça visual */}
+            <div style={{ width: 36, height: 4, borderRadius: 2, background: "#e2e8f0", margin: "0 auto 16px" }} />
+            <PainelConteudo />
+          </div>
+        </>
+      )}
+
     </div>
   );
 }
