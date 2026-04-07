@@ -1,6 +1,6 @@
 "use client";
 
-// app/planner/page.js — versão responsiva
+// app/planner/page.js
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -33,7 +33,7 @@ const MARCOS_BEBE = [
   { semana: 1,  key: "vacina_hepb_1",      titulo: "💉 Vacina Hepatite B (1ª dose)" },
   { semana: 2,  key: "teste_pezinho",      titulo: "🦶 Teste do pezinho" },
   { semana: 2,  key: "teste_orelhinha",    titulo: "👂 Teste da orelhinha" },
-  { semana: 2,  key: "consulta_bebe_1",   titulo: "🩺 Consulta pediatra (1ª semana)" },
+  { semana: 2,  key: "consulta_bebe_1",    titulo: "🩺 Consulta pediatra (1ª semana)" },
   { semana: 4,  key: "consulta_1m",        titulo: "🩺 Consulta pediatra 1 mês" },
   { semana: 8,  key: "vacina_2m",          titulo: "💉 Vacinas 2 meses (Penta, VIP, Pneumo 10, Rotavírus)" },
   { semana: 8,  key: "consulta_2m",        titulo: "🩺 Consulta pediatra 2 meses" },
@@ -63,14 +63,14 @@ function calcularDataMarco(eventDate, baseWeek, semanaMarco, stage) {
 }
 
 const MONTHS   = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-const WEEKDAYS = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+const WEEKDAYS_DESKTOP = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+const WEEKDAYS_MOBILE  = ["D","S","T","Q","Q","S","S"];
 
 const TYPE_COLORS = {
   nota:  { bg: "#3b82f6", light: "#dbeafe", text: "#1d4ed8" },
   marco: { bg: "#f59e0b", light: "#fef3c7", text: "#b45309" },
 };
 
-// Hook simples para detectar largura de tela
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -87,12 +87,12 @@ export default function PlannerPage() {
   const supabase = supabaseBrowser();
   const isMobile = useIsMobile();
 
-  const [profile, setProfile]     = useState(null);
-  const [loading, setLoading]     = useState(true);
-  const [events, setEvents]       = useState({});
-  const [today]                   = useState(() => new Date());
-  const [viewYear, setViewYear]   = useState(() => new Date().getFullYear());
-  const [viewMonth, setViewMonth] = useState(() => new Date().getMonth());
+  const [profile, setProfile]           = useState(null);
+  const [loading, setLoading]           = useState(true);
+  const [events, setEvents]             = useState({});
+  const [today]                         = useState(() => new Date());
+  const [viewYear, setViewYear]         = useState(() => new Date().getFullYear());
+  const [viewMonth, setViewMonth]       = useState(() => new Date().getMonth());
   const [selectedDate, setSelectedDate] = useState(null);
   const [editingEvent, setEditingEvent] = useState(null);
   const [draftTitle, setDraftTitle]     = useState("");
@@ -100,6 +100,7 @@ export default function PlannerPage() {
   const [draftTime, setDraftTime]       = useState("");
   const [draftDate, setDraftDate]       = useState("");
   const [saving, setSaving]             = useState(false);
+  const [sheetOpen, setSheetOpen]       = useState(false);
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -118,9 +119,7 @@ export default function PlannerPage() {
       await loadEvents(user.id);
       setLoading(false);
 
-      if (p?.event_date && p?.stage) {
-        initMarcos(prof);
-      }
+      if (p?.event_date && p?.stage) initMarcos(prof);
     }
     init();
   }, []);
@@ -142,7 +141,6 @@ export default function PlannerPage() {
 
   async function initMarcos(prof) {
     const marcos = prof.stage === "gestante" ? MARCOS_GESTANTE : MARCOS_BEBE;
-
     const toUpsert = marcos.map(m => ({
       user_id:   prof.id,
       date:      calcularDataMarco(prof.event_date, prof.base_week, m.semana, prof.stage),
@@ -150,7 +148,6 @@ export default function PlannerPage() {
       type:      "marco",
       marco_key: m.key,
     }));
-
     if (toUpsert.length > 0) {
       await supabase
         .from("calendar_events")
@@ -167,9 +164,11 @@ export default function PlannerPage() {
     setDraftNote("");
     setDraftTime("");
     setDraftDate(dateStr);
-    setTimeout(() => {
-      if (!isMobile) inputRef.current?.focus();
-    }, 150);
+    if (isMobile) {
+      setSheetOpen(true);
+    } else {
+      setTimeout(() => inputRef.current?.focus(), 150);
+    }
   }
 
   function closePanel() {
@@ -179,6 +178,7 @@ export default function PlannerPage() {
     setDraftNote("");
     setDraftTime("");
     setDraftDate("");
+    setSheetOpen(false);
   }
 
   function startEdit(ev, e) {
@@ -189,7 +189,8 @@ export default function PlannerPage() {
     setDraftNote(ev.note || "");
     setDraftTime(ev.time ? ev.time.slice(0, 5) : "");
     setDraftDate(ev.date);
-    setTimeout(() => inputRef.current?.focus(), 150);
+    if (isMobile) setSheetOpen(true);
+    else setTimeout(() => inputRef.current?.focus(), 150);
   }
 
   async function saveEvent() {
@@ -210,8 +211,7 @@ export default function PlannerPage() {
       if (targetDate !== editingEvent.date) {
         setSelectedDate(targetDate);
         const [y, m] = targetDate.split("-").map(Number);
-        setViewYear(y);
-        setViewMonth(m - 1);
+        setViewYear(y); setViewMonth(m - 1);
       }
       setEditingEvent(null);
     } else {
@@ -225,13 +225,11 @@ export default function PlannerPage() {
       });
     }
 
-    setDraftTitle("");
-    setDraftNote("");
-    setDraftTime("");
+    setDraftTitle(""); setDraftNote(""); setDraftTime("");
     setDraftDate(targetDate);
     await loadEvents(profile.id);
     setSaving(false);
-    setTimeout(() => inputRef.current?.focus(), 150);
+    if (!isMobile) setTimeout(() => inputRef.current?.focus(), 150);
   }
 
   async function deleteEvent(evId, e) {
@@ -252,29 +250,21 @@ export default function PlannerPage() {
     else setViewMonth(m => m + 1);
   }
 
-  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-  const firstDay    = new Date(viewYear, viewMonth, 1).getDay();
-  const todayStr    = today.toISOString().split("T")[0];
-
-  if (loading) {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc" }}>
-        <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid #3b82f6", borderTopColor: "transparent", animation: "spin 1s linear infinite" }} />
-        <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
-      </div>
-    );
-  }
-
+  const daysInMonth    = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const firstDay       = new Date(viewYear, viewMonth, 1).getDay();
+  const todayStr       = today.toISOString().split("T")[0];
   const selectedEvents = selectedDate ? (events[selectedDate] || []) : [];
+  const WEEKDAYS       = isMobile ? WEEKDAYS_MOBILE : WEEKDAYS_DESKTOP;
+  const CELL_HEIGHT    = isMobile ? 52 : 88;
 
-  // ── Painel lateral / bottom sheet ────────────────────────────────────────
+  // ── Painel de eventos (reutilizado no desktop e no bottom sheet) ──
   const PainelConteudo = () => (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
         <h2 style={{ fontSize: 14, fontWeight: 800, color: "#0f172a", margin: 0 }}>
-          {new Date(selectedDate + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+          {selectedDate && new Date(selectedDate + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
         </h2>
-        <button onClick={closePanel} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: 20, cursor: "pointer", lineHeight: 1, padding: "4px 8px" }}>✕</button>
+        <button onClick={closePanel} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: 18, cursor: "pointer", padding: "4px 8px" }}>✕</button>
       </div>
 
       {selectedEvents.length > 0 && (
@@ -288,49 +278,45 @@ export default function PlannerPage() {
                   <div style={{ padding: 10, background: c.light, display: "flex", flexDirection: "column", gap: 7 }}>
                     <input ref={inputRef} value={draftTitle} onChange={e => setDraftTitle(e.target.value)}
                       placeholder="Título" onKeyDown={e => e.key === "Enter" && saveEvent()}
-                      style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 14, fontWeight: 600, boxSizing: "border-box", outline: "none" }} />
+                      style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 13, fontWeight: 600, boxSizing: "border-box", outline: "none" }} />
                     <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                       <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Data</label>
                       <input type="date" value={draftDate} onChange={e => setDraftDate(e.target.value)}
-                        style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 14, boxSizing: "border-box", outline: "none" }} />
+                        style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 16, boxSizing: "border-box", outline: "none" }} />
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                       <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Horário (opcional)</label>
                       <input type="time" value={draftTime} onChange={e => setDraftTime(e.target.value)}
-                        style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 14, boxSizing: "border-box", outline: "none" }} />
+                        style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 16, boxSizing: "border-box", outline: "none" }} />
                     </div>
                     <textarea value={draftNote} onChange={e => setDraftNote(e.target.value)}
                       placeholder="Nota (opcional)" rows={2}
-                      style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 14, resize: "vertical", boxSizing: "border-box", outline: "none" }} />
+                      style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: "1px solid #cbd5e1", fontSize: 13, resize: "vertical", boxSizing: "border-box", outline: "none" }} />
                     <div style={{ display: "flex", gap: 6 }}>
                       <button onClick={saveEvent} disabled={saving}
-                        style={{ flex: 1, padding: "9px", borderRadius: 8, border: "none", background: "#3b82f6", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
+                        style={{ flex: 1, padding: "9px", borderRadius: 8, border: "none", background: "#3b82f6", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
                         {saving ? "..." : "💾 Salvar"}
                       </button>
                       <button onClick={() => { setEditingEvent(null); setDraftTitle(""); setDraftNote(""); setDraftTime(""); setDraftDate(selectedDate); }}
-                        style={{ padding: "9px 12px", borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: 14, cursor: "pointer" }}>
-                        ✕
-                      </button>
+                        style={{ padding: "9px 12px", borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: 13, cursor: "pointer" }}>✕</button>
                       <button onClick={e => deleteEvent(ev.id, e)}
-                        style={{ padding: "9px 12px", borderRadius: 8, border: "none", background: "#fee2e2", color: "#ef4444", fontSize: 14, cursor: "pointer" }}>
-                        🗑
-                      </button>
+                        style={{ padding: "9px 12px", borderRadius: 8, border: "none", background: "#fee2e2", color: "#ef4444", fontSize: 13, cursor: "pointer" }}>🗑</button>
                     </div>
                   </div>
                 ) : (
                   <div onClick={e => startEdit(ev, e)}
-                    style={{ padding: "10px 12px", background: c.light, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                    style={{ padding: "9px 12px", background: c.light, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
-                        {ev.time && <span style={{ fontSize: 11, fontWeight: 700, color: c.text }}>{ev.time.slice(0,5)}</span>}
-                        <span style={{ fontSize: 13, fontWeight: 700, color: "#1e293b" }}>{ev.title}</span>
-                        <span style={{ fontSize: 10, padding: "1px 5px", borderRadius: 20, background: c.bg, color: "#fff", fontWeight: 600 }}>
+                        {ev.time && <span style={{ fontSize: 10, fontWeight: 700, color: c.text }}>{ev.time.slice(0,5)}</span>}
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "#1e293b" }}>{ev.title}</span>
+                        <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 20, background: c.bg, color: "#fff", fontWeight: 600 }}>
                           {ev.type === "marco" ? "Marco" : "Nota"}
                         </span>
                       </div>
-                      {ev.note && <p style={{ fontSize: 12, color: "#475569", margin: "3px 0 0", lineHeight: 1.4 }}>{ev.note}</p>}
+                      {ev.note && <p style={{ fontSize: 11, color: "#475569", margin: "3px 0 0", lineHeight: 1.4 }}>{ev.note}</p>}
                     </div>
-                    <span style={{ fontSize: 12, color: "#94a3b8", flexShrink: 0 }}>✏️</span>
+                    <span style={{ fontSize: 10, color: "#94a3b8", flexShrink: 0 }}>✏️</span>
                   </div>
                 )}
               </div>
@@ -347,14 +333,14 @@ export default function PlannerPage() {
           <input ref={inputRef} value={draftTitle} onChange={e => setDraftTitle(e.target.value)}
             onKeyDown={e => e.key === "Enter" && !e.shiftKey && saveEvent()}
             placeholder="O que acontece nesse dia?"
-            style={{ width: "100%", padding: "9px 10px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 14, boxSizing: "border-box", outline: "none", color: "#1e293b" }} />
+            style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 14, boxSizing: "border-box", outline: "none", color: "#1e293b" }} />
           <input type="time" value={draftTime} onChange={e => setDraftTime(e.target.value)}
-            style={{ width: "100%", padding: "9px 10px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 14, boxSizing: "border-box", outline: "none" }} />
+            style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 16, boxSizing: "border-box", outline: "none" }} />
           <textarea value={draftNote} onChange={e => setDraftNote(e.target.value)}
             placeholder="Detalhes (opcional)" rows={2}
-            style={{ width: "100%", padding: "9px 10px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 14, resize: "vertical", boxSizing: "border-box", outline: "none" }} />
+            style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: "1px solid #e2e8f0", fontSize: 14, resize: "vertical", boxSizing: "border-box", outline: "none" }} />
           <button onClick={saveEvent} disabled={saving || !draftTitle.trim()}
-            style={{ width: "100%", padding: "11px", borderRadius: 9, border: "none", background: draftTitle.trim() ? "#3b82f6" : "#e2e8f0", color: draftTitle.trim() ? "#fff" : "#94a3b8", fontWeight: 700, fontSize: 14, cursor: draftTitle.trim() ? "pointer" : "default", transition: "all .15s" }}>
+            style={{ width: "100%", padding: "12px", borderRadius: 9, border: "none", background: draftTitle.trim() ? "#3b82f6" : "#e2e8f0", color: draftTitle.trim() ? "#fff" : "#94a3b8", fontWeight: 700, fontSize: 14, cursor: draftTitle.trim() ? "pointer" : "default", transition: "all .15s" }}>
             {saving ? "Salvando..." : "Adicionar nota"}
           </button>
         </div>
@@ -362,121 +348,84 @@ export default function PlannerPage() {
     </>
   );
 
+  if (loading) {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc" }}>
+        <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid #3b82f6", borderTopColor: "transparent", animation: "spin 1s linear infinite" }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+      </div>
+    );
+  }
+
   return (
     <div style={{ minHeight: "100vh", background: "#f1f5f9", fontFamily: "'DM Sans', 'Segoe UI', sans-serif" }}>
 
-      {/* ── CSS global para responsividade ── */}
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg) } }
-        @keyframes slideUp {
-          from { transform: translateY(100%); opacity: 0; }
-          to   { transform: translateY(0);    opacity: 1; }
-        }
-        .planner-layout {
-          display: flex;
-          gap: 20px;
-          align-items: flex-start;
-        }
-        .painel-desktop {
-          width: 300px;
-          flex-shrink: 0;
-        }
-        @media (max-width: 767px) {
-          .planner-layout {
-            flex-direction: column;
-          }
-          .painel-desktop {
-            display: none;
-          }
-        }
-      `}</style>
-
-      {/* ── HEADER ── */}
-      <header style={{
-        background: "#fff",
-        borderBottom: "1px solid #e2e8f0",
-        padding: "12px 16px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: 8,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+      <header style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <button onClick={() => router.back()}
-            style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", color: "#64748b", fontSize: 13, fontWeight: 600, padding: "6px 8px", borderRadius: 8, flexShrink: 0 }}>
+            style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "#64748b", fontSize: 13, fontWeight: 600, padding: "6px 10px", borderRadius: 8 }}
+            onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
+            onMouseLeave={e => e.currentTarget.style.background = "none"}>
             ← Voltar
           </button>
-          {/* Logo oculta em telas muito pequenas para não comprimir */}
-          <div style={{ width: isMobile ? 100 : 160 }}>
-            <Image
-              src="/logo/logo_email.png"
-              alt="Pai de Primeira"
-              width={160}
-              height={32}
-              style={{ width: "100%", height: "auto" }}
-            />
-          </div>
+          <Image src="/logo/logo_email.png" alt="Pai de Primeira" width={isMobile ? 110 : 180} height={36} />
         </div>
         <UserMenu />
       </header>
 
-      <div style={{ maxWidth: 960, margin: "0 auto", padding: isMobile ? "16px 12px 100px" : "24px 16px", display: "flex", flexDirection: "column", gap: 20 }}>
+      <div style={{ maxWidth: 960, margin: "0 auto", padding: isMobile ? "14px 10px" : "24px 16px", display: "flex", flexDirection: "column", gap: isMobile ? 12 : 20 }}>
 
-        {/* ── CABEÇALHO MÊS ── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
-          <div>
-            <h1 style={{ fontSize: isMobile ? 18 : 22, fontWeight: 900, color: "#0f172a", margin: 0 }}>📅 Meu Planner</h1>
-            {!isMobile && <p style={{ fontSize: 13, color: "#64748b", margin: "2px 0 0" }}>Clique num dia para adicionar notas</p>}
-          </div>
+        {/* CABEÇALHO */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+          <h1 style={{ fontSize: isMobile ? 17 : 22, fontWeight: 900, color: "#0f172a", margin: 0 }}>📅 Meu Planner</h1>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <button onClick={prevMonth} style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", fontSize: 18, color: "#475569" }}>‹</button>
-            <span style={{ fontSize: isMobile ? 13 : 15, fontWeight: 800, color: "#0f172a", minWidth: isMobile ? 120 : 155, textAlign: "center" }}>
+            <button onClick={prevMonth} style={{ width: 30, height: 30, borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", fontSize: 15, color: "#475569" }}>‹</button>
+            <span style={{ fontSize: isMobile ? 12 : 15, fontWeight: 800, color: "#0f172a", minWidth: isMobile ? 100 : 155, textAlign: "center" }}>
               {MONTHS[viewMonth]} {viewYear}
             </span>
-            <button onClick={nextMonth} style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", fontSize: 18, color: "#475569" }}>›</button>
+            <button onClick={nextMonth} style={{ width: 30, height: 30, borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", fontSize: 15, color: "#475569" }}>›</button>
             <button
               onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth()); selectDate(todayStr); }}
-              style={{ padding: "7px 10px", borderRadius: 8, border: "1px solid #dbeafe", background: "#eff6ff", cursor: "pointer", fontSize: 12, fontWeight: 700, color: "#3b82f6" }}>
+              style={{ padding: isMobile ? "5px 8px" : "7px 14px", borderRadius: 8, border: "1px solid #dbeafe", background: "#eff6ff", cursor: "pointer", fontSize: isMobile ? 11 : 13, fontWeight: 700, color: "#3b82f6" }}>
               Hoje
             </button>
           </div>
         </div>
 
-        {/* ── LAYOUT CALENDÁRIO + PAINEL ── */}
-        <div className="planner-layout">
+        {/* CALENDÁRIO + PAINEL */}
+        <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
 
-          {/* ── CALENDÁRIO ── */}
-          <div style={{ flex: 1, minWidth: 0, background: "#fff", borderRadius: 16, border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
+          {/* CALENDÁRIO */}
+          <div style={{ flex: 1, background: "#fff", borderRadius: 16, border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
 
-            {/* Cabeçalho dias da semana */}
+            {/* Header dias da semana */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", borderBottom: "1px solid #f1f5f9" }}>
-              {WEEKDAYS.map(d => (
-                <div key={d} style={{ padding: "8px 0", textAlign: "center", fontSize: isMobile ? 10 : 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                  {isMobile ? d.charAt(0) : d}
+              {WEEKDAYS.map((d, i) => (
+                <div key={i} style={{ padding: isMobile ? "7px 0" : "10px 0", textAlign: "center", fontSize: isMobile ? 10 : 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                  {d}
                 </div>
               ))}
             </div>
 
-            {/* Dias */}
+            {/* Grid de dias */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)" }}>
               {Array.from({ length: firstDay }).map((_, i) => (
-                <div key={`e${i}`} style={{ height: isMobile ? 56 : 88, borderRight: "1px solid #f8fafc", borderBottom: "1px solid #f8fafc", background: "#fafafa" }} />
+                <div key={`e${i}`} style={{ height: CELL_HEIGHT, borderRight: "1px solid #f8fafc", borderBottom: "1px solid #f8fafc", background: "#fafafa" }} />
               ))}
 
               {Array.from({ length: daysInMonth }).map((_, i) => {
-                const day      = i + 1;
-                const dateStr  = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-                const isToday  = dateStr === todayStr;
-                const isSel    = dateStr === selectedDate;
-                const dayEvts  = events[dateStr] || [];
-                const col      = (firstDay + i) % 7;
+                const day       = i + 1;
+                const dateStr   = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                const isToday   = dateStr === todayStr;
+                const isSel     = dateStr === selectedDate;
+                const dayEvts   = events[dateStr] || [];
+                const col       = (firstDay + i) % 7;
                 const isWeekend = col === 0 || col === 6;
-                const cellHeight = isMobile ? 56 : 88;
 
                 return (
                   <div key={day} onClick={() => selectDate(dateStr)}
                     style={{
-                      height: cellHeight,
+                      height: CELL_HEIGHT,
                       overflow: "hidden",
                       borderRight: "1px solid #f1f5f9",
                       borderBottom: "1px solid #f1f5f9",
@@ -485,16 +434,13 @@ export default function PlannerPage() {
                       boxSizing: "border-box",
                       background: isSel ? "#eff6ff" : isToday ? "#f0fdf4" : isWeekend ? "#fafafa" : "#fff",
                       transition: "background .1s",
-                      WebkitTapHighlightColor: "transparent",
                     }}
                   >
                     <div style={{
-                      width: isMobile ? 22 : 24,
-                      height: isMobile ? 22 : 24,
+                      width: isMobile ? 20 : 24,
+                      height: isMobile ? 20 : 24,
                       borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
+                      display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: isMobile ? 11 : 12,
                       fontWeight: isToday ? 800 : 500,
                       marginBottom: isMobile ? 2 : 3,
@@ -505,15 +451,14 @@ export default function PlannerPage() {
                       {day}
                     </div>
 
-                    {/* Em mobile mostra só pontinhos de cor, em desktop mostra texto */}
+                    {/* Mobile: dots coloridos | Desktop: texto do evento */}
                     {isMobile ? (
-                      <div style={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                      <div style={{ display: "flex", gap: 2, flexWrap: "wrap", paddingLeft: 1 }}>
                         {dayEvts.slice(0, 3).map(ev => {
                           const c = TYPE_COLORS[ev.type] || TYPE_COLORS.nota;
-                          return (
-                            <div key={ev.id} style={{ width: 5, height: 5, borderRadius: "50%", background: c.bg, flexShrink: 0 }} />
-                          );
+                          return <div key={ev.id} style={{ width: 6, height: 6, borderRadius: "50%", background: c.bg }} />;
                         })}
+                        {dayEvts.length > 3 && <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#cbd5e1" }} />}
                       </div>
                     ) : (
                       <div style={{ display: "flex", flexDirection: "column", gap: 2, overflow: "hidden" }}>
@@ -521,19 +466,12 @@ export default function PlannerPage() {
                           const c = TYPE_COLORS[ev.type] || TYPE_COLORS.nota;
                           return (
                             <div key={ev.id} onClick={e => startEdit(ev, e)} title={ev.title}
-                              style={{
-                                fontSize: 9, fontWeight: 600, padding: "1px 4px", borderRadius: 3,
-                                background: c.light, color: c.text,
-                                whiteSpace: "normal", lineHeight: 1.2,
-                                overflow: "hidden", maxHeight: 28,
-                              }}>
+                              style={{ fontSize: 9, fontWeight: 600, padding: "1px 4px", borderRadius: 3, background: c.light, color: c.text, whiteSpace: "normal", lineHeight: 1.2, overflow: "hidden", maxHeight: 28 }}>
                               {ev.time ? ev.time.slice(0,5) + " " : ""}{ev.title}
                             </div>
                           );
                         })}
-                        {dayEvts.length > 2 && (
-                          <div style={{ fontSize: 9, color: "#94a3b8", paddingLeft: 3 }}>+{dayEvts.length - 2}</div>
-                        )}
+                        {dayEvts.length > 2 && <div style={{ fontSize: 9, color: "#94a3b8", paddingLeft: 3 }}>+{dayEvts.length - 2}</div>}
                       </div>
                     )}
                   </div>
@@ -542,22 +480,22 @@ export default function PlannerPage() {
             </div>
           </div>
 
-          {/* ── PAINEL LATERAL (somente desktop) ── */}
-          <div className="painel-desktop">
-            {selectedDate ? (
-              <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #e2e8f0", padding: 18, boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
+          {/* PAINEL LATERAL — desktop only */}
+          {!isMobile && (
+            selectedDate ? (
+              <div style={{ width: 300, flexShrink: 0, background: "#fff", borderRadius: 16, border: "1px solid #e2e8f0", padding: 18, boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
                 <PainelConteudo />
               </div>
             ) : (
-              <div style={{ background: "#fff", borderRadius: 16, border: "1px dashed #e2e8f0", padding: 18, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, minHeight: 200 }}>
+              <div style={{ width: 300, flexShrink: 0, background: "#fff", borderRadius: 16, border: "1px dashed #e2e8f0", padding: 18, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, minHeight: 200 }}>
                 <span style={{ fontSize: 32 }}>👆</span>
                 <p style={{ fontSize: 13, color: "#94a3b8", textAlign: "center", margin: 0 }}>Clique em um dia para ver ou adicionar notas</p>
               </div>
-            )}
-          </div>
+            )
+          )}
         </div>
 
-        {/* ── LEGENDA ── */}
+        {/* LEGENDA */}
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
           {Object.entries(TYPE_COLORS).map(([type, color]) => (
             <div key={type} style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -568,41 +506,33 @@ export default function PlannerPage() {
             </div>
           ))}
         </div>
-
       </div>
 
-      {/* ── BOTTOM SHEET MOBILE ── */}
-      {isMobile && selectedDate && (
+      {/* BOTTOM SHEET — mobile only */}
+      {isMobile && (
         <>
-          {/* Overlay */}
-          <div
-            onClick={closePanel}
-            style={{
-              position: "fixed", inset: 0,
-              background: "rgba(0,0,0,0.35)",
-              zIndex: 40,
-            }}
-          />
-          {/* Sheet */}
+          {sheetOpen && (
+            <div onClick={closePanel}
+              style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.45)", zIndex: 40 }} />
+          )}
           <div style={{
-            position: "fixed",
-            bottom: 0, left: 0, right: 0,
+            position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 50,
             background: "#fff",
             borderRadius: "20px 20px 0 0",
-            padding: "20px 16px 32px",
-            zIndex: 50,
-            maxHeight: "80vh",
+            boxShadow: "0 -4px 24px rgba(0,0,0,.15)",
+            padding: "0 16px 36px",
+            maxHeight: "82vh",
             overflowY: "auto",
-            animation: "slideUp 0.25s ease",
-            boxShadow: "0 -4px 24px rgba(0,0,0,.12)",
+            transform: sheetOpen ? "translateY(0)" : "translateY(100%)",
+            transition: "transform .3s cubic-bezier(.4,0,.2,1)",
           }}>
-            {/* Alça visual */}
-            <div style={{ width: 36, height: 4, borderRadius: 2, background: "#e2e8f0", margin: "0 auto 16px" }} />
-            <PainelConteudo />
+            <div style={{ position: "sticky", top: 0, background: "#fff", paddingTop: 12, paddingBottom: 4, zIndex: 1 }}>
+              <div style={{ width: 36, height: 4, borderRadius: 2, background: "#e2e8f0", margin: "0 auto 12px" }} />
+            </div>
+            {selectedDate && <PainelConteudo />}
           </div>
         </>
       )}
-
     </div>
   );
 }
