@@ -3,7 +3,6 @@
 // app/planner/page.js
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { supabaseBrowser } from "../../lib/supabase/client";
 import UserMenu from "../components/UserMenu";
 
@@ -368,14 +367,7 @@ export default function PlannerPage() {
             onMouseLeave={e => e.currentTarget.style.background = "none"}>
             ← Voltar
           </button>
-          <Image 
-            src="/logo/logo_email.png" 
-            alt="Pai de Primeira" 
-            width={isMobile ? 110 : 180} 
-            height={40}
-            style={{ objectFit: "contain", width: isMobile ? 110 : 180, height: 40 }}
-            priority
-          />
+          <img src="/logo/logo_email.png" alt="Pai de Primeira" style={{ width: isMobile ? 110 : 180, height: "auto", display: "block" }} />
         </div>
         <UserMenu />
       </header>
