@@ -367,7 +367,7 @@ export default function PlannerPage() {
             onMouseLeave={e => e.currentTarget.style.background = "none"}>
             ← Voltar
           </button>
-          <img src="/logo/logo_email.png" alt="Pai de Primeira" style={{ width: isMobile ? 110 : 180, height: "auto", display: "block" }} />
+          <img src="/logo/logo_email.png" alt="Pai de Primeira" style={{ height: 36, width: "auto", display: "block" }} />
         </div>
         <UserMenu />
       </header>
