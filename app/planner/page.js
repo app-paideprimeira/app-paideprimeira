@@ -359,17 +359,17 @@ export default function PlannerPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#f1f5f9", fontFamily: "'DM Sans', 'Segoe UI', sans-serif" }}>
 
-      <header style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      <header style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: isMobile ? "10px 12px" : "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 6 : 12 }}>
           <button onClick={() => router.back()}
-            style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "#64748b", fontSize: 13, fontWeight: 600, padding: "6px 10px", borderRadius: 8 }}
+            style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", color: "#64748b", fontSize: 13, fontWeight: 600, padding: isMobile ? "6px 4px" : "6px 10px", borderRadius: 8, flexShrink: 0 }}
             onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
             onMouseLeave={e => e.currentTarget.style.background = "none"}>
-            ← Voltar
+            {isMobile ? "←" : "← Voltar"}
           </button>
-          <img src="/logo/Logo_email.png" alt="Pai de Primeira" style={{ height: 36, width: "auto", display: "block" }} />
+          <img src="/logo/logo_email.png" alt="Pai de Primeira" style={{ height: isMobile ? 26 : 36, width: "auto", display: "block" }} />
         </div>
-        <UserMenu />
+        {isMobile ? <UserMenu avatarOnly /> : <UserMenu />}
       </header>
 
       <div style={{ maxWidth: 960, margin: "0 auto", padding: isMobile ? "14px 10px" : "24px 16px", display: "flex", flexDirection: "column", gap: isMobile ? 12 : 20 }}>

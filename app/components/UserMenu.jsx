@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "../../lib/supabase/client";
 import { signOutClean } from "../../lib/session/useSession";
 
-export default function UserMenu() {
+export default function UserMenu({ avatarOnly = false }) {
   const router = useRouter();
   const [isOpen, setIsOpen]           = useState(false);
   const [user, setUser]               = useState(null);
@@ -49,11 +49,11 @@ export default function UserMenu() {
         onClick={() => setIsOpen(!isOpen)}
         style={{
           display: "flex", alignItems: "center", gap: 10,
-          background: "rgba(255,255,255,0.92)",
+          background: avatarOnly ? "transparent" : "rgba(255,255,255,0.92)",
           backdropFilter: "blur(12px)",
-          border: "1px solid rgba(255,255,255,0.6)",
-          borderRadius: 50, padding: "6px 14px 6px 6px",
-          cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.10)",
+          border: avatarOnly ? "none" : "1px solid rgba(255,255,255,0.6)",
+          borderRadius: 50, padding: avatarOnly ? "0" : "6px 14px 6px 6px",
+          cursor: "pointer", boxShadow: avatarOnly ? "none" : "0 2px 12px rgba(0,0,0,0.10)",
           transition: "all .2s",
         }}
       >
@@ -66,13 +66,17 @@ export default function UserMenu() {
         }}>
           {getInitials()}
         </div>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#1e293b", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-          {firstName}
-        </span>
-        <svg style={{ width: 14, height: 14, color: "#94a3b8", transition: "transform .2s", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", flexShrink: 0 }}
-          fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-        </svg>
+        {!avatarOnly && (
+          <span style={{ fontSize: 13, fontWeight: 700, color: "#1e293b", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {firstName}
+          </span>
+        )}
+        {!avatarOnly && (
+          <svg style={{ width: 14, height: 14, color: "#94a3b8", transition: "transform .2s", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", flexShrink: 0 }}
+            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+          </svg>
+        )}
       </button>
 
       {/* Dropdown */}
@@ -128,14 +132,7 @@ export default function UserMenu() {
           {/* Menu items */}
           <div style={{ padding: "8px 0" }}>
             <MenuSection>
-              <MenuItem icon="👤" label="Minhas informações" onClick={() => handleNavigation("/profile")} />
-              <MenuItem icon="📖" label="Meu diário de pai"  onClick={() => handleNavigation("/diario")} />
-            </MenuSection>
-
-            <Divider />
-
-            <MenuSection>
-              <MenuItem icon="📅" label="Planner Diário" onClick={() => handleNavigation("/planner")} />
+              <MenuItem icon="📅" label="Meu calendário" onClick={() => handleNavigation("/planner")} />
               {userProfile?.stage === "gestante" && (
                 <MenuItem icon="💓" label="Contador de contrações" onClick={() => handleNavigation("/contracoes")} />
               )}
@@ -143,9 +140,19 @@ export default function UserMenu() {
                 <MenuItem icon="👶" label="Acompanhamento bebê" onClick={() => handleNavigation("/bebe")} />
               )}
             </MenuSection>
+
             <Divider />
 
             <MenuSection>
+              <MenuItem icon="👤" label="Minhas informações" onClick={() => handleNavigation("/profile")} />
+              <MenuItem icon="📖" label="Meu diário de pai"  onClick={() => handleNavigation("/diario")} />
+              <MenuItem icon="👥" label="Outros pais"        onClick={() => handleNavigation("/comunidade")} />
+            </MenuSection>
+
+            <Divider />
+
+            <MenuSection>
+              <MenuItem icon="✉️" label="Fale conosco" onClick={() => window.location.href = "mailto:contato@apppaideprimeira.com"} />
               <MenuItem icon="🚪" label="Sair do app" onClick={handleLogout} danger />
             </MenuSection>
           </div>
