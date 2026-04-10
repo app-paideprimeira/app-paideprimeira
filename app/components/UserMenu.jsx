@@ -139,6 +139,7 @@ export default function UserMenu({ avatarOnly = false }) {
               {userProfile?.stage === "bebe" && (
                 <MenuItem icon="👶" label="Acompanhamento bebê" onClick={() => handleNavigation("/bebe")} />
               )}
+              <MenuItem icon="🛒" label="Produtos recomendados" onClick={() => handleNavigation("/produtos")} />
             </MenuSection>
 
             <Divider />
@@ -146,7 +147,6 @@ export default function UserMenu({ avatarOnly = false }) {
             <MenuSection>
               <MenuItem icon="👤" label="Minhas informações" onClick={() => handleNavigation("/profile")} />
               <MenuItem icon="📖" label="Meu diário de pai"  onClick={() => handleNavigation("/diario")} />
-              <MenuItem icon="👥" label="Outros pais"        onClick={() => handleNavigation("/comunidade")} />
             </MenuSection>
 
             <Divider />
