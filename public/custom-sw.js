@@ -1,6 +1,14 @@
 // public/custom-sw.js
 // Handler de push notifications para o PWA Pai de Primeira
 
+// ── Força NetworkOnly para todas as requisições do Supabase ──
+self.addEventListener("fetch", function (event) {
+  const url = event.request.url;
+  if (url.includes("supabase.co/rest/")) {
+    event.respondWith(fetch(event.request.clone()));
+  }
+});
+
 self.addEventListener("push", function (event) {
   if (!event.data) return;
 
@@ -33,14 +41,12 @@ self.addEventListener("notificationclick", function (event) {
 
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
-      // Se já tem uma aba aberta, foca nela
       for (const client of list) {
         if (client.url.includes(self.location.origin) && "focus" in client) {
           client.navigate(url);
           return client.focus();
         }
       }
-      // Senão abre nova aba
       return clients.openWindow(url);
     })
   );
