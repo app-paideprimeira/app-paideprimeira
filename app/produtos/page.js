@@ -113,7 +113,7 @@ export default function ProdutosPage() {
             onMouseLeave={e => e.currentTarget.style.background = "none"}>
             ← Voltar
           </button>
-          <img src="/logo/logo_email.png" alt="Pai de Primeira" style={{ height: 32, width: "auto", display: "block" }} />
+          <img src="/logo/Logo_email.png" alt="Pai de Primeira" style={{ height: 32, width: "auto", display: "block" }} />
         </div>
         <UserMenu />
       </header>

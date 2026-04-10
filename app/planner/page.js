@@ -367,7 +367,7 @@ export default function PlannerPage() {
             onMouseLeave={e => e.currentTarget.style.background = "none"}>
             {isMobile ? "←" : "← Voltar"}
           </button>
-          <img src="/logo/logo_email.png" alt="Pai de Primeira" style={{ height: isMobile ? 26 : 36, width: "auto", display: "block" }} />
+          <img src="/logo/Logo_email.png" alt="Pai de Primeira" style={{ height: isMobile ? 26 : 36, width: "auto", display: "block" }} />
         </div>
         {isMobile ? <UserMenu avatarOnly /> : <UserMenu />}
       </header>
