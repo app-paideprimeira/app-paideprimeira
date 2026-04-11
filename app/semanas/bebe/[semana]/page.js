@@ -28,17 +28,25 @@ const TIPO_LABELS = {
   download:       "📥 Download",
 };
 
+// ── Helper VAPID ─────────────────────────────────────────────────
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = atob(base64);
+  const output = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; i++) output[i] = rawData.charCodeAt(i);
+  return output;
+}
+
 function isPremiumWeekUnlocked(semana, currentWeek, premiumActivatedAt) {
   const diasAssinado = premiumActivatedAt
     ? Math.floor((Date.now() - new Date(premiumActivatedAt).getTime()) / (1000 * 60 * 60 * 24))
     : 999;
 
   if (diasAssinado < 7) {
-    // Primeiros 7 dias — janela restrita: 2 antes + atual + 2 depois
     return semana >= currentWeek - 2 && semana <= currentWeek + 2;
   }
 
-  // Após 7 dias — todo passado + 2 semanas à frente
   return semana <= currentWeek + 2;
 }
 
@@ -136,6 +144,35 @@ function SemanaBebePage({ params }) {
       window.history.replaceState({}, "", `/semanas/bebe/${semana}`);
     }
   }, [searchParams, semana]);
+
+  // ── Re-registra subscription se permissão já foi concedida ──
+  useEffect(() => {
+    if (!userId) return;
+    if (typeof window === "undefined") return;
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
+    if (Notification.permission !== "granted") return;
+
+    async function resubscribe() {
+      try {
+        const swReg = await navigator.serviceWorker.ready;
+        const subscription = await swReg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(
+            process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+          ),
+        });
+        await fetch("/api/push/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, subscription }),
+        });
+      } catch (_) {
+        // silencioso — não quebra a UI
+      }
+    }
+
+    resubscribe();
+  }, [userId]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -371,7 +408,7 @@ function SemanaBebePage({ params }) {
 
           {semana < 52 ? (
             <button onClick={() => router.push(`/semanas/bebe/${semana + 1}`)} className="px-4 py-2 rounded-xl bg-white/80 shadow-md hover:bg-white transition" style={{ color: textColor }}>
-              Semana {semana + 1} → 
+              Semana {semana + 1} →
             </button>
           ) : (
             <div className="w-28" />
@@ -380,6 +417,7 @@ function SemanaBebePage({ params }) {
 
       </main>
 
+      {/* ── PROMPT DE PUSH ── */}
       {showPrompt && (
         <div className="fixed inset-0 bg-black/40 flex items-end justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-t-2xl p-6 shadow-xl">
