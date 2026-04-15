@@ -130,16 +130,29 @@ function PlanosContent() {
     setLoading(selectedPlan.id);
     setError(null);
     try {
+      // ── Busca token JWT da sessão ──────────────────────────
+      const supabase = supabaseBrowser();
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token || "";
+
+      console.log("Token JWT:", token ? "OK ✅" : "VAZIO ❌");
+      console.log("userId:", userId);
+
       const res = await fetch("/api/checkout", {
         method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({
+        headers: {
+          "Content-Type":  "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
           planId:      selectedPlan.id,
-          userId,
           cupomCodigo: cupomStatus === "valid" ? cupomInput.trim() : null,
         }),
       });
+
       const data = await res.json();
+      console.log("Resposta checkout:", res.status, data);
+
       if (!res.ok) throw new Error(data.error || "Erro ao iniciar checkout");
 
       const url = process.env.NODE_ENV === "development"
