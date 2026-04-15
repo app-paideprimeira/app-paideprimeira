@@ -29,10 +29,32 @@ const PLANS = {
 
 export async function POST(req) {
   try {
-    const { planId, userId, cupomCodigo } = await req.json();
+    // ── Valida token JWT — ignora userId do body ───────────────
+    const authHeader = req.headers.get("authorization") || "";
+    const token = authHeader.replace("Bearer ", "").trim();
 
-    if (!planId || !userId) {
-      return NextResponse.json({ error: "planId e userId são obrigatórios" }, { status: 400 });
+    if (!token) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
+
+    const anonClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      { auth: { persistSession: false } }
+    );
+
+    const { data: { user }, error: authError } = await anonClient.auth.getUser(token);
+    if (authError || !user) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
+
+    // userId vem do token — nunca do body
+    const userId = user.id;
+
+    const { planId, cupomCodigo } = await req.json();
+
+    if (!planId) {
+      return NextResponse.json({ error: "planId é obrigatório" }, { status: 400 });
     }
 
     const plan = PLANS[planId];
@@ -46,7 +68,7 @@ export async function POST(req) {
       .eq("id", userId)
       .single();
 
-    // Aplica desconto do cupom se informado
+    // ── Aplica cupom se informado ─────────────────────────────
     let finalPrice    = plan.unit_price;
     let cupomAplicado = null;
 
@@ -59,9 +81,12 @@ export async function POST(req) {
         .maybeSingle();
 
       if (cupom && cupom.planos.includes(planId)) {
-        const desconto = (plan.unit_price * cupom.desconto_percent) / 100;
-        finalPrice     = Math.round((plan.unit_price - desconto) * 100) / 100;
-        cupomAplicado  = cupom;
+        // Verifica limite de usos antes de aplicar
+        if (!cupom.usos_maximos || cupom.usos_atuais < cupom.usos_maximos) {
+          const desconto = (plan.unit_price * cupom.desconto_percent) / 100;
+          finalPrice     = Math.round((plan.unit_price - desconto) * 100) / 100;
+          cupomAplicado  = cupom;
+        }
       }
     }
 
@@ -84,11 +109,12 @@ export async function POST(req) {
         }],
         payer: { email: profile?.email || "" },
         back_urls: {
-          success: `${baseUrl}/obrigado?status=approved&userId=${userId}&plan=${planId}${cupomAplicado ? `&cupom=${cupomAplicado.codigo}` : ""}`,
+          success: `${baseUrl}/obrigado?status=approved&plan=${planId}${cupomAplicado ? `&cupom=${cupomAplicado.codigo}` : ""}`,
           failure: `${baseUrl}/planos?status=failed`,
-          pending: `${baseUrl}/obrigado?status=pending&userId=${userId}&plan=${planId}`,
+          pending: `${baseUrl}/obrigado?status=pending&plan=${planId}`,
         },
         auto_return:          "approved",
+        // cupom incluído no external_reference para o webhook incrementar após pagamento confirmado
         external_reference:   `${userId}|${planId}${cupomAplicado ? `|${cupomAplicado.codigo}` : ""}`,
         notification_url:     `${baseUrl}/api/webhook/mercadopago`,
         statement_descriptor: "PAI DE PRIMEIRA",
@@ -103,13 +129,8 @@ export async function POST(req) {
 
     const data = await response.json();
 
-    // Incrementa uso do cupom
-    if (cupomAplicado) {
-      await supabase
-        .from("cupons")
-        .update({ usos_atuais: cupomAplicado.usos_atuais + 1 })
-        .eq("id", cupomAplicado.id);
-    }
+    // ── NÃO incrementa o cupom aqui ───────────────────────────
+    // O incremento acontece no webhook após pagamento aprovado
 
     return NextResponse.json({
       checkoutUrl: data.init_point,

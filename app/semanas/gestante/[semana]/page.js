@@ -43,11 +43,9 @@ function isPremiumWeekUnlocked(semana, currentWeek, premiumActivatedAt) {
     : 999;
 
   if (diasAssinado < 7) {
-    // Primeiros 7 dias — janela restrita: 2 antes + atual + 2 depois
     return semana >= currentWeek - 2 && semana <= currentWeek + 2;
   }
 
-  // Após 7 dias — todo passado + 2 semanas à frente
   return semana <= currentWeek + 2;
 }
 
@@ -184,10 +182,15 @@ export default function SemanaGestante({ params }) {
             process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
           ),
         });
+        const supabase = supabaseBrowser();
+        const { data: { session } } = await supabase.auth.getSession();
         await fetch("/api/push/subscribe", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, subscription }),
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token || ""}`,
+          },
+          body: JSON.stringify({ subscription }),
         });
       } catch (_) {
         // silencioso — não quebra a UI

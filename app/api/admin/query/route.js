@@ -10,7 +10,41 @@ function getServiceClient() {
   );
 }
 
+// ── Verifica se o usuário autenticado é admin ─────────────────
+async function isAdmin(request) {
+  try {
+    const authHeader = request.headers.get("authorization") || "";
+    const token = authHeader.replace("Bearer ", "").trim();
+    if (!token) return false;
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      { auth: { persistSession: false } }
+    );
+
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) return false;
+
+    const service = getServiceClient();
+    const { data: profile } = await service
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", user.id)
+      .single();
+
+    return profile?.is_admin === true;
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(request) {
+  const admin = await isAdmin(request);
+  if (!admin) {
+    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
   const body = await request.json();
   const { action, payload } = body;
   const supabase = getServiceClient();
@@ -67,7 +101,6 @@ export async function POST(request) {
 
       case "saveBlock": {
         const { block, weekId, blocksCount } = payload;
-        console.log("saveBlock payload:", JSON.stringify({ block, weekId, blocksCount }));
         if (block.id) {
           const { error } = await supabase.from("premium_week_blocks")
             .update({
@@ -122,7 +155,7 @@ export async function POST(request) {
         return NextResponse.json({ error: "Action não reconhecida" }, { status: 400 });
     }
   } catch (err) {
-  console.error("Admin query error:", err.message, err);
-  return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error("Admin query error:", err.message, err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
