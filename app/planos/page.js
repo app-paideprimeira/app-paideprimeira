@@ -135,8 +135,6 @@ function PlanosContent() {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || "";
 
-      console.log("Token JWT:", token ? "OK ✅" : "VAZIO ❌");
-      console.log("userId:", userId);
 
       const res = await fetch("/api/checkout", {
         method:  "POST",
@@ -151,7 +149,6 @@ function PlanosContent() {
       });
 
       const data = await res.json();
-      console.log("Resposta checkout:", res.status, data);
 
       if (!res.ok) throw new Error(data.error || "Erro ao iniciar checkout");
 
