@@ -438,15 +438,11 @@ export default function SemanaGestante({ params }) {
             )}
 
             {!loadingPremium && !hasAnyPreview && (
-              <div className="flex justify-center">
-                <button
-                  onClick={() => router.push(`/materiais/gestante/${semana}`)}
-                  className="px-5 py-3 rounded-xl font-semibold shadow-md bg-white/90 hover:bg-white transition"
-                  style={{ color: textColor }}
-                >
-                  {infoSemana.cta_premium || "Ver conteúdos extras da semana ✨"}
-                </button>
-              </div>
+              <UpgradeCTA
+                textColor={textColor}
+                onUpgrade={() => router.push("/planos")}
+                blocksCount={0}
+              />
             )}
           </>
         )}
