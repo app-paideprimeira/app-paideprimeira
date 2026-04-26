@@ -28,9 +28,25 @@ const EMPTY_BLOCK = {
 };
 
 async function adminQuery(action, payload) {
+  let token = "";
+  try {
+    // Tenta buscar o token via localStorage diretamente
+    const storageKeys = Object.keys(localStorage).filter(k => k.includes("auth-token") || k.includes("supabase"));
+    for (const key of storageKeys) {
+      try {
+        const val = JSON.parse(localStorage.getItem(key));
+        if (val?.access_token) { token = val.access_token; break; }
+        if (val?.session?.access_token) { token = val.session.access_token; break; }
+      } catch {}
+    }
+  } catch {}
+
   const res = await fetch("/api/admin/query", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+    },
     body: JSON.stringify({ action, payload }),
   });
   return res.json();

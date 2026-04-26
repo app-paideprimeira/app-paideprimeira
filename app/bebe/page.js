@@ -187,7 +187,7 @@ function AbaAmamentacao() {
       doc.setFillColor(30, 58, 138);
       doc.rect(0, 0, pageW, 28, "F");
       try {
-        const img = await fetch("/logo/logo_email.png");
+        const img = await fetch("/logo/Logo_email.png");
         const blob = await img.blob();
         const reader = new FileReader();
         const logoBase64 = await new Promise(res => { reader.onload = () => res(reader.result); reader.readAsDataURL(blob); });
@@ -461,7 +461,7 @@ function AbaFraldas() {
       doc.setFillColor(30, 58, 138);
       doc.rect(0, 0, pageW, 28, "F");
       try {
-        const img = await fetch("/logo/logo_email.png");
+        const img = await fetch("/logo/Logo_email.png");
         const blob = await img.blob();
         const reader = new FileReader();
         const logoBase64 = await new Promise(res => { reader.onload = () => res(reader.result); reader.readAsDataURL(blob); });
@@ -626,7 +626,7 @@ function AbaSono() {
       const hoje  = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
       doc.setFillColor(124, 58, 237); doc.rect(0, 0, pageW, 28, "F");
       try {
-        const img = await fetch("/logo/logo_email.png");
+        const img = await fetch("/logo/Logo_email.png");
         const blob = await img.blob();
         const reader = new FileReader();
         const logoBase64 = await new Promise(res => { reader.onload = () => res(reader.result); reader.readAsDataURL(blob); });

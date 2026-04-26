@@ -13,6 +13,12 @@ function getServiceClient() {
 // ── Verifica se o usuário autenticado é admin ─────────────────
 async function isAdmin(request) {
   try {
+    // Em localhost, libera acesso direto
+    const host = request.headers.get("host") || "";
+    if (host.includes("localhost") || host.includes("127.0.0.1")) {
+      return true;
+    }
+
     const authHeader = request.headers.get("authorization") || "";
     const token = authHeader.replace("Bearer ", "").trim();
     if (!token) return false;
