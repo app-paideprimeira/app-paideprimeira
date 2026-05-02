@@ -16,7 +16,7 @@ const BLOCK_TYPES = [
   { value: "filme",          label: "🎬 Dica de Filme"    },
   { value: "podcast",        label: "🎧 Podcast"          },
   { value: "audio",          label: "🔊 Áudio"            },
-  { value: "leitura",        label: "📖 Dica de Livro"          },
+  { value: "leitura",        label: "📖 Leitura"          },
   { value: "produto",        label: "🛒 Produto"          },
   { value: "lista_produtos", label: "🛍️ Lista de Produtos" },
   { value: "imagem",         label: "🖼️ Imagem"           },
@@ -134,15 +134,20 @@ export default function AdminPage() {
       return toast("Preencha título e mensagem antes de testar", "err");
     setSendingTest(true);
     try {
-      const res = await fetch("/api/push/send", {
+      const res = await fetch("https://painel.apppaideprimeira.com/api/push/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: notifDraft.title, body: notifDraft.body, url: notifDraft.url || "/" }),
       });
       const data = await res.json();
+      console.log("Push send status:", res.status);
+      console.log("Push send response:", JSON.stringify(data));
       if (data.ok) toast(`✓ Enviado para ${data.sent} dispositivo(s)`);
       else toast(data.error || "Erro ao enviar", "err");
-    } catch { toast("Erro ao enviar", "err"); }
+    } catch(err) {
+      console.log("Push send error:", err);
+      toast("Erro ao enviar", "err");
+    }
     finally { setSendingTest(false); }
   }
 
