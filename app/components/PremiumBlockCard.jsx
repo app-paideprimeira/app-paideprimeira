@@ -139,9 +139,11 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
       <article className="bg-white/90 rounded-2xl p-6 shadow-xl border border-white/40 space-y-4">
         <BadgeRow label="📥 Download" accentColor={accentColor} badgeBg={badgeBg} isPreview={isPreview} />
         <h2 className="text-lg md:text-xl font-semibold text-gray-900 leading-snug">{block.titulo}</h2>
-        {block.descricao && <p className="text-sm md:text-base text-gray-700 leading-relaxed">{block.descricao}</p>}
+        {block.descricao && (
+          <LinkableText text={block.descricao} subtleBg="transparent" leftBorder="transparent" accentColor={accentColor} />
+        )}
         {block.payload?.body && (
-          <ExpandableText text={block.payload.body} subtleBg={subtleBg} leftBorder={leftBorder} accentColor={accentColor} />
+          <LinkableText text={block.payload.body} subtleBg={subtleBg} leftBorder={leftBorder} accentColor={accentColor} />
         )}
         {downloadUrl && (
           <a href={downloadUrl} download={fileName} target="_blank" rel="noopener noreferrer"
