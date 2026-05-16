@@ -11,7 +11,7 @@ export default function PrivacidadePage() {
     <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "'DM Sans', 'Segoe UI', sans-serif" }}>
 
       <header style={{ background: "#1E3A8A", padding: "16px 24px", display: "flex", alignItems: "center", gap: 16 }}>
-        <button onClick={() => router.back()}
+        <button onClick={() => window.history.length > 1 ? router.back() : window.close()}
           style={{ background: "none", border: "none", color: "#fff", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
           ← Voltar
         </button>
