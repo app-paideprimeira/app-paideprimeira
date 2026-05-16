@@ -107,6 +107,18 @@ export async function POST(request) {
 
       case "saveBlock": {
         const { block, weekId, blocksCount } = payload;
+
+        // ── Validação de tamanho ───────────────────────────────
+        if (!block.title?.trim()) return NextResponse.json({ error: "Título obrigatório" }, { status: 400 });
+        if (block.title.length > 200) return NextResponse.json({ error: "Título muito longo (máx 200)" }, { status: 400 });
+        if (block.description?.length > 500) return NextResponse.json({ error: "Descrição muito longa (máx 500)" }, { status: 400 });
+        if (block.url?.length > 2000) return NextResponse.json({ error: "URL muito longa" }, { status: 400 });
+        if (block.cta?.length > 100) return NextResponse.json({ error: "CTA muito longo (máx 100)" }, { status: 400 });
+
+        // ── Valida type contra lista permitida ─────────────────
+        const TIPOS_VALIDOS = ["checklist","texto","lembrete_fixo","video","filme","podcast","audio","leitura","produto","lista_produtos","imagem","download"];
+        if (!TIPOS_VALIDOS.includes(block.type)) return NextResponse.json({ error: "Tipo de bloco inválido" }, { status: 400 });
+
         if (block.id) {
           const { error } = await supabase.from("premium_week_blocks")
             .update({
@@ -115,7 +127,7 @@ export async function POST(request) {
               payload: block.payload, sort_order: block.sort_order,
             })
             .eq("id", block.id);
-          if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+          if (error) return NextResponse.json({ error: "Erro ao salvar bloco" }, { status: 500 });
         } else {
           const { error } = await supabase.from("premium_week_blocks")
             .insert({
@@ -124,7 +136,7 @@ export async function POST(request) {
               cta: block.cta || null, payload: block.payload,
               sort_order: blocksCount + 1,
             });
-          if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+          if (error) return NextResponse.json({ error: "Erro ao criar bloco" }, { status: 500 });
         }
         return NextResponse.json({ ok: true });
       }
@@ -144,6 +156,13 @@ export async function POST(request) {
 
       case "saveNotif": {
         const { notifId, stage, week, title, body, url } = payload;
+
+        // ── Validação de tamanho ───────────────────────────────
+        if (!title?.trim() || !body?.trim()) return NextResponse.json({ error: "Título e mensagem obrigatórios" }, { status: 400 });
+        if (title.length > 100) return NextResponse.json({ error: "Título muito longo (máx 100)" }, { status: 400 });
+        if (body.length > 300) return NextResponse.json({ error: "Mensagem muito longa (máx 300)" }, { status: 400 });
+        if (url?.length > 500) return NextResponse.json({ error: "URL muito longa" }, { status: 400 });
+
         if (notifId) {
           await supabase.from("week_notifications")
             .update({ title, body, url, updated_at: new Date().toISOString() })
@@ -162,6 +181,6 @@ export async function POST(request) {
     }
   } catch (err) {
     console.error("Admin query error:", err.message, err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Erro interno no servidor" }, { status: 500 });
   }
 }

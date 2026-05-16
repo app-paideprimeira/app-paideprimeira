@@ -267,7 +267,39 @@ function criarAbaDetalhes(wb, dados, stage, tabName, corHeader, corAlt) {
   ];
 }
 
-export async function GET() {
+// ── Verifica se é admin (localhost ou JWT + is_admin) ─────────
+async function verificaAdmin(request) {
+  const host = request.headers.get("host") || "";
+  if (host.includes("localhost") || host.includes("127.0.0.1")) return true;
+
+  const authHeader = request.headers.get("authorization") || "";
+  const token = authHeader.replace("Bearer ", "").trim();
+  if (!token) return false;
+
+  const anonClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    { auth: { persistSession: false } }
+  );
+  const { data: { user }, error } = await anonClient.auth.getUser(token);
+  if (error || !user) return false;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user.id)
+    .single();
+
+  return profile?.is_admin === true;
+}
+
+export async function GET(request) {
+  // ── Bloqueia acesso não autorizado ────────────────────────
+  const admin = await verificaAdmin(request);
+  if (!admin) {
+    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
   try {
     const dados = await buscarDados();
 
@@ -295,6 +327,6 @@ export async function GET() {
     });
   } catch (err) {
     console.error("Erro ao gerar relatório:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Erro interno ao gerar relatório" }, { status: 500 });
   }
 }

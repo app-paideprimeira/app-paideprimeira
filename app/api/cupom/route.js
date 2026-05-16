@@ -1,24 +1,7 @@
 // app/api/cupom/route.js
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-
-// ── Rate limit — máx 20 tentativas por IP por minuto ─────────
-const rateMap = new Map();
-const RATE_LIMIT  = 20;
-const RATE_WINDOW = 60_000;
-
-function checkRateLimit(ip) {
-  const now   = Date.now();
-  const entry = rateMap.get(ip) || { count: 0, start: now };
-  if (now - entry.start > RATE_WINDOW) {
-    rateMap.set(ip, { count: 1, start: now });
-    return true;
-  }
-  if (entry.count >= RATE_LIMIT) return false;
-  entry.count++;
-  rateMap.set(ip, entry);
-  return true;
-}
+import { checkRateLimit, getClientIp } from "../../../lib/rateLimit";
 
 function getServiceClient() {
   return createClient(
@@ -29,9 +12,10 @@ function getServiceClient() {
 }
 
 export async function POST(request) {
-  // ── Rate limit por IP ──────────────────────────────────────
-  const ip = request.headers.get("x-forwarded-for") || "unknown";
-  if (!checkRateLimit(ip)) {
+  // ── Rate limit — 20 tentativas por IP por minuto ───────────
+  const ip = getClientIp(request);
+  const { allowed } = checkRateLimit(ip, 20, 60_000);
+  if (!allowed) {
     return NextResponse.json({ error: "Muitas tentativas. Aguarde um momento." }, { status: 429 });
   }
 

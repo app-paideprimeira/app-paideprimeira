@@ -3,6 +3,20 @@
 import { useState, useCallback } from "react";
 import MaterialCard from "./MaterialCard";
 
+// ── Sanitiza URLs — bloqueia javascript: e outros protocolos perigosos ──
+function safeUrl(url) {
+  if (!url || typeof url !== "string") return null;
+  try {
+    const parsed = new URL(url);
+    if (!["http:", "https:"].includes(parsed.protocol)) return null;
+    return url;
+  } catch {
+    // URL relativa — permite
+    if (url.startsWith("/")) return url;
+    return null;
+  }
+}
+
 function withAlpha(hex, alphaHex) {
   if (!hex || typeof hex !== "string") return undefined;
   if (hex.startsWith("#") && hex.length === 7) return `${hex}${alphaHex}`;
@@ -86,16 +100,17 @@ function LinkableText({ text, subtleBg, leftBorder, accentColor }) {
   return (
     <div className="rounded-xl p-4 text-sm text-gray-900 leading-relaxed whitespace-pre-line"
       style={{ backgroundColor: subtleBg, borderLeft: `5px solid ${leftBorder}` }}>
-      {parts.map((part, i) =>
-        urlRegex.test(part) ? (
-          <a key={i} href={part} target="_blank" rel="noopener noreferrer"
+      {parts.map((part, i) => {
+        const safe = urlRegex.test(part) ? safeUrl(part) : null;
+        return safe ? (
+          <a key={i} href={safe} target="_blank" rel="noopener noreferrer"
             style={{ color: accentColor, fontWeight: 600, textDecoration: "underline", wordBreak: "break-all" }}>
             {part}
           </a>
         ) : (
           <span key={i}>{part}</span>
-        )
-      )}
+        );
+      })}
     </div>
   );
 }
@@ -123,7 +138,7 @@ export default function PremiumBlockCard({ block, accentColor = "#1E3A8A", softB
 
   // ── DOWNLOAD ─────────────────────────────────────────────
   if (block.tipo === "download") {
-    const downloadUrl = getDownloadUrl(block.link);
+    const downloadUrl = safeUrl(getDownloadUrl(block.link));
     const fileName = block.link?.split("/").pop()?.split("?")[0] || "arquivo";
     const ext = fileName.split(".").pop()?.toUpperCase() || "";
     const extColors = {

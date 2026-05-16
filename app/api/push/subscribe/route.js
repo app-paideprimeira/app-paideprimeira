@@ -1,6 +1,7 @@
 // app/api/push/subscribe/route.js
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { checkRateLimit, getClientIp } from "../../../lib/rateLimit";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -8,29 +9,12 @@ const supabase = createClient(
   { auth: { persistSession: false } }
 );
 
-// ── Rate limit simples em memória ─────────────────────────────
-const rateMap = new Map();
-const RATE_LIMIT = 10;       // máximo de chamadas
-const RATE_WINDOW = 60_000;  // por minuto
-
-function checkRateLimit(ip) {
-  const now = Date.now();
-  const entry = rateMap.get(ip) || { count: 0, start: now };
-  if (now - entry.start > RATE_WINDOW) {
-    rateMap.set(ip, { count: 1, start: now });
-    return true;
-  }
-  if (entry.count >= RATE_LIMIT) return false;
-  entry.count++;
-  rateMap.set(ip, entry);
-  return true;
-}
-
 export async function POST(req) {
   try {
-    // ── Rate limit por IP ──────────────────────────────────────
-    const ip = req.headers.get("x-forwarded-for") || "unknown";
-    if (!checkRateLimit(ip)) {
+    // ── Rate limit — 10 por IP por minuto ─────────────────────
+    const ip = getClientIp(req);
+    const { allowed } = checkRateLimit(ip, 10, 60_000);
+    if (!allowed) {
       return NextResponse.json({ error: "Muitas requisições" }, { status: 429 });
     }
 
@@ -77,7 +61,7 @@ export async function POST(req) {
 
     if (error) {
       console.error("Erro ao salvar subscription:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: "Erro ao salvar subscription" }, { status: 500 });
     }
 
     await supabase

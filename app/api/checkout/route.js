@@ -51,7 +51,9 @@ export async function POST(req) {
     // userId vem do token — nunca do body
     const userId = user.id;
 
-    const { planId, cupomCodigo } = await req.json();
+    const body = await req.json();
+    const planId = typeof body.planId === "string" ? body.planId.trim().toLowerCase() : "";
+    const cupomCodigo = typeof body.cupomCodigo === "string" ? body.cupomCodigo.trim() : null;
 
     if (!planId) {
       return NextResponse.json({ error: "planId é obrigatório" }, { status: 400 });

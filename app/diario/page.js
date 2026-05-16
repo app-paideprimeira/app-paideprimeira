@@ -45,6 +45,11 @@ export default function Diario() {
   async function salvarEntrada(e) {
     e.preventDefault();
     if (!novaEntrada.titulo.trim() || !novaEntrada.conteudo.trim()) return;
+
+    // ── Validação de tamanho ───────────────────────────────────
+    if (novaEntrada.titulo.length > 200) return;
+    if (novaEntrada.conteudo.length > 10000) return;
+
     setSaving(true);
     try {
       const supabase = supabaseBrowser();
@@ -161,6 +166,7 @@ export default function Diario() {
                 onChange={e => setNovaEntrada({ ...novaEntrada, titulo: e.target.value })}
                 placeholder="Título da sua reflexão..."
                 required
+                maxLength={200}
                 style={{ ...inputStyle, fontWeight: 700, fontSize: 15 }}
               />
               <textarea
@@ -168,6 +174,7 @@ export default function Diario() {
                 onChange={e => setNovaEntrada({ ...novaEntrada, conteudo: e.target.value })}
                 placeholder="Escreva livremente... Como você está se sentindo? O que aconteceu hoje?"
                 required rows={6}
+                maxLength={10000}
                 style={{ ...inputStyle, resize: "vertical", lineHeight: 1.6 }}
               />
               <div style={{ display: "flex", gap: 10 }}>

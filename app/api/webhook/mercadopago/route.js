@@ -40,6 +40,14 @@ function validateSignature(req) {
     const v1 = parts["v1"];
     if (!ts || !v1) return false;
 
+    // ── Valida janela de tempo — rejeita webhooks com mais de 5 minutos ──
+    const tsMs = parseInt(ts, 10) * 1000;
+    const agora = Date.now();
+    if (Math.abs(agora - tsMs) > 5 * 60 * 1000) {
+      console.warn("⚠️ Webhook com timestamp fora da janela:", ts);
+      return false;
+    }
+
     const template = `id:${dataId};request-id:${xRequestId};ts:${ts};`;
     const hash = createHmac("sha256", secret).update(template).digest("hex");
 
@@ -66,6 +74,30 @@ export async function POST(req) {
 
     const paymentId = body.data?.id || body.id;
     if (!paymentId) {
+      return NextResponse.json({ ok: true });
+    }
+
+    // ── Idempotência — verifica se este paymentId já foi processado ──
+    const { data: jaProcessado } = await supabase
+      .from("webhook_log")
+      .select("id")
+      .eq("payment_id", String(paymentId))
+      .eq("status", "processed")
+      .maybeSingle();
+
+    if (jaProcessado) {
+      console.log(`⚠️ Webhook duplicado ignorado: paymentId=${paymentId}`);
+      return NextResponse.json({ ok: true });
+    }
+
+    // ── Registra o paymentId como "em processamento" ──────────
+    const { error: logError } = await supabase
+      .from("webhook_log")
+      .insert({ payment_id: String(paymentId), status: "processing" });
+
+    // Se já existe como "processing" (outra instância pegou), ignora
+    if (logError) {
+      console.log(`⚠️ PaymentId já em processamento: paymentId=${paymentId}`);
       return NextResponse.json({ ok: true });
     }
 
@@ -116,6 +148,7 @@ export async function POST(req) {
     // Só salva premium_activated_at na primeira ativação
     const activatedAt = profile.premium_activated_at ?? new Date().toISOString();
 
+    // ── Upsert atômico — seguro contra concorrência ───────────
     const { error } = await supabase
       .from("profiles")
       .update({
@@ -126,14 +159,15 @@ export async function POST(req) {
         premium_activated_at: activatedAt,
         updated_at:           new Date().toISOString(),
       })
-      .eq("id", userId);
+      .eq("id", userId)
+      .eq("is_premium", false); // Só atualiza se ainda não for premium (evita sobrescrever renovações)
 
     if (error) {
       console.error("Erro ao ativar premium:", error);
       return NextResponse.json({ error: "Erro ao ativar premium" }, { status: 500 });
     }
 
-    console.log(`✅ Premium ativado: userId=${userId} plano=${planId} expira=${expiresAt.toISOString()}`);
+    console.log(`✅ Premium ativado: plano=${planId} expira=${expiresAt.toISOString()}`);
 
     // ── Incrementa uso do cupom após pagamento confirmado ─────
     if (cupomCodigo) {
@@ -149,13 +183,18 @@ export async function POST(req) {
           .update({ usos_atuais: (cupom.usos_atuais || 0) + 1 })
           .eq("id", cupom.id);
 
-        // Desativa automaticamente se atingiu o limite
         if (cupom.usos_maximos && (cupom.usos_atuais + 1) >= cupom.usos_maximos) {
           await supabase.from("cupons").update({ ativo: false }).eq("id", cupom.id);
           console.log(`🔒 Cupom ${cupomCodigo} desativado — limite atingido`);
         }
       }
     }
+
+    // ── Marca como processado (idempotência) ──────────────────
+    await supabase
+      .from("webhook_log")
+      .update({ status: "processed", processed_at: new Date().toISOString() })
+      .eq("payment_id", String(paymentId));
 
     return NextResponse.json({ ok: true });
 

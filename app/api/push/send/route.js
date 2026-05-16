@@ -2,11 +2,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import webpush from "web-push";
-export const dynamic = "force-dynamic";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  { auth: { persistSession: false } }
 );
 
 webpush.setVapidDetails(
@@ -15,12 +15,49 @@ webpush.setVapidDetails(
   process.env.VAPID_PRIVATE_KEY
 );
 
+// ── Verifica se é admin (localhost ou JWT + is_admin) ─────────
+async function verificaAdmin(request) {
+  const host = request.headers.get("host") || "";
+  if (host.includes("localhost") || host.includes("127.0.0.1")) return true;
+
+  const authHeader = request.headers.get("authorization") || "";
+  const token = authHeader.replace("Bearer ", "").trim();
+  if (!token) return false;
+
+  const anonClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    { auth: { persistSession: false } }
+  );
+  const { data: { user }, error } = await anonClient.auth.getUser(token);
+  if (error || !user) return false;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user.id)
+    .single();
+
+  return profile?.is_admin === true;
+}
+
 export async function POST(req) {
+  // ── Bloqueia acesso não autorizado ────────────────────────
+  const admin = await verificaAdmin(req);
+  if (!admin) {
+    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
   try {
     const { userId, title, body, url } = await req.json();
 
     if (!title || !body) {
       return NextResponse.json({ error: "title e body são obrigatórios" }, { status: 400 });
+    }
+
+    // Sanitiza tamanho dos campos
+    if (title.length > 100 || body.length > 300) {
+      return NextResponse.json({ error: "title ou body muito longos" }, { status: 400 });
     }
 
     // Busca subscriptions — de um usuário específico ou de todos
@@ -62,7 +99,6 @@ export async function POST(req) {
     const sent   = results.filter(r => r.value?.ok).length;
     const failed = results.filter(r => !r.value?.ok).length;
 
-    // Registra na tabela push_notifications
     await supabase.from("push_notifications").insert({
       user_id:    userId || null,
       endpoint:   "broadcast",
