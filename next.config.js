@@ -38,7 +38,7 @@ const nextConfig = {
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https: http:",
               "media-src 'self' https:",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.mercadopago.com https://fcm.googleapis.com https://web.push.apple.com",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.mercadopago.com https://fcm.googleapis.com https://web.push.apple.com https://painel.apppaideprimeira.com",
               "frame-src 'self' https://www.youtube.com https://www.mercadopago.com.br https://www.mercadopago.com",
               "worker-src 'self' blob:",
               "manifest-src 'self'",
